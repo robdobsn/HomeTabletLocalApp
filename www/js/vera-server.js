@@ -20,17 +20,17 @@ VeraServer = (function() {
       success: function(data, textStatus, jqXHR) {
         _this.rooms = _this.getRooms(jqXHR.responseText);
         _this.scenes = _this.getScenes(jqXHR.responseText, _this.rooms);
-        _this.scenes.sort(_this.sortByName);
+        _this.scenes.sort(_this.sortByRoomName);
         return _this.veraReadyCallback(_this.scenes);
       }
     });
   };
 
-  VeraServer.prototype.sortByName = function(a, b) {
-    if (a[0] < b[0]) {
+  VeraServer.prototype.sortByRoomName = function(a, b) {
+    if (a[2] < b[2]) {
       return -1;
     }
-    if (a[0] > b[0]) {
+    if (a[2] > b[2]) {
       return 1;
     }
     return 0;

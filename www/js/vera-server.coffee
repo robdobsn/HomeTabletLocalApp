@@ -12,12 +12,12 @@ class VeraServer
 			success: (data, textStatus, jqXHR) =>
 				@rooms = @getRooms(jqXHR.responseText)
 				@scenes = @getScenes(jqXHR.responseText, @rooms)
-				@scenes.sort @sortByName
+				@scenes.sort @sortByRoomName
 				@veraReadyCallback(@scenes)
 
-	sortByName: (a, b) ->
-		if a[0] < b[0] then return -1
-		if a[0] > b[0] then return 1
+	sortByRoomName: (a, b) ->
+		if a[2] < b[2] then return -1
+		if a[2] > b[2] then return 1
 		return 0
 
 	getMatches: (inText, re) ->
