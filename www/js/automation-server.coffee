@@ -1,5 +1,5 @@
 class AutomationServer
-	constructor: (@intermediateServerURL, @veraServerUrl, @indigoServerUrl) ->
+	constructor: (@intermediateServerURL, @veraServerUrl, @indigoServerUrl, @blindsActions, @doorActions) ->
 		@ACTIONS_URI = @intermediateServerURL + "/actions"
 		@EXEC_URI = @intermediateServerURL + "/exec"
 		@indigoServer = new IndigoServer(@indigoServerUrl)
@@ -22,7 +22,12 @@ class AutomationServer
 		@callBackWithSumActions()
 
 	callBackWithSumActions: =>
-		sumActions = { "vera" : @veraActions, "indigo" : @indigoActions }
+		sumActions = { "vera" : @veraActions, "indigo" : @indigoActions, "blinds" : @blindsActions, "doors" : @doorActions }
+		# Each action returned is an array:
+		# [0] = action/scene number
+		# [1] = action/scene name
+		# [2] = room/group name
+		# [3] = URI to execute the action
 		@readyCallback(sumActions)
 
 	getActionGroups: ->

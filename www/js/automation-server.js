@@ -3,10 +3,12 @@ var AutomationServer,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 AutomationServer = (function() {
-  function AutomationServer(intermediateServerURL, veraServerUrl, indigoServerUrl) {
+  function AutomationServer(intermediateServerURL, veraServerUrl, indigoServerUrl, blindsActions, doorActions) {
     this.intermediateServerURL = intermediateServerURL;
     this.veraServerUrl = veraServerUrl;
     this.indigoServerUrl = indigoServerUrl;
+    this.blindsActions = blindsActions;
+    this.doorActions = doorActions;
     this.executeCommand = __bind(this.executeCommand, this);
     this.callBackWithSumActions = __bind(this.callBackWithSumActions, this);
     this.veraServerReadyCb = __bind(this.veraServerReadyCb, this);
@@ -41,7 +43,9 @@ AutomationServer = (function() {
     var sumActions;
     sumActions = {
       "vera": this.veraActions,
-      "indigo": this.indigoActions
+      "indigo": this.indigoActions,
+      "blinds": this.blindsActions,
+      "doors": this.doorActions
     };
     return this.readyCallback(sumActions);
   };

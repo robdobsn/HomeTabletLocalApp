@@ -15,6 +15,9 @@ WallTabApp = (function() {
     this.tabletConfigUrl = this.rdHomeServerUrl + "/tablet/api/v1.0/config";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
     this.veraServerUrl = "http://192.168.0.206:3480";
+    this.frontDoorUrl = "http://192.168.0.221/";
+    this.blindsActions = GetBlindsActions();
+    this.doorActions = [[0, "Main Unlock", "Front Door", this.frontDoorUrl + "main-unlock"], [0, "Main Lock", "Front Door", this.frontDoorUrl + "main-lock"], [0, "Inner Unlock", "Front Door", this.frontDoorUrl + "inner-unlock"], [0, "Inner Lock", "Front Door", this.frontDoorUrl + "inner-lock"]];
   }
 
   WallTabApp.prototype.go = function() {
@@ -23,7 +26,7 @@ WallTabApp = (function() {
     this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
     this.automationActionGroups = [];
     this.uiGroupMapping = {};
-    this.automationServer = new AutomationServer(this.automationServerUrl, this.veraServerUrl, this.indigoServerUrl);
+    this.automationServer = new AutomationServer(this.automationServerUrl, this.veraServerUrl, this.indigoServerUrl, this.blindsActions, this.doorActions);
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfig = new TabletConfig(this.tabletConfigUrl);
     this.tabletConfig.setReadyCallback(this.configReadyCb);

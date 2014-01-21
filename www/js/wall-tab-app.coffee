@@ -8,6 +8,14 @@ class WallTabApp
         @tabletConfigUrl = @rdHomeServerUrl + "/tablet/api/v1.0/config"
         @indigoServerUrl = "http://IndigoServer.local:8176"
         @veraServerUrl = "http://192.168.0.206:3480"
+        @frontDoorUrl = "http://192.168.0.221/"
+        @blindsActions = GetBlindsActions()
+        @doorActions = [
+            [ 0, "Main Unlock", "Front Door", @frontDoorUrl + "main-unlock" ],
+            [ 0, "Main Lock", "Front Door", @frontDoorUrl + "main-lock" ],
+            [ 0, "Inner Unlock", "Front Door", @frontDoorUrl + "inner-unlock" ],
+            [ 0, "Inner Lock", "Front Door", @frontDoorUrl + "inner-lock" ]
+        ]
 
     go: ->
         # Basic body for DOM
@@ -27,7 +35,7 @@ class WallTabApp
         @uiGroupMapping = {}
 
         # Communication with Vera3 & Indigo through automation server
-        @automationServer = new AutomationServer(@automationServerUrl, @veraServerUrl, @indigoServerUrl)
+        @automationServer = new AutomationServer(@automationServerUrl, @veraServerUrl, @indigoServerUrl, @blindsActions, @doorActions)
         @automationServer.setReadyCallback(@automationServerReadyCb)
 
         # Tablet config is based on the IP address of the tablet
