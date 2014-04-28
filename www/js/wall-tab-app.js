@@ -22,7 +22,7 @@ WallTabApp = (function() {
 
   WallTabApp.prototype.go = function() {
     var _this = this;
-    $("body").append("<div id=\"sqGroupTitles\"></div>\n<div id=\"sqWrapper\">\n  <div id=\"sqTileWrapper\">\n  </div>\n</div>");
+    $("body").append("<div id=\"sqWrapper\">\n    <div id=\"sqTier1\">\n        <div class=\"sqGroupTitles\"/>\n        <div class=\"sqGroups\"/>\n    </div>\n</div>");
     this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
     this.automationActionGroups = [];
     this.uiGroupMapping = {};
@@ -30,19 +30,19 @@ WallTabApp = (function() {
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfig = new TabletConfig(this.tabletConfigUrl);
     this.tabletConfig.setReadyCallback(this.configReadyCb);
-    this.tileContainer = new TileContainer("#sqTileWrapper", "#sqGroupTitles");
-    this.tileContainer.clearTiles();
-    this.favouritesGroupIdx = this.tileContainer.addGroup("Home");
-    this.addClock(this.favouritesGroupIdx);
-    this.calendarGroupIdx = this.tileContainer.addGroup("Calendar");
-    this.addCalendar();
-    this.sceneGroupIdx = this.tileContainer.addGroup("Scenes");
-    this.tileContainer.reDoLayout();
+    this.tileTiers = new TileTiers("#sqWrapper");
+    this.tileContainer = new TileContainer("#sqTier1 .sqGroups", "#sqTier1 .sqGroupTitles");
+    this.tileTiers.addTier(this.tileContainer);
+    this.favouritesGroupIdx = this.tileTiers.addGroup(0, "Home");
+    this.calendarGroupIdx = this.tileTiers.addGroup(0, "Calendar");
+    this.sceneGroupIdx = this.tileTiers.addGroup(0, "Scenes");
+    this.setupInitialUI();
+    this.tileTiers.reDoLayout();
     $(window).on('orientationchange', function() {
-      return _this.tileContainer.reDoLayout();
+      return _this.tileTiers.reDoLayout();
     });
     $(window).on('resize', function() {
-      return _this.tileContainer.reDoLayout();
+      return _this.tileTiers.reDoLayout();
     });
     this.requestActionAndConfigData();
     return setInterval(function() {
@@ -60,7 +60,7 @@ WallTabApp = (function() {
     visibility = "all";
     tileBasics = new TileBasics(this.tileColours.getNextColour(), 3, null, "", "clock", visibility);
     tile = new Clock(tileBasics);
-    return this.tileContainer.addTileToGroup(groupIdx, tile);
+    return this.tileTiers.addTileToTierGroup(0, groupIdx, tile);
   };
 
   WallTabApp.prototype.addCalendar = function(onlyAddToGroupIdx) {
@@ -92,7 +92,7 @@ WallTabApp = (function() {
           if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== groupIdx))) {
             tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, null, "", "calendar", visibility);
             tile = new CalendarTile(tileBasics, this.calendarUrl, calDayIdx[i]);
-            _results1.push(this.tileContainer.addTileToGroup(groupIdx, tile));
+            _results1.push(this.tileTiers.addTileToTierGroup(0, groupIdx, tile));
           } else {
             _results1.push(void 0);
           }
@@ -110,7 +110,7 @@ WallTabApp = (function() {
     }
     tileBasics = new TileBasics(this.tileColours.getNextColour(), 1, this.automationServer.executeCommand, uri, name, visibility);
     tile = new SceneButton(tileBasics, "bulb-on", name);
-    return this.tileContainer.addTileToGroup(groupIdx, tile);
+    return this.tileTiers.addTileToTierGroup(0, groupIdx, tile);
   };
 
   WallTabApp.prototype.automationServerReadyCb = function(actions, serverType) {
@@ -158,11 +158,15 @@ WallTabApp = (function() {
     return false;
   };
 
-  WallTabApp.prototype.updateUIWithActionGroups = function() {
-    var action, actionList, groupIdx, servType, _i, _len, _ref;
+  WallTabApp.prototype.setupInitialUI = function() {
     this.tileContainer.clearTiles();
     this.addClock(this.favouritesGroupIdx);
-    this.addCalendar();
+    return this.addCalendar();
+  };
+
+  WallTabApp.prototype.updateUIWithActionGroups = function() {
+    var action, actionList, groupIdx, servType, _i, _len, _ref;
+    this.setupInitialUI();
     _ref = this.automationActionGroups;
     for (servType in _ref) {
       actionList = _ref[servType];

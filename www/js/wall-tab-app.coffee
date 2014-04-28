@@ -20,10 +20,11 @@ class WallTabApp
     go: ->
         # Basic body for DOM
         $("body").append """
-            <div id="sqGroupTitles"></div>
             <div id="sqWrapper">
-              <div id="sqTileWrapper">
-              </div>
+                <div id="sqTier1">
+                    <div class="sqGroupTitles"/>
+                    <div class="sqGroups"/>
+                </div>
             </div>
             """
 
@@ -42,29 +43,33 @@ class WallTabApp
         @tabletConfig = new TabletConfig @tabletConfigUrl
         @tabletConfig.setReadyCallback(@configReadyCb)
 
-        # UI container for tiles
-        @tileContainer = new TileContainer "#sqTileWrapper", "#sqGroupTitles"
-        @tileContainer.clearTiles()
+        # Tile tiers
+        @tileTiers = new TileTiers "#sqWrapper"
+
+        # Main tier
+        @tileContainer = new TileContainer "#sqTier1 .sqGroups", "#sqTier1 .sqGroupTitles"
+        @tileTiers.addTier @tileContainer
 
         # Favourites group
-        @favouritesGroupIdx = @tileContainer.addGroup "Home"
-        @addClock(@favouritesGroupIdx)
+        @favouritesGroupIdx = @tileTiers.addGroup 0, "Home"
 
         # Calendar group
-        @calendarGroupIdx = @tileContainer.addGroup "Calendar"
-        @addCalendar()
+        @calendarGroupIdx = @tileTiers.addGroup 0, "Calendar"
 
         # Scenes group
-        @sceneGroupIdx = @tileContainer.addGroup "Scenes"
-        @tileContainer.reDoLayout()
+        @sceneGroupIdx = @tileTiers.addGroup 0, "Scenes"
+
+        # Initial UI layout
+        @setupInitialUI()
+        @tileTiers.reDoLayout()
 
         # Handler for orientation change
         $(window).on 'orientationchange', =>
-          @tileContainer.reDoLayout()
+          @tileTiers.reDoLayout()
 
         # And resize event
         $(window).on 'resize', =>
-          @tileContainer.reDoLayout()
+          @tileTiers.reDoLayout()
 
         # Make initial requests for action (scene) data and config data and repeat requests at intervals
         @requestActionAndConfigData()
@@ -80,7 +85,7 @@ class WallTabApp
         visibility = "all"
         tileBasics = new TileBasics @tileColours.getNextColour(), 3, null, "", "clock", visibility
         tile = new Clock tileBasics
-        @tileContainer.addTileToGroup(groupIdx, tile)
+        @tileTiers.addTileToTierGroup(0, groupIdx, tile)
 
     addCalendar: (onlyAddToGroupIdx = null) ->
         for orientation in [0..1]
@@ -102,12 +107,12 @@ class WallTabApp
                 if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt groupIdx))
                     tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, null, "", "calendar", visibility
                     tile = new CalendarTile tileBasics, @calendarUrl, calDayIdx[i]
-                    @tileContainer.addTileToGroup(groupIdx, tile)
+                    @tileTiers.addTileToTierGroup(0, groupIdx, tile)
 
     makeSceneButton: (groupIdx, name, uri, visibility = "all") ->
         tileBasics = new TileBasics @tileColours.getNextColour(), 1, @automationServer.executeCommand, uri, name, visibility
         tile = new SceneButton tileBasics, "bulb-on", name
-        @tileContainer.addTileToGroup(groupIdx, tile)
+        @tileTiers.addTileToTierGroup(0, groupIdx, tile)
 
     automationServerReadyCb: (actions, serverType) =>
         # Callback when data received from the automation server (scenes/actions)
@@ -134,12 +139,15 @@ class WallTabApp
                 if oldAction[i] isnt newAction[i] then return true
         false
 
-    updateUIWithActionGroups: =>
+    setupInitialUI: ->
         # Clear all tiles initially
         @tileContainer.clearTiles()
         # Add the clock and calendar back in
         @addClock(@favouritesGroupIdx)
         @addCalendar()
+
+    updateUIWithActionGroups: =>
+        @setupInitialUI()
         # Create tiles for all actions/scenes
         for servType, actionList of @automationActionGroups
             for action in actionList
