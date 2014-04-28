@@ -3,7 +3,7 @@ var GenBlindsActions, GetBlindsActions;
 
 GetBlindsActions = function() {
   var actionsArray, blindsDef;
-  blindsDef = [["Games Room", [["1", "Shade 1"], ["2", "Shade 2"]], "http://192.168.0.225/blind/"], ["Grace Bath", [["1", "Blinds"]], "http://192.168.0.82/blind/"], ["Office", [["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"]], "http://192.168.0.220/blind/"]];
+  blindsDef = [["Games Room", [["1", "Shade 1"], ["2", "Shade 2"]], "http://192.168.0.225/blind/"], ["Grace Bath", [["1", "Blinds"]], "http://192.168.0.226/blind/"], ["Office", [["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"]], "http://192.168.0.220/blind/"]];
   return actionsArray = GenBlindsActions(blindsDef);
 };
 
