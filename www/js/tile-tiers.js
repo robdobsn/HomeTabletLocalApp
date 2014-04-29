@@ -18,6 +18,13 @@ TileTiers = (function() {
     return this.tiers[tierIdx].addGroup(groupTitle);
   };
 
+  TileTiers.prototype.clearGroup = function(tierIdx, groupIdx) {
+    if (tierIdx >= this.tiers.length) {
+      return;
+    }
+    return this.tiers[tierIdx].clearTileGroup();
+  };
+
   TileTiers.prototype.reDoLayout = function() {
     var tier, _i, _len, _ref, _results;
     _ref = this.tiers;
@@ -34,6 +41,24 @@ TileTiers = (function() {
       return;
     }
     return this.tiers[tierIdx].addTileToGroup(groupIdx, tile);
+  };
+
+  TileTiers.prototype.clear = function() {
+    var tier, _i, _len, _ref, _results;
+    _ref = this.tiers;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      tier = _ref[_i];
+      _results.push(tier.clearTiles());
+    }
+    return _results;
+  };
+
+  TileTiers.prototype.findExistingTile = function(tierIdx, tileName) {
+    if (tierIdx >= this.tiers.length) {
+      return;
+    }
+    return this.tiers[tierIdx].findExistingTile(tileName);
   };
 
   return TileTiers;

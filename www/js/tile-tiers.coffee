@@ -9,10 +9,21 @@ class TileTiers
 		if tierIdx >= @tiers.length then return
 		@tiers[tierIdx].addGroup groupTitle
 
+	clearGroup: (tierIdx, groupIdx) ->
+		if tierIdx >= @tiers.length then return
+		@tiers[tierIdx].clearTileGroup()
+
 	reDoLayout: ->
 		tier.reDoLayout() for tier in @tiers
 
 	addTileToTierGroup: (tierIdx, groupIdx, tile) ->
 		if tierIdx >= @tiers.length then return
 		@tiers[tierIdx].addTileToGroup groupIdx, tile
+
+	clear: ->
+		for tier in @tiers
+			tier.clearTiles()
 		
+	findExistingTile: (tierIdx, tileName) ->
+		if tierIdx >= @tiers.length then return
+		@tiers[tierIdx].findExistingTile tileName

@@ -1,5 +1,5 @@
-class TileContainer
-	constructor: (@parentTag, @groupTitlesTag) ->
+class TileTier
+	constructor: (@parentTag, @tierName) ->
 		@groups = []
 		@groupCols = []
 		@groupSepPixels = 30
@@ -7,23 +7,36 @@ class TileContainer
 		@tileSepXPixels = 20
 		@tileSepYPixels = 20
 		@nextTileIdx = 0
+		@tierId = "sqTier" + @tierName
+		@groupTitlesClass = "sqGroupTitles"
+		@groupTitlesTagLocator = "#" + @tierId + " ." + @groupTitlesClass
+		@groupsClass = "sqGroups"
+		@groupsTagLocator = "#" + @tierId + " ." + @groupsClass
+
+	addToDom: ->
+		# This shouldn't be necessary after the first call as the above should have removed all tiles
+		$(@parentTag).html """
+            <div id="#{@tierId}">
+                <div class="#{@groupTitlesClass}"/>
+                <div class="#{@groupsClass}">
+			        <div id="sqTileContainer" style="width:3000px;display:block;zoom:1;">
+			        </div>
+			    </div>
+            </div>
+			"""
 
 	clearTiles: ->
 		# Container of tile groups
 		for group in @groups
 			group.clearTiles()
-		# This shouldn't be necessary after the first call as the above should have removed all tiles
-		$(@parentTag).html """
-	        <div id="sqTileContainer" style="width:3000px;height:350px;display:block;zoom:1;">
-	        </div>
-			"""
 
 	clearTileGroup: (groupIdx) ->
+		if groupIdx >= @groups.length then return
 		@groups[groupIdx].clearTiles()
 
 	addGroup: (groupTitle) ->
 		groupIdx = @groups.length
-		newTileGroup = new TileGroup this, @groupTitlesTag, groupIdx, groupTitle
+		newTileGroup = new TileGroup this, @groupTitlesTagLocator, groupIdx, groupTitle
 		@groups.push newTileGroup
 		groupIdx
 

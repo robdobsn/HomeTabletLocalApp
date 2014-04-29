@@ -21,10 +21,6 @@ class WallTabApp
         # Basic body for DOM
         $("body").append """
             <div id="sqWrapper">
-                <div id="sqTier1">
-                    <div class="sqGroupTitles"/>
-                    <div class="sqGroups"/>
-                </div>
             </div>
             """
 
@@ -47,8 +43,9 @@ class WallTabApp
         @tileTiers = new TileTiers "#sqWrapper"
 
         # Main tier
-        @tileContainer = new TileContainer "#sqTier1 .sqGroups", "#sqTier1 .sqGroupTitles"
-        @tileTiers.addTier @tileContainer
+        mainTier = new TileTier "#sqWrapper", "_Tier1"
+        mainTier.addToDom()
+        @tileTiers.addTier mainTier
 
         # Favourites group
         @favouritesGroupIdx = @tileTiers.addGroup 0, "Home"
@@ -140,8 +137,8 @@ class WallTabApp
         false
 
     setupInitialUI: ->
-        # Clear all tiles initially
-        @tileContainer.clearTiles()
+        # Clear all tiers initially
+        @tileTiers.clear()
         # Add the clock and calendar back in
         @addClock(@favouritesGroupIdx)
         @addCalendar()
@@ -158,7 +155,7 @@ class WallTabApp
                         groupIdx = @uiGroupMapping[action[2]]
                     else
                         # Make a new ui group if the room/action-group name is new
-                        groupIdx = @tileContainer.addGroup action[2]
+                        groupIdx = @tileTiers.addGroup 0, action[2]
                         @uiGroupMapping[action[2]] = groupIdx
                 # make the scene button
                 @makeSceneButton groupIdx, action[1], action[3]
@@ -166,22 +163,22 @@ class WallTabApp
         if @jsonConfig isnt null
             @applyJsonConfig @jsonConfig
         # Re-do the layout of tiles
-        @tileContainer.reDoLayout()
+        @tileTiers.reDoLayout()
 
     applyJsonConfig: (jsonConfig) ->
         # Clear just the favourites group (and add clock back in)
-        @tileContainer.clearTileGroup(@favouritesGroupIdx)
+        @tileTiers.clearGroup(0, @favouritesGroupIdx)
         @addClock(@favouritesGroupIdx)
         @addCalendar(@favouritesGroupIdx)
         # Copy tiles that should be in favourites group
         for actionName, uiGroup of jsonConfig
-            existingTile = @tileContainer.findExistingTile(actionName)
+            existingTile = @tileTiers.findExistingTile(0, actionName)
             if existingTile isnt null
                 @makeSceneButton @favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam
 
     configReadyCb: (@jsonConfig) =>
         @applyJsonConfig(@jsonConfig)
-        @tileContainer.reDoLayout()
+        @tileTiers.reDoLayout()
 
     actionOnUserIdle: =>
         $("html, body").animate({ scrollLeft: "0px" });

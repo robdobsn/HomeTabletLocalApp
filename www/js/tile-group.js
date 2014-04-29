@@ -2,8 +2,8 @@
 var TileGroup;
 
 TileGroup = (function() {
-  function TileGroup(tileContainer, groupTitlesTag, groupIdx, groupTitle) {
-    this.tileContainer = tileContainer;
+  function TileGroup(tileTier, groupTitlesTag, groupIdx, groupTitle) {
+    this.tileTier = tileTier;
     this.groupTitlesTag = groupTitlesTag;
     this.groupIdx = groupIdx;
     this.groupTitle = groupTitle;
@@ -97,7 +97,7 @@ TileGroup = (function() {
   };
 
   TileGroup.prototype.addExistingTile = function(tile) {
-    tile.setTileIndex(this.tileContainer.getNextTileIdx());
+    tile.setTileIndex(this.tileTier.getNextTileIdx());
     tile.addToDoc();
     return this.tiles.push(tile);
   };
@@ -108,7 +108,7 @@ TileGroup = (function() {
 
   TileGroup.prototype.repositionTiles = function(isPortrait) {
     var fontScaling, fontSize, tile, tileHeight, tileIdx, tileWidth, titleX, titleY, xPos, yPos, _i, _len, _ref, _ref1, _ref2, _ref3, _results;
-    _ref = this.tileContainer.getGroupTitlePos(this.groupIdx), titleX = _ref[0], titleY = _ref[1], fontSize = _ref[2];
+    _ref = this.tileTier.getGroupTitlePos(this.groupIdx), titleX = _ref[0], titleY = _ref[1], fontSize = _ref[2];
     $("#" + this.groupIdTag).css({
       "margin-left": titleX + "px",
       "margin-top": titleY + "px",
@@ -119,8 +119,8 @@ TileGroup = (function() {
     for (tileIdx = _i = 0, _len = _ref1.length; _i < _len; tileIdx = ++_i) {
       tile = _ref1[tileIdx];
       if (tile.isVisible(isPortrait)) {
-        _ref2 = this.tileContainer.getTileSize(tile.tileBasics.colSpan), tileWidth = _ref2[0], tileHeight = _ref2[1];
-        _ref3 = this.tileContainer.getCellPos(this.groupIdx, this.tilePositions[tileIdx][0], this.tilePositions[tileIdx][1]), xPos = _ref3[0], yPos = _ref3[1], fontScaling = _ref3[2];
+        _ref2 = this.tileTier.getTileSize(tile.tileBasics.colSpan), tileWidth = _ref2[0], tileHeight = _ref2[1];
+        _ref3 = this.tileTier.getCellPos(this.groupIdx, this.tilePositions[tileIdx][0], this.tilePositions[tileIdx][1]), xPos = _ref3[0], yPos = _ref3[1], fontScaling = _ref3[2];
         _results.push(tile.reposition(xPos, yPos, tileWidth, tileHeight, fontScaling));
       } else {
         _results.push(tile.setInvisible());

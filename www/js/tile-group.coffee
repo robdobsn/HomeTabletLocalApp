@@ -1,5 +1,5 @@
 class TileGroup
-	constructor: (@tileContainer, @groupTitlesTag, @groupIdx, @groupTitle) ->
+	constructor: (@tileTier, @groupTitlesTag, @groupIdx, @groupTitle) ->
 		@tiles = []
 		@tilePositions = []
 		@groupIdTag = "sqGroupTitle" + groupIdx
@@ -67,12 +67,12 @@ class TileGroup
 
 	# addTile: (tileColour, colSpan) ->
 	# 	tile = new Tile tileColour, colSpan
-	# 	tile.setTileIndex(@tileContainer.getNextTileIdx())
+	# 	tile.setTileIndex(@tileTier.getNextTileIdx())
 	# 	tile.addToDoc()
 	# 	@tiles.push tile
 
 	addExistingTile: (tile) ->
-		tile.setTileIndex(@tileContainer.getNextTileIdx())
+		tile.setTileIndex(@tileTier.getNextTileIdx())
 		tile.addToDoc()
 		@tiles.push tile
 
@@ -80,7 +80,7 @@ class TileGroup
 		a.tileBasics.colSpan - b.tileBasics.colSpan
 
 	repositionTiles: (isPortrait) ->
-		[titleX, titleY, fontSize] = @tileContainer.getGroupTitlePos(@groupIdx)
+		[titleX, titleY, fontSize] = @tileTier.getGroupTitlePos(@groupIdx)
 		$("#"+@groupIdTag).css {
 			"margin-left": titleX + "px", 
 			"margin-top": titleY + "px",
@@ -89,8 +89,8 @@ class TileGroup
 		# Order tiles so widest are at the end
 		for tile, tileIdx in @tiles
 			if tile.isVisible(isPortrait)
-				[tileWidth, tileHeight] = @tileContainer.getTileSize(tile.tileBasics.colSpan)
-				[xPos, yPos, fontScaling] = @tileContainer.getCellPos(@groupIdx, @tilePositions[tileIdx][0], @tilePositions[tileIdx][1])
+				[tileWidth, tileHeight] = @tileTier.getTileSize(tile.tileBasics.colSpan)
+				[xPos, yPos, fontScaling] = @tileTier.getCellPos(@groupIdx, @tilePositions[tileIdx][0], @tilePositions[tileIdx][1])
 				tile.reposition xPos, yPos, tileWidth, tileHeight, fontScaling
 				# console.log "Grp=" + @groupIdx + "Tile=" + tile.tileBasics.tileName + "(" + tileIdx + ") Pos " + xPos + " " + yPos
 			else
