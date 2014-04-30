@@ -3,9 +3,8 @@ class Tile
 		@contentFontScaling = 1
 
 	addToDoc: ->
-		@parentTag = "#sqTileContainer"
 		@tileId = "sqTile" + @tileIdx
-		$(@parentTag).append """
+		$(@tileBasics.parentTag).append """
 			<a class="sqTile" id="#{@tileId}" 
 					href="javascript:void(0);" 
 					style="background-color:#{@tileBasics.bkColour};

@@ -10,7 +10,7 @@ TileGroup = (function() {
     this.tiles = [];
     this.tilePositions = [];
     this.groupIdTag = "sqGroupTitle" + groupIdx;
-    $(groupTitlesTag).append("<div class=\"sqGroupTitle\" id=\"" + this.groupIdTag + "\">" + this.groupTitle + "\n</div>");
+    $(groupTitlesTag).append("<div class=\"sqGroupTitle " + this.groupIdTag + "\">" + this.groupTitle + "\n</div>");
   }
 
   TileGroup.prototype.clearTiles = function() {
@@ -109,7 +109,7 @@ TileGroup = (function() {
   TileGroup.prototype.repositionTiles = function(isPortrait) {
     var fontScaling, fontSize, tile, tileHeight, tileIdx, tileWidth, titleX, titleY, xPos, yPos, _i, _len, _ref, _ref1, _ref2, _ref3, _results;
     _ref = this.tileTier.getGroupTitlePos(this.groupIdx), titleX = _ref[0], titleY = _ref[1], fontSize = _ref[2];
-    $("#" + this.groupIdTag).css({
+    $(this.groupTitlesTag + " ." + this.groupIdTag).css({
       "margin-left": titleX + "px",
       "margin-top": titleY + "px",
       "font-size": fontSize

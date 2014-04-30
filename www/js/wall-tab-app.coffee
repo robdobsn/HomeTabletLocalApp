@@ -45,18 +45,31 @@ class WallTabApp
         # Main tier
         mainTier = new TileTier "#sqWrapper", "_Tier1"
         mainTier.addToDom()
-        @tileTiers.addTier mainTier
+        @tileTiers.addTier (mainTier)
 
         # Favourites group
-        @favouritesGroupIdx = @tileTiers.addGroup 0, "Home"
+        @favouritesTierIdx = 0
+        @favouritesGroupIdx = @tileTiers.addGroup @favouritesTierIdx, "Home"
 
         # Calendar group
-        @calendarGroupIdx = @tileTiers.addGroup 0, "Calendar"
+        @calendarTierIdx = 0
+        @calendarGroupIdx = @tileTiers.addGroup @calendarTierIdx, "Calendar"
 
         # Scenes group
-        @sceneGroupIdx = @tileTiers.addGroup 0, "Scenes"
+        @sceneTierIdx = 0
+        @sceneGroupIdx = @tileTiers.addGroup @sceneTierIdx, "Scenes"
+
+        # Second tier
+        secondTier = new TileTier "#sqWrapper", "_Tier2"
+        secondTier.addToDom()
+        @tileTiers.addTier (secondTier)
+
+        # Sonos group
+        @sonosTierIdx = 1
+        @sonosGroupIdx = @tileTiers.addGroup @sonosTierIdx, "Sonos"
 
         # Initial UI layout
+        @tileTiers.clear()
         @setupInitialUI()
         @tileTiers.reDoLayout()
 
@@ -78,13 +91,13 @@ class WallTabApp
         @automationServer.getActionGroups()
         @tabletConfig.initTabletConfig()
     
-    addClock: (groupIdx) ->
+    addClock: (tierIdx, groupIdx) ->
         visibility = "all"
-        tileBasics = new TileBasics @tileColours.getNextColour(), 3, null, "", "clock", visibility
+        tileBasics = new TileBasics @tileColours.getNextColour(), 3, null, "", "clock", visibility, @tileTiers.getTileContainerSelector(tierIdx)
         tile = new Clock tileBasics
-        @tileTiers.addTileToTierGroup(0, groupIdx, tile)
+        @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
-    addCalendar: (onlyAddToGroupIdx = null) ->
+    addCalendar: (tierIdx, onlyAddToGroupIdx = null) ->
         for orientation in [0..1]
             calG = @calendarGroupIdx
             favG = @favouritesGroupIdx
@@ -102,14 +115,14 @@ class WallTabApp
                 groupIdx = groupInfo[i]
                 colSpan = colSpans[i]
                 if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt groupIdx))
-                    tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, null, "", "calendar", visibility
+                    tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, null, "", "calendar", visibility, @tileTiers.getTileContainerSelector(tierIdx)
                     tile = new CalendarTile tileBasics, @calendarUrl, calDayIdx[i]
-                    @tileTiers.addTileToTierGroup(0, groupIdx, tile)
+                    @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
-    makeSceneButton: (groupIdx, name, uri, visibility = "all") ->
-        tileBasics = new TileBasics @tileColours.getNextColour(), 1, @automationServer.executeCommand, uri, name, visibility
+    makeSceneButton: (tierIdx, groupIdx, name, uri, visibility = "all") ->
+        tileBasics = new TileBasics @tileColours.getNextColour(), 1, @automationServer.executeCommand, uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
         tile = new SceneButton tileBasics, "bulb-on", name
-        @tileTiers.addTileToTierGroup(0, groupIdx, tile)
+        @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
     automationServerReadyCb: (actions, serverType) =>
         # Callback when data received from the automation server (scenes/actions)
@@ -137,13 +150,13 @@ class WallTabApp
         false
 
     setupInitialUI: ->
-        # Clear all tiers initially
-        @tileTiers.clear()
         # Add the clock and calendar back in
-        @addClock(@favouritesGroupIdx)
-        @addCalendar()
+        @addClock(@favouritesTierIdx, @favouritesGroupIdx)
+        @addCalendar(@calendarTierIdx, @calendarGroupIdx)
 
     updateUIWithActionGroups: =>
+        # Clear all tiers initially
+        @tileTiers.clear()
         @setupInitialUI()
         # Create tiles for all actions/scenes
         for servType, actionList of @automationActionGroups
@@ -155,10 +168,10 @@ class WallTabApp
                         groupIdx = @uiGroupMapping[action[2]]
                     else
                         # Make a new ui group if the room/action-group name is new
-                        groupIdx = @tileTiers.addGroup 0, action[2]
+                        groupIdx = @tileTiers.addGroup @sceneTierIdx, action[2]
                         @uiGroupMapping[action[2]] = groupIdx
                 # make the scene button
-                @makeSceneButton groupIdx, action[1], action[3]
+                @makeSceneButton @sceneTierIdx, groupIdx, action[1], action[3]
         # Apply the configuration for the tablet - handles favourites group etc
         if @jsonConfig isnt null
             @applyJsonConfig @jsonConfig
@@ -167,14 +180,13 @@ class WallTabApp
 
     applyJsonConfig: (jsonConfig) ->
         # Clear just the favourites group (and add clock back in)
-        @tileTiers.clearGroup(0, @favouritesGroupIdx)
-        @addClock(@favouritesGroupIdx)
-        @addCalendar(@favouritesGroupIdx)
+        @tileTiers.clearGroup(@favouritesTierIdx, @favouritesGroupIdx)
+        @setupInitialUI()
         # Copy tiles that should be in favourites group
         for actionName, uiGroup of jsonConfig
-            existingTile = @tileTiers.findExistingTile(0, actionName)
+            existingTile = @tileTiers.findExistingTile(@favouritesTierIdx, actionName)
             if existingTile isnt null
-                @makeSceneButton @favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam
+                @makeSceneButton @favouritesTierIdx, @favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam
 
     configReadyCb: (@jsonConfig) =>
         @applyJsonConfig(@jsonConfig)

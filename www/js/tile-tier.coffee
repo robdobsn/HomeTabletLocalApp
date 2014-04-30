@@ -13,13 +13,16 @@ class TileTier
 		@groupsClass = "sqGroups"
 		@groupsTagLocator = "#" + @tierId + " ." + @groupsClass
 
+	getTileContainerSelector: ->
+		@groupsTagLocator + " .sqTileContainer"
+
 	addToDom: ->
-		# This shouldn't be necessary after the first call as the above should have removed all tiles
-		$(@parentTag).html """
-            <div id="#{@tierId}">
+		# Add to html in parent tag
+		$(@parentTag).append """
+            <div id="#{@tierId}" class="sqTier">
                 <div class="#{@groupTitlesClass}"/>
                 <div class="#{@groupsClass}">
-			        <div id="sqTileContainer" style="width:3000px;display:block;zoom:1;">
+			        <div class="sqTileContainer" style="width:3000px;display:block;zoom:1;">
 			        </div>
 			    </div>
             </div>

@@ -5,6 +5,10 @@ class TileTiers
 	addTier: (tier) ->
 		@tiers.push tier
 
+	getTileContainerSelector: (tierIdx) ->
+		if tierIdx >= @tiers.length then return ""
+		@tiers[tierIdx].getTileContainerSelector()
+
 	addGroup: (tierIdx, groupTitle) ->
 		if tierIdx >= @tiers.length then return
 		@tiers[tierIdx].addGroup groupTitle

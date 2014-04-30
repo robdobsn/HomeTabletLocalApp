@@ -4,7 +4,7 @@ class TileGroup
 		@tilePositions = []
 		@groupIdTag = "sqGroupTitle" + groupIdx
 		$(groupTitlesTag).append """
-	        <div class="sqGroupTitle" id="#{@groupIdTag}">#{@groupTitle}
+	        <div class="sqGroupTitle #{@groupIdTag}">#{@groupTitle}
 	        </div>
 			"""
 
@@ -81,7 +81,7 @@ class TileGroup
 
 	repositionTiles: (isPortrait) ->
 		[titleX, titleY, fontSize] = @tileTier.getGroupTitlePos(@groupIdx)
-		$("#"+@groupIdTag).css {
+		$(@groupTitlesTag + " ."+@groupIdTag).css {
 			"margin-left": titleX + "px", 
 			"margin-top": titleY + "px",
 			"font-size": fontSize

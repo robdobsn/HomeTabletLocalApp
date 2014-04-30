@@ -11,6 +11,13 @@ TileTiers = (function() {
     return this.tiers.push(tier);
   };
 
+  TileTiers.prototype.getTileContainerSelector = function(tierIdx) {
+    if (tierIdx >= this.tiers.length) {
+      return "";
+    }
+    return this.tiers[tierIdx].getTileContainerSelector();
+  };
+
   TileTiers.prototype.addGroup = function(tierIdx, groupTitle) {
     if (tierIdx >= this.tiers.length) {
       return;

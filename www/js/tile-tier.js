@@ -19,8 +19,12 @@ TileTier = (function() {
     this.groupsTagLocator = "#" + this.tierId + " ." + this.groupsClass;
   }
 
+  TileTier.prototype.getTileContainerSelector = function() {
+    return this.groupsTagLocator + " .sqTileContainer";
+  };
+
   TileTier.prototype.addToDom = function() {
-    return $(this.parentTag).html("            <div id=\"" + this.tierId + "\">\n                <div class=\"" + this.groupTitlesClass + "\"/>\n                <div class=\"" + this.groupsClass + "\">\n    <div id=\"sqTileContainer\" style=\"width:3000px;display:block;zoom:1;\">\n    </div>\n</div>\n            </div>");
+    return $(this.parentTag).append("            <div id=\"" + this.tierId + "\" class=\"sqTier\">\n                <div class=\"" + this.groupTitlesClass + "\"/>\n                <div class=\"" + this.groupsClass + "\">\n    <div class=\"sqTileContainer\" style=\"width:3000px;display:block;zoom:1;\">\n    </div>\n</div>\n            </div>");
   };
 
   TileTier.prototype.clearTiles = function() {

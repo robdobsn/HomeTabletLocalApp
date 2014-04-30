@@ -2,13 +2,14 @@
 var TileBasics;
 
 TileBasics = (function() {
-  function TileBasics(bkColour, colSpan, clickFn, clickParam, tileName, visibility) {
+  function TileBasics(bkColour, colSpan, clickFn, clickParam, tileName, visibility, parentTag) {
     this.bkColour = bkColour;
     this.colSpan = colSpan;
     this.clickFn = clickFn;
     this.clickParam = clickParam;
     this.tileName = tileName;
     this.visibility = visibility;
+    this.parentTag = parentTag;
   }
 
   return TileBasics;

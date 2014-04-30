@@ -21,7 +21,7 @@ WallTabApp = (function() {
   }
 
   WallTabApp.prototype.go = function() {
-    var mainTier,
+    var mainTier, secondTier,
       _this = this;
     $("body").append("<div id=\"sqWrapper\">\n</div>");
     this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
@@ -35,9 +35,18 @@ WallTabApp = (function() {
     mainTier = new TileTier("#sqWrapper", "_Tier1");
     mainTier.addToDom();
     this.tileTiers.addTier(mainTier);
-    this.favouritesGroupIdx = this.tileTiers.addGroup(0, "Home");
-    this.calendarGroupIdx = this.tileTiers.addGroup(0, "Calendar");
-    this.sceneGroupIdx = this.tileTiers.addGroup(0, "Scenes");
+    this.favouritesTierIdx = 0;
+    this.favouritesGroupIdx = this.tileTiers.addGroup(this.favouritesTierIdx, "Home");
+    this.calendarTierIdx = 0;
+    this.calendarGroupIdx = this.tileTiers.addGroup(this.calendarTierIdx, "Calendar");
+    this.sceneTierIdx = 0;
+    this.sceneGroupIdx = this.tileTiers.addGroup(this.sceneTierIdx, "Scenes");
+    secondTier = new TileTier("#sqWrapper", "_Tier2");
+    secondTier.addToDom();
+    this.tileTiers.addTier(secondTier);
+    this.sonosTierIdx = 1;
+    this.sonosGroupIdx = this.tileTiers.addGroup(this.sonosTierIdx, "Sonos");
+    this.tileTiers.clear();
     this.setupInitialUI();
     this.tileTiers.reDoLayout();
     $(window).on('orientationchange', function() {
@@ -57,15 +66,15 @@ WallTabApp = (function() {
     return this.tabletConfig.initTabletConfig();
   };
 
-  WallTabApp.prototype.addClock = function(groupIdx) {
+  WallTabApp.prototype.addClock = function(tierIdx, groupIdx) {
     var tile, tileBasics, visibility;
     visibility = "all";
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), 3, null, "", "clock", visibility);
+    tileBasics = new TileBasics(this.tileColours.getNextColour(), 3, null, "", "clock", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
     tile = new Clock(tileBasics);
-    return this.tileTiers.addTileToTierGroup(0, groupIdx, tile);
+    return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };
 
-  WallTabApp.prototype.addCalendar = function(onlyAddToGroupIdx) {
+  WallTabApp.prototype.addCalendar = function(tierIdx, onlyAddToGroupIdx) {
     var calDayIdx, calG, colSpan, colSpans, favG, groupIdx, groupInfo, i, orientation, tile, tileBasics, visibility, _i, _results;
     if (onlyAddToGroupIdx == null) {
       onlyAddToGroupIdx = null;
@@ -92,9 +101,9 @@ WallTabApp = (function() {
           groupIdx = groupInfo[i];
           colSpan = colSpans[i];
           if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== groupIdx))) {
-            tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, null, "", "calendar", visibility);
+            tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, null, "", "calendar", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
             tile = new CalendarTile(tileBasics, this.calendarUrl, calDayIdx[i]);
-            _results1.push(this.tileTiers.addTileToTierGroup(0, groupIdx, tile));
+            _results1.push(this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile));
           } else {
             _results1.push(void 0);
           }
@@ -105,14 +114,14 @@ WallTabApp = (function() {
     return _results;
   };
 
-  WallTabApp.prototype.makeSceneButton = function(groupIdx, name, uri, visibility) {
+  WallTabApp.prototype.makeSceneButton = function(tierIdx, groupIdx, name, uri, visibility) {
     var tile, tileBasics;
     if (visibility == null) {
       visibility = "all";
     }
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), 1, this.automationServer.executeCommand, uri, name, visibility);
+    tileBasics = new TileBasics(this.tileColours.getNextColour(), 1, this.automationServer.executeCommand, uri, name, visibility, this.tileTiers.getTileContainerSelector(tierIdx));
     tile = new SceneButton(tileBasics, "bulb-on", name);
-    return this.tileTiers.addTileToTierGroup(0, groupIdx, tile);
+    return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };
 
   WallTabApp.prototype.automationServerReadyCb = function(actions, serverType) {
@@ -161,13 +170,13 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.setupInitialUI = function() {
-    this.tileTiers.clear();
-    this.addClock(this.favouritesGroupIdx);
-    return this.addCalendar();
+    this.addClock(this.favouritesTierIdx, this.favouritesGroupIdx);
+    return this.addCalendar(this.calendarTierIdx, this.calendarGroupIdx);
   };
 
   WallTabApp.prototype.updateUIWithActionGroups = function() {
     var action, actionList, groupIdx, servType, _i, _len, _ref;
+    this.tileTiers.clear();
     this.setupInitialUI();
     _ref = this.automationActionGroups;
     for (servType in _ref) {
@@ -179,11 +188,11 @@ WallTabApp = (function() {
           if (action[2] in this.uiGroupMapping) {
             groupIdx = this.uiGroupMapping[action[2]];
           } else {
-            groupIdx = this.tileTiers.addGroup(0, action[2]);
+            groupIdx = this.tileTiers.addGroup(this.sceneTierIdx, action[2]);
             this.uiGroupMapping[action[2]] = groupIdx;
           }
         }
-        this.makeSceneButton(groupIdx, action[1], action[3]);
+        this.makeSceneButton(this.sceneTierIdx, groupIdx, action[1], action[3]);
       }
     }
     if (this.jsonConfig !== null) {
@@ -194,15 +203,14 @@ WallTabApp = (function() {
 
   WallTabApp.prototype.applyJsonConfig = function(jsonConfig) {
     var actionName, existingTile, uiGroup, _results;
-    this.tileTiers.clearGroup(0, this.favouritesGroupIdx);
-    this.addClock(this.favouritesGroupIdx);
-    this.addCalendar(this.favouritesGroupIdx);
+    this.tileTiers.clearGroup(this.favouritesTierIdx, this.favouritesGroupIdx);
+    this.setupInitialUI();
     _results = [];
     for (actionName in jsonConfig) {
       uiGroup = jsonConfig[actionName];
-      existingTile = this.tileTiers.findExistingTile(0, actionName);
+      existingTile = this.tileTiers.findExistingTile(this.favouritesTierIdx, actionName);
       if (existingTile !== null) {
-        _results.push(this.makeSceneButton(this.favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam));
+        _results.push(this.makeSceneButton(this.favouritesTierIdx, this.favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam));
       } else {
         _results.push(void 0);
       }

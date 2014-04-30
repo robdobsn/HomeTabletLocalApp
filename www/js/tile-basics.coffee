@@ -1,2 +1,2 @@
 class TileBasics
-	constructor: (@bkColour, @colSpan, @clickFn, @clickParam, @tileName, @visibility) ->
+	constructor: (@bkColour, @colSpan, @clickFn, @clickParam, @tileName, @visibility, @parentTag) ->
