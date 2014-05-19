@@ -93,7 +93,7 @@ class WallTabApp
     
     addClock: (tierIdx, groupIdx) ->
         visibility = "all"
-        tileBasics = new TileBasics @tileColours.getNextColour(), 3, null, "", "clock", visibility, @tileTiers.getTileContainerSelector(tierIdx)
+        tileBasics = new TileBasics @tileColours.getNextColour(), 3, 1, null, "", "clock", visibility, @tileTiers.getTileContainerSelector(tierIdx)
         tile = new Clock tileBasics
         @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
@@ -115,12 +115,12 @@ class WallTabApp
                 groupIdx = groupInfo[i]
                 colSpan = colSpans[i]
                 if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt groupIdx))
-                    tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, null, "", "calendar", visibility, @tileTiers.getTileContainerSelector(tierIdx)
+                    tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, 1, null, "", "calendar", visibility, @tileTiers.getTileContainerSelector(tierIdx)
                     tile = new CalendarTile tileBasics, @calendarUrl, calDayIdx[i]
                     @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
     makeSceneButton: (tierIdx, groupIdx, name, uri, visibility = "all") ->
-        tileBasics = new TileBasics @tileColours.getNextColour(), 1, @automationServer.executeCommand, uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
+        tileBasics = new TileBasics @tileColours.getNextColour(), 1, 1, @automationServer.executeCommand, uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
         tile = new SceneButton tileBasics, "bulb-on", name
         @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 

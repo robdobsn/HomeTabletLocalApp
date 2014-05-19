@@ -22,6 +22,10 @@ class SceneButton extends Tile
 			iconUrl = 'img/light-bulb-on.png'
 		else if iconType is 'bulb-off'
 			iconUrl = 'img/light-bulb-off.png'
+		else if iconType is 'shadesicon'
+			iconUrl = 'img/shadesicon.png'
+		else if iconType is 'musicicon'
+			iconUrl = 'img/musicicon.png'
 		$('#'+@tileId+" .sqSceneButtonIcon img").attr("src", iconUrl)
 
 	setText: (@textStr) ->

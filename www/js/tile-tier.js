@@ -73,8 +73,8 @@ TileTier = (function() {
     return isPortrait;
   };
 
-  TileTier.prototype.getTileSize = function(colSpan) {
-    return [this.tileWidth * colSpan + (this.tileSepXPixels * (colSpan - 1)), this.tileHeight];
+  TileTier.prototype.getTileSize = function(colSpan, rowSpan) {
+    return [this.tileWidth * colSpan + (this.tileSepXPixels * (colSpan - 1)), this.tileHeight * rowSpan + (this.tileSepYPixels * (rowSpan - 1))];
   };
 
   TileTier.prototype.getGroupStartX = function(groupIdx) {

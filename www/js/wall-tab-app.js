@@ -69,7 +69,7 @@ WallTabApp = (function() {
   WallTabApp.prototype.addClock = function(tierIdx, groupIdx) {
     var tile, tileBasics, visibility;
     visibility = "all";
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), 3, null, "", "clock", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
+    tileBasics = new TileBasics(this.tileColours.getNextColour(), 3, 1, null, "", "clock", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
     tile = new Clock(tileBasics);
     return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };
@@ -101,7 +101,7 @@ WallTabApp = (function() {
           groupIdx = groupInfo[i];
           colSpan = colSpans[i];
           if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== groupIdx))) {
-            tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, null, "", "calendar", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
+            tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, 1, null, "", "calendar", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
             tile = new CalendarTile(tileBasics, this.calendarUrl, calDayIdx[i]);
             _results1.push(this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile));
           } else {
@@ -119,7 +119,7 @@ WallTabApp = (function() {
     if (visibility == null) {
       visibility = "all";
     }
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), 1, this.automationServer.executeCommand, uri, name, visibility, this.tileTiers.getTileContainerSelector(tierIdx));
+    tileBasics = new TileBasics(this.tileColours.getNextColour(), 1, 1, this.automationServer.executeCommand, uri, name, visibility, this.tileTiers.getTileContainerSelector(tierIdx));
     tile = new SceneButton(tileBasics, "bulb-on", name);
     return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };

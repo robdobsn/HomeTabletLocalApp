@@ -27,8 +27,8 @@ TileGroup = (function() {
     return this.tiles.length;
   };
 
-  TileGroup.prototype.findBestPlaceForTile = function(colSpan, tilesDown, tilesAcross) {
-    var bestColIdx, bestRowIdx, colIdx, colTest, posValid, rowIdx, spanTest, tilePos, _i, _j, _k, _l, _len, _m, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+  TileGroup.prototype.findBestPlaceForTile = function(colSpan, rowSpan, tilesDown, tilesAcross) {
+    var bestColIdx, bestRowIdx, colIdx, posValid, rowIdx, tilePos, _i, _j, _k, _len, _ref, _ref1, _ref2;
     bestColIdx = 0;
     bestRowIdx = 0;
     for (rowIdx = _i = 0, _ref = tilesDown - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; rowIdx = 0 <= _ref ? ++_i : --_i) {
@@ -40,24 +40,14 @@ TileGroup = (function() {
         _ref2 = this.tilePositions;
         for (_k = 0, _len = _ref2.length; _k < _len; _k++) {
           tilePos = _ref2[_k];
-          if (tilePos[1] !== rowIdx) {
-            continue;
-          }
-          for (colTest = _l = colIdx, _ref3 = colIdx + colSpan - 1; colIdx <= _ref3 ? _l <= _ref3 : _l >= _ref3; colTest = colIdx <= _ref3 ? ++_l : --_l) {
-            for (spanTest = _m = _ref4 = tilePos[0], _ref5 = tilePos[0] + tilePos[2] - 1; _ref4 <= _ref5 ? _m <= _ref5 : _m >= _ref5; spanTest = _ref4 <= _ref5 ? ++_m : --_m) {
-              if (spanTest === colTest) {
-                posValid = false;
-                break;
-              }
-            }
-          }
-          if (!posValid) {
+          if (tilePos.intersects(new TilePosition(true, colIdx, rowIdx, colSpan, rowSpan))) {
+            posValid = false;
             break;
           }
         }
-        bestColIdx = colIdx;
-        bestRowIdx = rowIdx;
         if (posValid) {
+          bestColIdx = colIdx;
+          bestRowIdx = rowIdx;
           break;
         }
       }
@@ -65,7 +55,10 @@ TileGroup = (function() {
         break;
       }
     }
-    return [bestColIdx, bestRowIdx, colSpan];
+    if (!posValid) {
+      return new TilePosition(false);
+    }
+    return new TilePosition(true, bestColIdx, bestRowIdx, colSpan, rowSpan);
   };
 
   TileGroup.prototype.getColsInGroup = function(tilesDown, isPortrait) {
@@ -78,19 +71,19 @@ TileGroup = (function() {
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       tile = _ref[_i];
       if (tile.isVisible(isPortrait)) {
-        cellCount += tile.tileBasics.colSpan;
-        maxColSpan = maxColSpan < tile.tileBasics.colSpan ? tile.tileBasics.colSpan : maxColSpan;
+        cellCount += tile.tileBasics.colSpan * tile.tileBasics.rowSpan;
+        maxColSpan = Math.max(maxColSpan, tile.tileBasics.colSpan);
       }
     }
     estColCount = Math.floor((cellCount + tilesDown - 1) / tilesDown);
-    estColCount = estColCount < maxColSpan ? maxColSpan : estColCount;
+    estColCount = Math.max(estColCount, maxColSpan);
     _ref1 = this.tiles;
     for (tileIdx = _j = 0, _len1 = _ref1.length; _j < _len1; tileIdx = ++_j) {
       tile = _ref1[tileIdx];
       if (tile.isVisible(isPortrait)) {
-        this.tilePositions.push(this.findBestPlaceForTile(tile.tileBasics.colSpan, tilesDown, estColCount));
+        this.tilePositions.push(this.findBestPlaceForTile(tile.tileBasics.colSpan, tile.tileBasics.rowSpan, tilesDown, estColCount));
       } else {
-        this.tilePositions.push([0, 0, 0]);
+        this.tilePositions.push(new TilePosition(false));
       }
     }
     return estColCount;
@@ -118,9 +111,9 @@ TileGroup = (function() {
     _results = [];
     for (tileIdx = _i = 0, _len = _ref1.length; _i < _len; tileIdx = ++_i) {
       tile = _ref1[tileIdx];
-      if (tile.isVisible(isPortrait)) {
-        _ref2 = this.tileTier.getTileSize(tile.tileBasics.colSpan), tileWidth = _ref2[0], tileHeight = _ref2[1];
-        _ref3 = this.tileTier.getCellPos(this.groupIdx, this.tilePositions[tileIdx][0], this.tilePositions[tileIdx][1]), xPos = _ref3[0], yPos = _ref3[1], fontScaling = _ref3[2];
+      if (this.tilePositions[tileIdx].tileValid) {
+        _ref2 = this.tileTier.getTileSize(tile.tileBasics.colSpan, tile.tileBasics.rowSpan), tileWidth = _ref2[0], tileHeight = _ref2[1];
+        _ref3 = this.tileTier.getCellPos(this.groupIdx, this.tilePositions[tileIdx].xPos, this.tilePositions[tileIdx].yPos), xPos = _ref3[0], yPos = _ref3[1], fontScaling = _ref3[2];
         _results.push(tile.reposition(xPos, yPos, tileWidth, tileHeight, fontScaling));
       } else {
         _results.push(tile.setInvisible());

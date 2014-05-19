@@ -33,6 +33,10 @@ SceneButton = (function(_super) {
       iconUrl = 'img/light-bulb-on.png';
     } else if (iconType === 'bulb-off') {
       iconUrl = 'img/light-bulb-off.png';
+    } else if (iconType === 'shadesicon') {
+      iconUrl = 'img/shadesicon.png';
+    } else if (iconType === 'musicicon') {
+      iconUrl = 'img/musicicon.png';
     }
     return $('#' + this.tileId + " .sqSceneButtonIcon img").attr("src", iconUrl);
   };

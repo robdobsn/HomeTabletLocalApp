@@ -16,7 +16,7 @@ class TileGroup
 	numTiles: ->
 		@tiles.length
 
-	findBestPlaceForTile: (colSpan, tilesDown, tilesAcross) ->
+	findBestPlaceForTile: (colSpan, rowSpan, tilesDown, tilesAcross) ->
 		# Algorithm to find best location for a tile
 		# Exhaustive search for a gap large enough
 		bestColIdx = 0
@@ -28,21 +28,16 @@ class TileGroup
 				if ((colIdx + colSpan) > tilesAcross) then continue
 				posValid = true
 				for tilePos in @tilePositions
-					if tilePos[1] isnt rowIdx
-						continue
-					# Go through each remaining column that would be covered
-					# and check the new tile doesn't impinge on existing tile
-					for colTest in [colIdx..colIdx+colSpan-1]
-						for spanTest in [tilePos[0]..tilePos[0]+tilePos[2]-1] 
-							if spanTest is colTest
-								posValid = false
-								break
-					if not posValid then break
-				bestColIdx = colIdx
-				bestRowIdx = rowIdx
-				if posValid then break
+					if tilePos.intersects (new TilePosition(true, colIdx, rowIdx, colSpan, rowSpan))
+						posValid = false
+						break
+				if posValid 
+					bestColIdx = colIdx
+					bestRowIdx = rowIdx
+					break
 			if posValid then break
-		[bestColIdx, bestRowIdx, colSpan]
+		if not posValid then return new TilePosition false
+		new TilePosition true, bestColIdx, bestRowIdx, colSpan, rowSpan
 
 	getColsInGroup: (tilesDown, isPortrait) ->
 		# Simple algorithm to find the number of columns in a tile-group
@@ -54,15 +49,15 @@ class TileGroup
 		maxColSpan = 1
 		for tile in @tiles
 			if tile.isVisible(isPortrait)
-				cellCount += tile.tileBasics.colSpan
-				maxColSpan = if maxColSpan < tile.tileBasics.colSpan then tile.tileBasics.colSpan else maxColSpan
+				cellCount += tile.tileBasics.colSpan * tile.tileBasics.rowSpan
+				maxColSpan = Math.max(maxColSpan, tile.tileBasics.colSpan)
 		estColCount = Math.floor((cellCount + tilesDown - 1) / tilesDown)
-		estColCount = if estColCount < maxColSpan then maxColSpan else estColCount
+		estColCount = Math.max(estColCount, maxColSpan)
 		for tile, tileIdx in @tiles
 			if tile.isVisible(isPortrait)
-				@tilePositions.push @findBestPlaceForTile(tile.tileBasics.colSpan, tilesDown, estColCount)
+				@tilePositions.push @findBestPlaceForTile(tile.tileBasics.colSpan, tile.tileBasics.rowSpan, tilesDown, estColCount)
 			else
-				@tilePositions.push [0,0,0]
+				@tilePositions.push new TilePosition false
 		estColCount
 
 	# addTile: (tileColour, colSpan) ->
@@ -88,9 +83,9 @@ class TileGroup
 			}
 		# Order tiles so widest are at the end
 		for tile, tileIdx in @tiles
-			if tile.isVisible(isPortrait)
-				[tileWidth, tileHeight] = @tileTier.getTileSize(tile.tileBasics.colSpan)
-				[xPos, yPos, fontScaling] = @tileTier.getCellPos(@groupIdx, @tilePositions[tileIdx][0], @tilePositions[tileIdx][1])
+			if (@tilePositions[tileIdx].tileValid)
+				[tileWidth, tileHeight] = @tileTier.getTileSize(tile.tileBasics.colSpan, tile.tileBasics.rowSpan)
+				[xPos, yPos, fontScaling] = @tileTier.getCellPos(@groupIdx, @tilePositions[tileIdx].xPos, @tilePositions[tileIdx].yPos)
 				tile.reposition xPos, yPos, tileWidth, tileHeight, fontScaling
 				# console.log "Grp=" + @groupIdx + "Tile=" + tile.tileBasics.tileName + "(" + tileIdx + ") Pos " + xPos + " " + yPos
 			else

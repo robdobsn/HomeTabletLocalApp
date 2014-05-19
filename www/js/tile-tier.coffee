@@ -58,8 +58,8 @@ class TileTier
 			@groupCols.push group.getColsInGroup(@tilesDown, isPortrait)
 		isPortrait
 
-	getTileSize: (colSpan) ->
-		[@tileWidth * colSpan + (@tileSepXPixels * (colSpan-1)), @tileHeight]
+	getTileSize: (colSpan, rowSpan) ->
+		[@tileWidth * colSpan + (@tileSepXPixels * (colSpan-1)), @tileHeight * rowSpan + (@tileSepYPixels * (rowSpan-1))]
 
 	getGroupStartX: (groupIdx) ->
 		gIdx = 0
