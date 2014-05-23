@@ -15,7 +15,7 @@ class TileTiers
 
 	clearGroup: (tierIdx, groupIdx) ->
 		if tierIdx >= @tiers.length then return
-		@tiers[tierIdx].clearTileGroup()
+		@tiers[tierIdx].clearTileGroup groupIdx
 
 	reDoLayout: ->
 		tier.reDoLayout() for tier in @tiers

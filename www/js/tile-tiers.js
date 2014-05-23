@@ -29,7 +29,7 @@ TileTiers = (function() {
     if (tierIdx >= this.tiers.length) {
       return;
     }
-    return this.tiers[tierIdx].clearTileGroup();
+    return this.tiers[tierIdx].clearTileGroup(groupIdx);
   };
 
   TileTiers.prototype.reDoLayout = function() {

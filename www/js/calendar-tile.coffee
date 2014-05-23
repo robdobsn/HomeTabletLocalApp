@@ -109,3 +109,7 @@ class CalendarTile extends Tile
 			outStr += if hrs is 0 then "" else (hrs + "h")
 			outStr += if mins is 0 then "" else (mins + "m")
 
+class CalendarTileDefiniton
+	constructor: (@visibility, @groupIdx, @colSpan, @rowSpan, @calDayIndex) ->
+		
+

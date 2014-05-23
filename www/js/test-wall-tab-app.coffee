@@ -61,29 +61,22 @@ class TestWallTabApp
         @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
     addCalendar: (tierIdx, onlyAddToGroupIdx = null) ->
-        for orientation in [0..1]
-            calG = @calendarGroupIdx
-            favG = @favouritesGroupIdx
-            if orientation is 0
-                visibility = "landscape"
-                groupInfo = [ calG, calG ]
-                calDayIdx = [ 0, 1 ]
-                colSpans = [ 2, 2 ]
-                rowSpans = [ 2, 1 ]
-            else
-                visibility = "portrait"
-                groupInfo = [ favG, calG, calG, calG ]
-                calDayIdx = [ 0, 1, 2, 3]
-                colSpans = [ 3, 3, 3, 3]
-                rowSpans = [ 2, 2, 2, 1]
-            for i in [0..groupInfo.length-1]
-                groupIdx = groupInfo[i]
-                colSpan = colSpans[i]
-                rowSpan = rowSpans[i]
-                if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt groupIdx))
-                    tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, rowSpan, null, "", "calendar", visibility, @tileTiers.getTileContainerSelector(tierIdx)
-                    tile = new CalendarTile tileBasics, @calendarUrl, calDayIdx[i]
-                    @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
+        calG = @calendarGroupIdx
+        favG = @favouritesGroupIdx
+        lands = "landscape"
+        portr = "portrait"
+        calendarTileDefs = []
+        calendarTileDefs.push new CalendarTileDefiniton lands, calG, 2, 2, 0
+        calendarTileDefs.push new CalendarTileDefiniton lands, calG, 2, 1, 1
+        calendarTileDefs.push new CalendarTileDefiniton portr, favG, 3, 2, 0
+        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 2, 1
+        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 2, 2
+        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 1, 3
+        for ctd in calendarTileDefs
+            if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt ctd.groupIdx))
+                tileBasics = new TileBasics @tileColours.getNextColour(), ctd.colSpan, ctd.rowSpan, null, "", "calendar", ctd.visibility, @tileTiers.getTileContainerSelector(tierIdx)
+                tile = new CalendarTile tileBasics, @calendarUrl, ctd.calDayIndex
+                @tileTiers.addTileToTierGroup(tierIdx, ctd.groupIdx, tile)
 
     makeUriButton: (tierIdx, groupIdx, name, iconname, uri, colSpan, rowSpan, visibility = "all") ->
         tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, rowSpan, "testCommand", uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)

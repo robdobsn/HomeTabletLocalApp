@@ -1,8 +1,9 @@
 class WallTabApp
     constructor: ->
         @tileColours = new TileColours
+        @rdHomeServerUrl = "http://127.0.0.1:5000"
 #        @rdHomeServerUrl = "http://192.168.0.97:5000"
-        @rdHomeServerUrl = "http://macallan:5000"
+#        @rdHomeServerUrl = "http://macallan:5000"
         @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
         @automationServerUrl = @rdHomeServerUrl + "/automation/api/v1.0"
         @tabletConfigUrl = @rdHomeServerUrl + "/tablet/api/v1.0/config"
@@ -71,6 +72,7 @@ class WallTabApp
         # Initial UI layout
         @tileTiers.clear()
         @setupInitialUI()
+
         @tileTiers.reDoLayout()
 
         # Handler for orientation change
@@ -98,26 +100,27 @@ class WallTabApp
         @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
     addCalendar: (tierIdx, onlyAddToGroupIdx = null) ->
-        for orientation in [0..1]
-            calG = @calendarGroupIdx
-            favG = @favouritesGroupIdx
-            if orientation is 0
-                visibility = "all"
-                groupInfo = [ calG, calG, calG ]
-                calDayIdx = [ 0, 1, 2]
-                colSpans = [ 2, 2, 2]
-            else
-                visibility = "portrait"
-                groupInfo = [ favG, favG, calG, calG ]
-                calDayIdx = [ 0, 1, 3, 4]
-                colSpans = [ 3, 3, 2, 2]
-            for i in [0..groupInfo.length-1]
-                groupIdx = groupInfo[i]
-                colSpan = colSpans[i]
-                if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt groupIdx))
-                    tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, 1, null, "", "calendar", visibility, @tileTiers.getTileContainerSelector(tierIdx)
-                    tile = new CalendarTile tileBasics, @calendarUrl, calDayIdx[i]
-                    @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
+        calG = @calendarGroupIdx
+        favG = @favouritesGroupIdx
+        lands = "landscape"
+        portr = "portrait"
+        calendarTileDefs = []
+        calendarTileDefs.push new CalendarTileDefiniton lands, calG, 2, 2, 0
+        calendarTileDefs.push new CalendarTileDefiniton lands, calG, 2, 1, 1
+        calendarTileDefs.push new CalendarTileDefiniton portr, favG, 3, 2, 0
+        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 2, 1
+        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 2, 2
+        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 1, 3
+        for ctd in calendarTileDefs
+            if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt ctd.groupIdx))
+                tileBasics = new TileBasics @tileColours.getNextColour(), ctd.colSpan, ctd.rowSpan, null, "", "calendar", ctd.visibility, @tileTiers.getTileContainerSelector(tierIdx)
+                tile = new CalendarTile tileBasics, @calendarUrl, ctd.calDayIndex
+                @tileTiers.addTileToTierGroup(tierIdx, ctd.groupIdx, tile)
+
+    makeUriButton: (tierIdx, groupIdx, name, iconname, uri, colSpan, rowSpan, visibility = "all") ->
+        tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, rowSpan, "testCommand", uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
+        tile = new SceneButton tileBasics, iconname, name
+        @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
     makeSceneButton: (tierIdx, groupIdx, name, uri, visibility = "all") ->
         tileBasics = new TileBasics @tileColours.getNextColour(), 1, 1, @automationServer.executeCommand, uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
@@ -152,7 +155,7 @@ class WallTabApp
     setupInitialUI: ->
         # Add the clock and calendar back in
         @addClock(@favouritesTierIdx, @favouritesGroupIdx)
-        @addCalendar(@calendarTierIdx, @calendarGroupIdx)
+        @addCalendar(@calendarTierIdx)
 
     updateUIWithActionGroups: =>
         # Clear all tiers initially
@@ -183,10 +186,10 @@ class WallTabApp
         @tileTiers.clearGroup(@favouritesTierIdx, @favouritesGroupIdx)
         @setupInitialUI()
         # Copy tiles that should be in favourites group
-        for actionName, uiGroup of jsonConfig
-            existingTile = @tileTiers.findExistingTile(@favouritesTierIdx, actionName)
+        for favouriteDefn in jsonConfig.favourites
+            existingTile = @tileTiers.findExistingTile(@favouritesTierIdx, favouriteDefn.tileName)
             if existingTile isnt null
-                @makeSceneButton @favouritesTierIdx, @favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam
+                @makeSceneButton @favouritesTierIdx, @favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam
 
     configReadyCb: (@jsonConfig) =>
         @applyJsonConfig(@jsonConfig)

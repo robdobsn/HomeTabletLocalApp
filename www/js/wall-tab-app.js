@@ -9,7 +9,7 @@ WallTabApp = (function() {
     this.updateUIWithActionGroups = __bind(this.updateUIWithActionGroups, this);
     this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
     this.tileColours = new TileColours;
-    this.rdHomeServerUrl = "http://macallan:5000";
+    this.rdHomeServerUrl = "http://127.0.0.1:5000";
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
     this.automationServerUrl = this.rdHomeServerUrl + "/automation/api/v1.0";
     this.tabletConfigUrl = this.rdHomeServerUrl + "/tablet/api/v1.0/config";
@@ -75,43 +75,43 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.addCalendar = function(tierIdx, onlyAddToGroupIdx) {
-    var calDayIdx, calG, colSpan, colSpans, favG, groupIdx, groupInfo, i, orientation, tile, tileBasics, visibility, _i, _results;
+    var calG, calendarTileDefs, ctd, favG, lands, portr, tile, tileBasics, _i, _len, _results;
     if (onlyAddToGroupIdx == null) {
       onlyAddToGroupIdx = null;
     }
+    calG = this.calendarGroupIdx;
+    favG = this.favouritesGroupIdx;
+    lands = "landscape";
+    portr = "portrait";
+    calendarTileDefs = [];
+    calendarTileDefs.push(new CalendarTileDefiniton(lands, calG, 2, 2, 0));
+    calendarTileDefs.push(new CalendarTileDefiniton(lands, calG, 2, 1, 1));
+    calendarTileDefs.push(new CalendarTileDefiniton(portr, favG, 3, 2, 0));
+    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 2, 1));
+    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 2, 2));
+    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 1, 3));
     _results = [];
-    for (orientation = _i = 0; _i <= 1; orientation = ++_i) {
-      calG = this.calendarGroupIdx;
-      favG = this.favouritesGroupIdx;
-      if (orientation === 0) {
-        visibility = "all";
-        groupInfo = [calG, calG, calG];
-        calDayIdx = [0, 1, 2];
-        colSpans = [2, 2, 2];
+    for (_i = 0, _len = calendarTileDefs.length; _i < _len; _i++) {
+      ctd = calendarTileDefs[_i];
+      if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== ctd.groupIdx))) {
+        tileBasics = new TileBasics(this.tileColours.getNextColour(), ctd.colSpan, ctd.rowSpan, null, "", "calendar", ctd.visibility, this.tileTiers.getTileContainerSelector(tierIdx));
+        tile = new CalendarTile(tileBasics, this.calendarUrl, ctd.calDayIndex);
+        _results.push(this.tileTiers.addTileToTierGroup(tierIdx, ctd.groupIdx, tile));
       } else {
-        visibility = "portrait";
-        groupInfo = [favG, favG, calG, calG];
-        calDayIdx = [0, 1, 3, 4];
-        colSpans = [3, 3, 2, 2];
+        _results.push(void 0);
       }
-      _results.push((function() {
-        var _j, _ref, _results1;
-        _results1 = [];
-        for (i = _j = 0, _ref = groupInfo.length - 1; 0 <= _ref ? _j <= _ref : _j >= _ref; i = 0 <= _ref ? ++_j : --_j) {
-          groupIdx = groupInfo[i];
-          colSpan = colSpans[i];
-          if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== groupIdx))) {
-            tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, 1, null, "", "calendar", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
-            tile = new CalendarTile(tileBasics, this.calendarUrl, calDayIdx[i]);
-            _results1.push(this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile));
-          } else {
-            _results1.push(void 0);
-          }
-        }
-        return _results1;
-      }).call(this));
     }
     return _results;
+  };
+
+  WallTabApp.prototype.makeUriButton = function(tierIdx, groupIdx, name, iconname, uri, colSpan, rowSpan, visibility) {
+    var tile, tileBasics;
+    if (visibility == null) {
+      visibility = "all";
+    }
+    tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, rowSpan, "testCommand", uri, name, visibility, this.tileTiers.getTileContainerSelector(tierIdx));
+    tile = new SceneButton(tileBasics, iconname, name);
+    return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };
 
   WallTabApp.prototype.makeSceneButton = function(tierIdx, groupIdx, name, uri, visibility) {
@@ -171,7 +171,7 @@ WallTabApp = (function() {
 
   WallTabApp.prototype.setupInitialUI = function() {
     this.addClock(this.favouritesTierIdx, this.favouritesGroupIdx);
-    return this.addCalendar(this.calendarTierIdx, this.calendarGroupIdx);
+    return this.addCalendar(this.calendarTierIdx);
   };
 
   WallTabApp.prototype.updateUIWithActionGroups = function() {
@@ -202,15 +202,16 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.applyJsonConfig = function(jsonConfig) {
-    var actionName, existingTile, uiGroup, _results;
+    var existingTile, favouriteDefn, _i, _len, _ref, _results;
     this.tileTiers.clearGroup(this.favouritesTierIdx, this.favouritesGroupIdx);
     this.setupInitialUI();
+    _ref = jsonConfig.favourites;
     _results = [];
-    for (actionName in jsonConfig) {
-      uiGroup = jsonConfig[actionName];
-      existingTile = this.tileTiers.findExistingTile(this.favouritesTierIdx, actionName);
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      favouriteDefn = _ref[_i];
+      existingTile = this.tileTiers.findExistingTile(this.favouritesTierIdx, favouriteDefn.tileName);
       if (existingTile !== null) {
-        _results.push(this.makeSceneButton(this.favouritesTierIdx, this.favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam));
+        _results.push(this.makeSceneButton(this.favouritesTierIdx, this.favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam));
       } else {
         _results.push(void 0);
       }

@@ -48,44 +48,31 @@ TestWallTabApp = (function() {
   };
 
   TestWallTabApp.prototype.addCalendar = function(tierIdx, onlyAddToGroupIdx) {
-    var calDayIdx, calG, colSpan, colSpans, favG, groupIdx, groupInfo, i, orientation, rowSpan, rowSpans, tile, tileBasics, visibility, _i, _results;
+    var calG, calendarTileDefs, ctd, favG, lands, portr, tile, tileBasics, _i, _len, _results;
     if (onlyAddToGroupIdx == null) {
       onlyAddToGroupIdx = null;
     }
+    calG = this.calendarGroupIdx;
+    favG = this.favouritesGroupIdx;
+    lands = "landscape";
+    portr = "portrait";
+    calendarTileDefs = [];
+    calendarTileDefs.push(new CalendarTileDefiniton(lands, calG, 2, 2, 0));
+    calendarTileDefs.push(new CalendarTileDefiniton(lands, calG, 2, 1, 1));
+    calendarTileDefs.push(new CalendarTileDefiniton(portr, favG, 3, 2, 0));
+    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 2, 1));
+    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 2, 2));
+    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 1, 3));
     _results = [];
-    for (orientation = _i = 0; _i <= 1; orientation = ++_i) {
-      calG = this.calendarGroupIdx;
-      favG = this.favouritesGroupIdx;
-      if (orientation === 0) {
-        visibility = "landscape";
-        groupInfo = [calG, calG];
-        calDayIdx = [0, 1];
-        colSpans = [2, 2];
-        rowSpans = [2, 1];
+    for (_i = 0, _len = calendarTileDefs.length; _i < _len; _i++) {
+      ctd = calendarTileDefs[_i];
+      if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== ctd.groupIdx))) {
+        tileBasics = new TileBasics(this.tileColours.getNextColour(), ctd.colSpan, ctd.rowSpan, null, "", "calendar", ctd.visibility, this.tileTiers.getTileContainerSelector(tierIdx));
+        tile = new CalendarTile(tileBasics, this.calendarUrl, ctd.calDayIndex);
+        _results.push(this.tileTiers.addTileToTierGroup(tierIdx, ctd.groupIdx, tile));
       } else {
-        visibility = "portrait";
-        groupInfo = [favG, calG, calG, calG];
-        calDayIdx = [0, 1, 2, 3];
-        colSpans = [3, 3, 3, 3];
-        rowSpans = [2, 2, 2, 1];
+        _results.push(void 0);
       }
-      _results.push((function() {
-        var _j, _ref, _results1;
-        _results1 = [];
-        for (i = _j = 0, _ref = groupInfo.length - 1; 0 <= _ref ? _j <= _ref : _j >= _ref; i = 0 <= _ref ? ++_j : --_j) {
-          groupIdx = groupInfo[i];
-          colSpan = colSpans[i];
-          rowSpan = rowSpans[i];
-          if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== groupIdx))) {
-            tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, rowSpan, null, "", "calendar", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
-            tile = new CalendarTile(tileBasics, this.calendarUrl, calDayIdx[i]);
-            _results1.push(this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile));
-          } else {
-            _results1.push(void 0);
-          }
-        }
-        return _results1;
-      }).call(this));
     }
     return _results;
   };
