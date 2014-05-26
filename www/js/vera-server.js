@@ -27,10 +27,10 @@ VeraServer = (function() {
   };
 
   VeraServer.prototype.sortByRoomName = function(a, b) {
-    if (a[2] < b[2]) {
+    if (a.groupName < b.groupName) {
       return -1;
     }
-    if (a[2] > b[2]) {
+    if (a.groupName > b.groupName) {
       return 1;
     }
     return 0;
@@ -89,7 +89,12 @@ VeraServer = (function() {
       room = rooms[grp3[1]];
     }
     sceneCmd = this.serverURL + "/data_request?id=lu_action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1&action=RunScene&SceneNum=" + grp2[1];
-    return scenes[scenes.length] = new Array(grp2[1], grp1[1], room, sceneCmd);
+    return scenes[scenes.length] = {
+      actionNum: grp2[1],
+      actionName: grp1[1],
+      groupName: room,
+      actionUrl: sceneCmd
+    };
   };
 
   VeraServer.prototype.getRooms = function(respText) {

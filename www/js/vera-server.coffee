@@ -16,8 +16,8 @@ class VeraServer
 				@veraReadyCallback(@scenes)
 
 	sortByRoomName: (a, b) ->
-		if a[2] < b[2] then return -1
-		if a[2] > b[2] then return 1
+		if a.groupName < b.groupName then return -1
+		if a.groupName > b.groupName then return 1
 		return 0
 
 	getMatches: (inText, re) ->
@@ -56,7 +56,7 @@ class VeraServer
 		if grp3[1] of rooms
 			room = rooms[grp3[1]]
 		sceneCmd = @serverURL + "/data_request?id=lu_action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1&action=RunScene&SceneNum=" + grp2[1]
-		scenes[scenes.length] = new Array(grp2[1], grp1[1], room, sceneCmd)
+		scenes[scenes.length] = { actionNum: grp2[1], actionName: grp1[1], groupName: room, actionUrl: sceneCmd }
 		# console.log(grp2[1] + " " + grp1[1] + " " + room + " " + sceneCmd)
 
 	getRooms: (respText) ->
