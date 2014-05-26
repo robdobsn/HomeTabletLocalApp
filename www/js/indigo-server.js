@@ -20,7 +20,7 @@ IndigoServer = (function() {
       dataType: "xml",
       crossDomain: true,
       success: function(data, textStatus, jqXHR) {
-        var action, actions, bLoop, pos, respText;
+        var action, actionDict, actions, bLoop, pos, respText;
         bLoop = true;
         respText = jqXHR.responseText;
         actions = [];
@@ -34,7 +34,13 @@ IndigoServer = (function() {
             break;
           }
           respText = respText.substring(pos + action[0].length);
-          actions[actions.length] = new Array("", action[2], "", _this.serverURL + action[1] + "?_method=execute");
+          actionDict = {
+            actionNum: "",
+            actionName: action[2],
+            groupName: "",
+            actionUrl: _this.serverURL + action[1] + "?_method=execute"
+          };
+          actions[actions.length] = actionDict;
         }
         return _this.indigoReadyCallback(actions);
       }

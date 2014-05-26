@@ -22,5 +22,6 @@ class IndigoServer
 					pos = respText.search matchRe
 					if pos is -1 then break
 					respText = respText.substring(pos+action[0].length)
-					actions[actions.length] = new Array("", action[2], "", @serverURL + action[1] + "?_method=execute")					
+					actionDict = { actionNum: "", actionName: action[2], groupName: "", actionUrl: @serverURL + action[1] + "?_method=execute" }
+					actions[actions.length] = actionDict				
 				@indigoReadyCallback(actions)
