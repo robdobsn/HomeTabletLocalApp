@@ -17,7 +17,30 @@ WallTabApp = (function() {
     this.veraServerUrl = "http://192.168.0.206:3480";
     this.frontDoorUrl = "http://192.168.0.221/";
     this.blindsActions = GetBlindsActions();
-    this.doorActions = [[0, "Main Unlock", "Front Door", this.frontDoorUrl + "main-unlock"], [0, "Main Lock", "Front Door", this.frontDoorUrl + "main-lock"], [0, "Inner Unlock", "Front Door", this.frontDoorUrl + "inner-unlock"], [0, "Inner Lock", "Front Door", this.frontDoorUrl + "inner-lock"]];
+    this.jsonConfig = {};
+    this.doorActions = [
+      {
+        actionNum: 0,
+        actionName: "Main Unlock",
+        groupName: "Front Door",
+        actionUrl: this.frontDoorUrl + "main-unlock"
+      }, {
+        actionNum: 0,
+        actionName: "Main Lock",
+        groupName: "Front Door",
+        actionUrl: this.frontDoorUrl + "main-lock"
+      }, {
+        actionNum: 0,
+        actionName: "Inner Unlock",
+        groupName: "Front Door",
+        actionUrl: this.frontDoorUrl + "inner-unlock"
+      }, {
+        actionNum: 0,
+        actionName: "Inner Lock",
+        groupName: "Front Door",
+        actionUrl: this.frontDoorUrl + "inner-lock"
+      }
+    ];
   }
 
   WallTabApp.prototype.go = function() {
@@ -47,8 +70,7 @@ WallTabApp = (function() {
     this.sonosTierIdx = 1;
     this.sonosGroupIdx = this.tileTiers.addGroup(this.sonosTierIdx, "Sonos");
     this.tileTiers.clear();
-    this.setupInitialUI();
-    this.tileTiers.reDoLayout();
+    this.setupClockAndCalendar(false);
     $(window).on('orientationchange', function() {
       return _this.tileTiers.reDoLayout();
     });
@@ -104,6 +126,16 @@ WallTabApp = (function() {
     return _results;
   };
 
+  WallTabApp.prototype.setupClockAndCalendar = function(bFavouritesOnly) {
+    if (bFavouritesOnly) {
+      this.addClock(this.favouritesTierIdx, this.favouritesGroupIdx);
+      return this.addCalendar(this.calendarTierIdx);
+    } else {
+      this.addClock(this.favouritesTierIdx, this.favouritesGroupIdx);
+      return this.addCalendar(this.calendarTierIdx, this.favouritesGroupIdx);
+    }
+  };
+
   WallTabApp.prototype.makeUriButton = function(tierIdx, groupIdx, name, iconname, uri, colSpan, rowSpan, visibility) {
     var tile, tileBasics;
     if (visibility == null) {
@@ -150,18 +182,22 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.checkActionsForServer = function(oldActions, newActions) {
-    var i, j, newAction, oldAction, _i, _j, _ref, _ref1;
+    var j, k, newAction, oldAction, v, _i, _ref;
     if (oldActions.length !== newActions.length) {
       return true;
     }
     for (j = _i = 0, _ref = oldActions.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; j = 0 <= _ref ? ++_i : --_i) {
       oldAction = oldActions[j];
       newAction = newActions[j];
-      if (oldAction.length !== newAction.length) {
+      if (Object.keys(oldAction).length !== Object.keys(newAction).length) {
         return true;
       }
-      for (i = _j = 0, _ref1 = oldAction.length - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-        if (oldAction[i] !== newAction[i]) {
+      for (k in oldAction) {
+        v = oldAction[k];
+        if (!k in newAction) {
+          return true;
+        }
+        if (v !== newAction[k]) {
           return true;
         }
       }
@@ -169,54 +205,49 @@ WallTabApp = (function() {
     return false;
   };
 
-  WallTabApp.prototype.setupInitialUI = function() {
-    this.addClock(this.favouritesTierIdx, this.favouritesGroupIdx);
-    return this.addCalendar(this.calendarTierIdx);
-  };
-
   WallTabApp.prototype.updateUIWithActionGroups = function() {
     var action, actionList, groupIdx, servType, _i, _len, _ref;
     this.tileTiers.clear();
-    this.setupInitialUI();
+    this.setupClockAndCalendar(false);
     _ref = this.automationActionGroups;
     for (servType in _ref) {
       actionList = _ref[servType];
       for (_i = 0, _len = actionList.length; _i < _len; _i++) {
         action = actionList[_i];
         groupIdx = this.sceneGroupIdx;
-        if (action[2] !== "") {
-          if (action[2] in this.uiGroupMapping) {
-            groupIdx = this.uiGroupMapping[action[2]];
+        if (action.groupName !== "") {
+          if (action.groupName in this.uiGroupMapping) {
+            groupIdx = this.uiGroupMapping[action.groupName];
           } else {
-            groupIdx = this.tileTiers.addGroup(this.sceneTierIdx, action[2]);
-            this.uiGroupMapping[action[2]] = groupIdx;
+            groupIdx = this.tileTiers.addGroup(this.sceneTierIdx, action.groupName);
+            this.uiGroupMapping[action.groupName] = groupIdx;
           }
         }
-        this.makeSceneButton(this.sceneTierIdx, groupIdx, action[1], action[3]);
+        this.makeSceneButton(this.sceneTierIdx, groupIdx, action.actionName, action.actionUrl);
       }
     }
-    if (this.jsonConfig !== null) {
-      this.applyJsonConfig(this.jsonConfig);
-    }
+    this.applyJsonConfig(this.jsonConfig);
     return this.tileTiers.reDoLayout();
   };
 
   WallTabApp.prototype.applyJsonConfig = function(jsonConfig) {
     var existingTile, favouriteDefn, _i, _len, _ref, _results;
     this.tileTiers.clearGroup(this.favouritesTierIdx, this.favouritesGroupIdx);
-    this.setupInitialUI();
-    _ref = jsonConfig.favourites;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      favouriteDefn = _ref[_i];
-      existingTile = this.tileTiers.findExistingTile(this.favouritesTierIdx, favouriteDefn.tileName);
-      if (existingTile !== null) {
-        _results.push(this.makeSceneButton(this.favouritesTierIdx, this.favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam));
-      } else {
-        _results.push(void 0);
+    this.setupClockAndCalendar(true);
+    if ("favourites" in jsonConfig) {
+      _ref = jsonConfig.favourites;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        favouriteDefn = _ref[_i];
+        existingTile = this.tileTiers.findExistingTile(this.favouritesTierIdx, favouriteDefn.tileName);
+        if (existingTile !== null) {
+          _results.push(this.makeSceneButton(this.favouritesTierIdx, this.favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam));
+        } else {
+          _results.push(void 0);
+        }
       }
+      return _results;
     }
-    return _results;
   };
 
   WallTabApp.prototype.configReadyCb = function(jsonConfig) {

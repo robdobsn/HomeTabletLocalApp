@@ -11,11 +11,13 @@ class WallTabApp
         @veraServerUrl = "http://192.168.0.206:3480"
         @frontDoorUrl = "http://192.168.0.221/"
         @blindsActions = GetBlindsActions()
-        @doorActions = [
-            [ 0, "Main Unlock", "Front Door", @frontDoorUrl + "main-unlock" ],
-            [ 0, "Main Lock", "Front Door", @frontDoorUrl + "main-lock" ],
-            [ 0, "Inner Unlock", "Front Door", @frontDoorUrl + "inner-unlock" ],
-            [ 0, "Inner Lock", "Front Door", @frontDoorUrl + "inner-lock" ]
+        @jsonConfig = {}
+        @doorActions = 
+        [
+            { actionNum: 0, actionName: "Main Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-unlock" },
+            { actionNum: 0, actionName: "Main Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-lock" },
+            { actionNum: 0, actionName: "Inner Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-unlock" },
+            { actionNum: 0, actionName: "Inner Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-lock" }
         ]
 
     go: ->
@@ -71,9 +73,7 @@ class WallTabApp
 
         # Initial UI layout
         @tileTiers.clear()
-        @setupInitialUI()
-
-        @tileTiers.reDoLayout()
+        @setupClockAndCalendar(false)
 
         # Handler for orientation change
         $(window).on 'orientationchange', =>
@@ -117,6 +117,15 @@ class WallTabApp
                 tile = new CalendarTile tileBasics, @calendarUrl, ctd.calDayIndex
                 @tileTiers.addTileToTierGroup(tierIdx, ctd.groupIdx, tile)
 
+    setupClockAndCalendar: (bFavouritesOnly) ->
+        # Add the clock and calendar back in
+        if bFavouritesOnly
+            @addClock(@favouritesTierIdx, @favouritesGroupIdx)
+            @addCalendar(@calendarTierIdx)
+        else
+            @addClock(@favouritesTierIdx, @favouritesGroupIdx)
+            @addCalendar(@calendarTierIdx, @favouritesGroupIdx)
+
     makeUriButton: (tierIdx, groupIdx, name, iconname, uri, colSpan, rowSpan, visibility = "all") ->
         tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, rowSpan, "testCommand", uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
         tile = new SceneButton tileBasics, iconname, name
@@ -147,49 +156,45 @@ class WallTabApp
         for j in [0..oldActions.length-1]
             oldAction = oldActions[j]
             newAction = newActions[j]
-            if oldAction.length isnt newAction.length then return true
-            for i in [0..oldAction.length-1]
-                if oldAction[i] isnt newAction[i] then return true
+            if Object.keys(oldAction).length isnt Object.keys(newAction).length then return true
+            for k, v of oldAction
+                if not k of newAction then return true
+                if v isnt newAction[k] then return true
         false
-
-    setupInitialUI: ->
-        # Add the clock and calendar back in
-        @addClock(@favouritesTierIdx, @favouritesGroupIdx)
-        @addCalendar(@calendarTierIdx)
 
     updateUIWithActionGroups: =>
         # Clear all tiers initially
         @tileTiers.clear()
-        @setupInitialUI()
+        @setupClockAndCalendar(false)
         # Create tiles for all actions/scenes
         for servType, actionList of @automationActionGroups
             for action in actionList
                 # Get ui group for the scene
                 groupIdx = @sceneGroupIdx
-                if action[2] isnt ""
-                    if action[2] of @uiGroupMapping
-                        groupIdx = @uiGroupMapping[action[2]]
+                if action.groupName isnt ""
+                    if action.groupName of @uiGroupMapping
+                        groupIdx = @uiGroupMapping[action.groupName]
                     else
                         # Make a new ui group if the room/action-group name is new
-                        groupIdx = @tileTiers.addGroup @sceneTierIdx, action[2]
-                        @uiGroupMapping[action[2]] = groupIdx
+                        groupIdx = @tileTiers.addGroup @sceneTierIdx, action.groupName
+                        @uiGroupMapping[action.groupName] = groupIdx
                 # make the scene button
-                @makeSceneButton @sceneTierIdx, groupIdx, action[1], action[3]
+                @makeSceneButton @sceneTierIdx, groupIdx, action.actionName, action.actionUrl
         # Apply the configuration for the tablet - handles favourites group etc
-        if @jsonConfig isnt null
-            @applyJsonConfig @jsonConfig
+        @applyJsonConfig @jsonConfig
         # Re-do the layout of tiles
         @tileTiers.reDoLayout()
 
     applyJsonConfig: (jsonConfig) ->
         # Clear just the favourites group (and add clock back in)
         @tileTiers.clearGroup(@favouritesTierIdx, @favouritesGroupIdx)
-        @setupInitialUI()
+        @setupClockAndCalendar(true)
         # Copy tiles that should be in favourites group
-        for favouriteDefn in jsonConfig.favourites
-            existingTile = @tileTiers.findExistingTile(@favouritesTierIdx, favouriteDefn.tileName)
-            if existingTile isnt null
-                @makeSceneButton @favouritesTierIdx, @favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam
+        if "favourites" of jsonConfig
+            for favouriteDefn in jsonConfig.favourites
+                existingTile = @tileTiers.findExistingTile(@favouritesTierIdx, favouriteDefn.tileName)
+                if existingTile isnt null
+                    @makeSceneButton @favouritesTierIdx, @favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam
 
     configReadyCb: (@jsonConfig) =>
         @applyJsonConfig(@jsonConfig)
