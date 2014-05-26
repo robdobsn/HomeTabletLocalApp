@@ -18,7 +18,12 @@ GenBlindsActions = function(blindsDefs) {
       win = _ref[_j];
       for (_k = 0, _len2 = blindsDirns.length; _k < _len2; _k++) {
         dirn = blindsDirns[_k];
-        actions.push([0, win[1] + " " + dirn[0], room[0], room[2] + win[0] + "/" + dirn[1] + "/pulse"]);
+        actions.push({
+          actionNum: 0,
+          actionName: win[1] + " " + dirn[0],
+          groupName: room[0],
+          actionUrl: room[2] + win[0] + "/" + dirn[1] + "/pulse"
+        });
       }
     }
   }

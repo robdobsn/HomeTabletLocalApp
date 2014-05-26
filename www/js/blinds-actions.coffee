@@ -13,5 +13,5 @@ GenBlindsActions = (blindsDefs) ->
 	for room in blindsDefs
 		for win in room[1]
 			for dirn in blindsDirns
-				actions.push [ 0, win[1] + " " + dirn[0], room[0], room[2] + win[0] + "/" + dirn[1] + "/pulse"]
+				actions.push { actionNum: 0, actionName: win[1] + " " + dirn[0], groupName: room[0], actionUrl: room[2] + win[0] + "/" + dirn[1] + "/pulse" }
 	actions
