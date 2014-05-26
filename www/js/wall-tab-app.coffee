@@ -118,6 +118,7 @@ class WallTabApp
                 @tileTiers.addTileToTierGroup(tierIdx, ctd.groupIdx, tile)
 
     setupClockAndCalendar: (bFavouritesOnly) ->
+        return
         # Add the clock and calendar back in
         if bFavouritesOnly
             @addClock(@favouritesTierIdx, @favouritesGroupIdx)
@@ -126,10 +127,37 @@ class WallTabApp
             @addClock(@favouritesTierIdx, @favouritesGroupIdx)
             @addCalendar(@calendarTierIdx, @favouritesGroupIdx)
 
+    makeTileFromtileDef: (tileDef) ->
+        if tileDef.tileType is "calendar"
+            makeCalendarTile(tileDef)
+        else if tileDef.tileType is "clock"
+            makeClockTile(tileDef)
+        else
+            makeTileFreeForm(tileDef)
+
+    makeCalendarTile: (tileDef) ->
+        cmdHandler = tileDef.cmdHandler if cmdHandler of tileDef else @automationServer.executeCommand
+        tileBasics = new TileBasics @tileColours.getNextColour(), tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileContainerSelector(tileDef.tierIdx)
+        tile = new CalendarTile tileBasics, @calendarUrl, tileDef.calDayIndex
+        @tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile)
+
+    makeClockTile: (tileDef) ->
+        cmdHandler = tileDef.cmdHandler if cmdHandler of tileDef else @automationServer.executeCommand
+        tileBasics = new TileBasics @tileColours.getNextColour(), tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileContainerSelector(tileDef.tierIdx)
+        tile = new ClockTile tileBasics
+        @tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile)
+
     makeUriButton: (tierIdx, groupIdx, name, iconname, uri, colSpan, rowSpan, visibility = "all") ->
         tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, rowSpan, "testCommand", uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
         tile = new SceneButton tileBasics, iconname, name
         @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
+
+    makeTileFreeForm: (tileDef) ->
+        tileColour = @tileColours.getNextColour()
+        cmdHandler = tileDef.cmdHandler if cmdHandler of tileDef else @automationServer.executeCommand
+        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileContainerSelector(tileDef.tierIdx)
+        tile = new SceneButton tileBasics, tileDef.iconname, tileDef.name
+        @tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile)
 
     makeSceneButton: (tierIdx, groupIdx, name, uri, visibility = "all") ->
         tileBasics = new TileBasics @tileColours.getNextColour(), 1, 1, @automationServer.executeCommand, uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
@@ -189,7 +217,11 @@ class WallTabApp
         # Clear just the favourites group (and add clock back in)
         @tileTiers.clearGroup(@favouritesTierIdx, @favouritesGroupIdx)
         @setupClockAndCalendar(true)
-        # Copy tiles that should be in favourites group
+        # Make tiles free-form
+        if "tileDefinitions" of jsonConfig
+            for tileDef in jsonConfig.tileDefinitions
+                makeTileFreeForm(tileDef)
+        # Copy tiles that should be in favourites group                
         if "favourites" of jsonConfig
             for favouriteDefn in jsonConfig.favourites
                 existingTile = @tileTiers.findExistingTile(@favouritesTierIdx, favouriteDefn.tileName)
