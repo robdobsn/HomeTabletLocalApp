@@ -46,34 +46,37 @@ class WallTabApp
         @tileTiers = new TileTiers "#sqWrapper"
 
         # Main tier
-        mainTier = new TileTier "#sqWrapper", "_Tier1"
-        mainTier.addToDom()
-        @tileTiers.addTier (mainTier)
+#        mainTier = new TileTier "#sqWrapper", "mainTier"
+#        mainTier.addToDom()
+#        @tileTiers.addTier (mainTier)
 
         # Favourites group
-        @favouritesTierIdx = 0
-        @favouritesGroupIdx = @tileTiers.addGroup @favouritesTierIdx, "Home"
+#        @favouritesTierIdx = 0
+#        @favouritesGroupIdx = @tileTiers.addGroup @favouritesTierIdx, "Home"
 
         # Calendar group
-        @calendarTierIdx = 0
-        @calendarGroupIdx = @tileTiers.addGroup @calendarTierIdx, "Calendar"
+#        @calendarTierIdx = 0
+#        @calendarGroupIdx = @tileTiers.addGroup @calendarTierIdx, "Calendar"
 
         # Scenes group
-        @sceneTierIdx = 0
-        @sceneGroupIdx = @tileTiers.addGroup @sceneTierIdx, "Scenes"
+#        @sceneTierIdx = 0
+#        @sceneGroupIdx = @tileTiers.addGroup @sceneTierIdx, "Scenes"
 
         # Second tier
-        secondTier = new TileTier "#sqWrapper", "_Tier2"
-        secondTier.addToDom()
-        @tileTiers.addTier (secondTier)
+#        secondTier = new TileTier "#sqWrapper", "_Tier2"
+#        secondTier.addToDom()
+#        @tileTiers.addTier (secondTier)
 
         # Sonos group
-        @sonosTierIdx = 1
-        @sonosGroupIdx = @tileTiers.addGroup @sonosTierIdx, "Sonos"
+#        @sonosTierIdx = 1
+#        @sonosGroupIdx = @tileTiers.addGroup @sonosTierIdx, "Sonos"
+
+        # Default config for tablet (overridden with info from tablet config server if available)
+        setDefaultTabletConfig()
 
         # Initial UI layout
-        @tileTiers.clear()
-        @setupClockAndCalendar(false)
+#        @tileTiers.clear()
+#        @setupClockAndCalendar(false)
 
         # Handler for orientation change
         $(window).on 'orientationchange', =>
@@ -88,6 +91,29 @@ class WallTabApp
         setInterval =>
             @requestActionAndConfigData()
         , 600000
+
+    setDefaultTabletConfig: () ->
+        groupDefinitions =
+            [
+                { tierName: "mainTier", groupName: "Home" },
+                { tierName: "mainTier", groupName: "Calendar" }
+            ]
+        @jsonConfig["groupDefinitions"] = groupDefinitions
+        tileDefinitions = 
+            [
+                # Clock
+                { tierName: "mainTier", groupName: "calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "all"}
+                # Calendar
+                { tierName: "mainTier", groupName: "calendar", colSpan: 2, rowSpan: 2, uri: "", name: "calendar", visibility: "all"}
+            ]
+        @jsonConfig["tileDefinitions"] = tileDefinitions               
+
+    createGroupsFromConfig: () ->
+        check if group info has changed
+        if so remove all tiers
+        create new groups
+
+        this must be called on new config and new scene info before scene info implemented
 
     requestActionAndConfigData: ->
         @automationServer.getActionGroups()
@@ -228,7 +254,9 @@ class WallTabApp
                 if existingTile isnt null
                     @makeSceneButton @favouritesTierIdx, @favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam
 
-    configReadyCb: (@jsonConfig) =>
+    configReadyCb: (inConfig) =>
+        for k,v of inConfig
+            @jsonConfig[k] = v
         @applyJsonConfig(@jsonConfig)
         @tileTiers.reDoLayout()
 
