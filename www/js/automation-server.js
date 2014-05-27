@@ -19,10 +19,38 @@ AutomationServer = (function() {
     this.indigoServer.setReadyCallback(this.indigoServerReadyCb);
     this.veraServer = new VeraServer(this.veraServerUrl);
     this.veraServer.setReadyCallback(this.veraServerReadyCb);
-    this.useDirectAccessForGet = true;
     this.useDirectAccessForExec = true;
     this.veraActions = [];
     this.indigoActions = [];
+    this.baseAutomationActions = {};
+    this.doorActions = [
+      {
+        actionNum: 0,
+        actionName: "Main Unlock",
+        groupName: "Front Door",
+        actionUrl: this.frontDoorUrl + "main-unlock",
+        iconName: "door-unlock"
+      }, {
+        actionNum: 0,
+        actionName: "Main Lock",
+        groupName: "Front Door",
+        actionUrl: this.frontDoorUrl + "main-lock",
+        iconName: "door-lock"
+      }, {
+        actionNum: 0,
+        actionName: "Inner Unlock",
+        groupName: "Front Door",
+        actionUrl: this.frontDoorUrl + "inner-unlock",
+        iconName: "door-unlock"
+      }, {
+        actionNum: 0,
+        actionName: "Inner Lock",
+        groupName: "Front Door",
+        actionUrl: this.frontDoorUrl + "inner-lock",
+        iconName: "door-lock"
+      }
+    ];
+    this.blindsActions = GetBlindsActions();
   }
 
   AutomationServer.prototype.setReadyCallback = function(readyCallback) {
@@ -40,23 +68,27 @@ AutomationServer = (function() {
   };
 
   AutomationServer.prototype.callBackWithSumActions = function() {
-    var sumActions;
+    var k, sumActions, v, _ref;
     sumActions = {
-      "vera": this.veraActions,
-      "indigo": this.indigoActions,
+      "doors": this.doorActions,
       "blinds": this.blindsActions,
-      "doors": this.doorActions
+      "vera": this.veraActions,
+      "indigo": this.indigoActions
     };
+    _ref = this.baseAutomationActions;
+    for (k in _ref) {
+      v = _ref[k];
+      if (k !== "vera" && k !== "indigo" && k !== "blinds" && k !== "doors") {
+        sumActions[k] = v;
+      }
+    }
     return this.readyCallback(sumActions);
   };
 
   AutomationServer.prototype.getActionGroups = function() {
-    if (this.useDirectAccessForGet) {
-      this.indigoServer.getActionGroups();
-      return this.veraServer.getActionGroups();
-    } else {
-      return this.getActionGroupsFromIntermediateServer();
-    }
+    this.indigoServer.getActionGroups();
+    this.veraServer.getActionGroups();
+    return this.getActionGroupsFromIntermediateServer();
   };
 
   AutomationServer.prototype.getActionGroupsFromIntermediateServer = function() {
@@ -65,7 +97,19 @@ AutomationServer = (function() {
       type: "GET",
       dataType: "json",
       success: function(data, textStatus, jqXHR) {
-        return _this.readyCallback(data);
+        if ("vera" in data) {
+          _this.veraActions = data.vera;
+        }
+        if ("indigo" in data) {
+          _this.indigoActions = data.indigo;
+        }
+        if ("doorController" in data) {
+          _this.doorActions = data.doorController;
+        }
+        if ("blinds" in data) {
+          _this.blindsActions = data.blinds;
+        }
+        return _this.callBackWithSumActions;
       },
       error: function(jqXHR, textStatus, errorThrown) {
         return console.log("Get Actions failed: " + textStatus + " " + errorThrown);

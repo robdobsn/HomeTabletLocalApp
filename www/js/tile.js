@@ -9,7 +9,7 @@ Tile = (function() {
 
   Tile.prototype.addToDoc = function() {
     var _this = this;
-    this.tileId = "sqTile" + this.tileIdx;
+    this.tileId = "sqTile_" + this.tileBasics.tierIdx + "_" + this.tileBasics.groupIdx + "_" + this.tileIdx;
     $(this.tileBasics.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileBasics.bkColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
     if (this.tileBasics.clickFn != null) {
       $("#" + this.tileId).click(function() {

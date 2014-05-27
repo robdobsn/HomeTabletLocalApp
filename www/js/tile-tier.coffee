@@ -13,7 +13,7 @@ class TileTier
 		@groupsClass = "sqGroups"
 		@groupsTagLocator = "#" + @tierId + " ." + @groupsClass
 
-	getTileContainerSelector: ->
+	getTileTierSelector: ->
 		@groupsTagLocator + " .sqTileContainer"
 
 	addToDom: ->
@@ -27,6 +27,10 @@ class TileTier
 			    </div>
             </div>
 			"""
+
+	removeAll: ->
+		@clearTiles()
+		$("##{@tierId}").remove()
 
 	clearTiles: ->
 		# Container of tile groups
@@ -42,6 +46,14 @@ class TileTier
 		newTileGroup = new TileGroup this, @groupTitlesTagLocator, groupIdx, groupTitle
 		@groups.push newTileGroup
 		groupIdx
+
+	findGroupIdx: (groupName) ->
+		groupIdx = 0
+		for group in @groups
+			if group.groupTitle is groupName
+				return groupIdx
+			groupIdx += 1
+		return -1
 
 	calcLayout: ->
 		winWidth = $(window).width()

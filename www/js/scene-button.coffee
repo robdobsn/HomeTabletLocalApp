@@ -1,5 +1,5 @@
 class SceneButton extends Tile
-	constructor: (tileBasics, @iconType, @buttonText) ->
+	constructor: (tileBasics, @buttonText) ->
 		super tileBasics
 
 	addToDoc: (elemToAddTo) ->
@@ -8,25 +8,29 @@ class SceneButton extends Tile
 			<div class="sqSceneButtonIcon"><img src="img/light-bulb-on.png"></img></div>
 			<div class="sqSceneButtonText"></div>
 			"""
-		if @buttonText.toLowerCase().indexOf("off") >= 0
-			@iconType = "bulb-off"
-		else if @buttonText.toLowerCase().indexOf(" on") >= 0
-			@iconType = "bulb-on"
+		iconName = @tileBasics.iconName
+		if iconName is null or iconName is ""
+			if @buttonText.toLowerCase().indexOf("off") >= 0
+				iconName = "bulb-off"
+			else if @buttonText.toLowerCase().indexOf(" on") >= 0
+				iconName = "bulb-on"
 		@buttonText = @buttonText.replace(" Lights", "")
 		@buttonText = @buttonText.replace(" Light", "")
-		@setIcon(@iconType)
+		@setIcon(iconName)
 		@setText(@buttonText)
 
-	setIcon: (@iconType) ->
-		if iconType is 'bulb-on'
+	setIcon: (iconName) ->
+		iconUrl = 'img/' + iconName + '.png'
+		if iconName is 'bulb-on'
 			iconUrl = 'img/light-bulb-on.png'
-		else if iconType is 'bulb-off'
+		else if iconName is 'bulb-off'
 			iconUrl = 'img/light-bulb-off.png'
-		else if iconType is 'shadesicon'
+		else if iconName is 'shadesicon'
 			iconUrl = 'img/shadesicon.png'
-		else if iconType is 'musicicon'
+		else if iconName is 'musicicon'
 			iconUrl = 'img/musicicon.png'
-		$('#'+@tileId+" .sqSceneButtonIcon img").attr("src", iconUrl)
+		if iconUrl isnt ""
+			$('#'+@tileId+" .sqSceneButtonIcon img").attr("src", iconUrl)
 
 	setText: (@textStr) ->
 		$('#'+@tileId+" .sqSceneButtonText").html textStr

@@ -1,24 +1,16 @@
 class WallTabApp
     constructor: ->
         @tileColours = new TileColours
-#        @rdHomeServerUrl = "http://127.0.0.1:5000"
+        @rdHomeServerUrl = "http://127.0.0.1:5000"
 #        @rdHomeServerUrl = "http://192.168.0.97:5000"
-        @rdHomeServerUrl = "http://macallan:5000"
+#        @rdHomeServerUrl = "http://macallan:5000"
         @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
         @automationServerUrl = @rdHomeServerUrl + "/automation/api/v1.0"
         @tabletConfigUrl = @rdHomeServerUrl + "/tablet/api/v1.0/config"
         @indigoServerUrl = "http://IndigoServer.local:8176"
         @veraServerUrl = "http://192.168.0.206:3480"
         @frontDoorUrl = "http://192.168.0.221/"
-        @blindsActions = GetBlindsActions()
         @jsonConfig = {}
-        @doorActions = 
-        [
-            { actionNum: 0, actionName: "Main Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-unlock" },
-            { actionNum: 0, actionName: "Main Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-lock" },
-            { actionNum: 0, actionName: "Inner Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-unlock" },
-            { actionNum: 0, actionName: "Inner Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-lock" }
-        ]
 
     go: ->
         # Basic body for DOM
@@ -30,12 +22,14 @@ class WallTabApp
         # Scrolls back to most important panels on left of display after user idle timeout
         @userIdleCatcher = new UserIdleCatcher(30, @actionOnUserIdle)
 
+        # Default config for tablet (overridden with info from tablet config server if available)
+        @setDefaultTabletConfig()
+
         # Manage ui grouping (rooms, action-groups, etc)
         @automationActionGroups = []
-        @uiGroupMapping = {}
 
         # Communication with Vera3 & Indigo through automation server
-        @automationServer = new AutomationServer(@automationServerUrl, @veraServerUrl, @indigoServerUrl, @blindsActions, @doorActions)
+        @automationServer = new AutomationServer(@automationServerUrl, @veraServerUrl, @indigoServerUrl)
         @automationServer.setReadyCallback(@automationServerReadyCb)
 
         # Tablet config is based on the IP address of the tablet
@@ -45,39 +39,6 @@ class WallTabApp
         # Tile tiers
         @tileTiers = new TileTiers "#sqWrapper"
 
-        # Main tier
-#        mainTier = new TileTier "#sqWrapper", "mainTier"
-#        mainTier.addToDom()
-#        @tileTiers.addTier (mainTier)
-
-        # Favourites group
-#        @favouritesTierIdx = 0
-#        @favouritesGroupIdx = @tileTiers.addGroup @favouritesTierIdx, "Home"
-
-        # Calendar group
-#        @calendarTierIdx = 0
-#        @calendarGroupIdx = @tileTiers.addGroup @calendarTierIdx, "Calendar"
-
-        # Scenes group
-#        @sceneTierIdx = 0
-#        @sceneGroupIdx = @tileTiers.addGroup @sceneTierIdx, "Scenes"
-
-        # Second tier
-#        secondTier = new TileTier "#sqWrapper", "_Tier2"
-#        secondTier.addToDom()
-#        @tileTiers.addTier (secondTier)
-
-        # Sonos group
-#        @sonosTierIdx = 1
-#        @sonosGroupIdx = @tileTiers.addGroup @sonosTierIdx, "Sonos"
-
-        # Default config for tablet (overridden with info from tablet config server if available)
-        setDefaultTabletConfig()
-
-        # Initial UI layout
-#        @tileTiers.clear()
-#        @setupClockAndCalendar(false)
-
         # Handler for orientation change
         $(window).on 'orientationchange', =>
           @tileTiers.reDoLayout()
@@ -86,115 +47,139 @@ class WallTabApp
         $(window).on 'resize', =>
           @tileTiers.reDoLayout()
 
+        # Rebuild UI
+        @rebuildUI()
+
         # Make initial requests for action (scene) data and config data and repeat requests at intervals
         @requestActionAndConfigData()
         setInterval =>
             @requestActionAndConfigData()
         , 600000
 
+    requestActionAndConfigData: ->
+        @automationServer.getActionGroups()
+        @tabletConfig.initTabletConfig()
+
     setDefaultTabletConfig: () ->
         groupDefinitions =
             [
                 { tierName: "mainTier", groupName: "Home" },
-                { tierName: "mainTier", groupName: "Calendar" }
+                { tierName: "mainTier", groupName: "Calendar" },
+                { tierName: "actionsTier", groupName: "Scenes" }
             ]
         @jsonConfig["groupDefinitions"] = groupDefinitions
         tileDefinitions = 
             [
-                # Clock
-                { tierName: "mainTier", groupName: "calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "all"}
                 # Calendar
-                { tierName: "mainTier", groupName: "calendar", colSpan: 2, rowSpan: 2, uri: "", name: "calendar", visibility: "all"}
+                { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 2, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 0 }
+                # Clock
+                { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "all", tileType: "clock", iconName: "none"}
             ]
-        @jsonConfig["tileDefinitions"] = tileDefinitions               
+        @jsonConfig["tileDefinitions"] = tileDefinitions
 
-    createGroupsFromConfig: () ->
-        check if group info has changed
-        if so remove all tiers
-        create new groups
-
-        this must be called on new config and new scene info before scene info implemented
-
-    requestActionAndConfigData: ->
-        @automationServer.getActionGroups()
-        @tabletConfig.initTabletConfig()
-    
-    addClock: (tierIdx, groupIdx) ->
-        visibility = "all"
-        tileBasics = new TileBasics @tileColours.getNextColour(), 3, 1, null, "", "clock", visibility, @tileTiers.getTileContainerSelector(tierIdx)
-        tile = new Clock tileBasics
-        @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
-
-    addCalendar: (tierIdx, onlyAddToGroupIdx = null) ->
-        calG = @calendarGroupIdx
-        favG = @favouritesGroupIdx
-        lands = "landscape"
-        portr = "portrait"
-        calendarTileDefs = []
-        calendarTileDefs.push new CalendarTileDefiniton lands, calG, 2, 2, 0
-        calendarTileDefs.push new CalendarTileDefiniton lands, calG, 2, 1, 1
-        calendarTileDefs.push new CalendarTileDefiniton portr, favG, 3, 2, 0
-        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 2, 1
-        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 2, 2
-        calendarTileDefs.push new CalendarTileDefiniton portr, calG, 3, 1, 3
-        for ctd in calendarTileDefs
-            if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt ctd.groupIdx))
-                tileBasics = new TileBasics @tileColours.getNextColour(), ctd.colSpan, ctd.rowSpan, null, "", "calendar", ctd.visibility, @tileTiers.getTileContainerSelector(tierIdx)
-                tile = new CalendarTile tileBasics, @calendarUrl, ctd.calDayIndex
-                @tileTiers.addTileToTierGroup(tierIdx, ctd.groupIdx, tile)
-
-    setupClockAndCalendar: (bFavouritesOnly) ->
-        return
-        # Add the clock and calendar back in
-        if bFavouritesOnly
-            @addClock(@favouritesTierIdx, @favouritesGroupIdx)
-            @addCalendar(@calendarTierIdx)
-        else
-            @addClock(@favouritesTierIdx, @favouritesGroupIdx)
-            @addCalendar(@calendarTierIdx, @favouritesGroupIdx)
-
-    makeTileFromtileDef: (tileDef) ->
+    makeTileFromTileDef: (tileDef) ->
         if tileDef.tileType is "calendar"
-            makeCalendarTile(tileDef)
+            @makeCalendarTile(tileDef)
         else if tileDef.tileType is "clock"
-            makeClockTile(tileDef)
+            @makeClockTile(tileDef)
         else
-            makeTileFreeForm(tileDef)
+            @makeSceneTile(tileDef)
+
+    tileBasicsFromDef: (tileDef) ->
+        tileColour = @tileColours.getNextColour()
+        tierIdx = @tileTiers.findTierIdx(tileDef.tierName)
+        if tierIdx < 0 then return null
+        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, @automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName
 
     makeCalendarTile: (tileDef) ->
-        cmdHandler = tileDef.cmdHandler if cmdHandler of tileDef else @automationServer.executeCommand
-        tileBasics = new TileBasics @tileColours.getNextColour(), tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileContainerSelector(tileDef.tierIdx)
+        tileBasics = @tileBasicsFromDef(tileDef)
+        if tileBasics is null then return
         tile = new CalendarTile tileBasics, @calendarUrl, tileDef.calDayIndex
-        @tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile)
+        @addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile)
 
     makeClockTile: (tileDef) ->
-        cmdHandler = tileDef.cmdHandler if cmdHandler of tileDef else @automationServer.executeCommand
-        tileBasics = new TileBasics @tileColours.getNextColour(), tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileContainerSelector(tileDef.tierIdx)
-        tile = new ClockTile tileBasics
-        @tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile)
+        tileBasics = @tileBasicsFromDef(tileDef)
+        if tileBasics is null then return
+        tile = new Clock tileBasics
+        @addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile)
 
-    makeUriButton: (tierIdx, groupIdx, name, iconname, uri, colSpan, rowSpan, visibility = "all") ->
-        tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, rowSpan, "testCommand", uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
-        tile = new SceneButton tileBasics, iconname, name
+    makeSceneTile: (tileDef) ->
+        tileBasics = @tileBasicsFromDef(tileDef)
+        if tileBasics is null then return
+        tile = new SceneButton tileBasics, tileDef.name
+        @addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile)
+
+    addTileToTierGroup: (tierName, groupName, tile) ->
+        tierIdx = @tileTiers.findTierIdx(tierName)
+        if tierIdx < 0 then return
+        if groupName is "" then groupName = "Scenes"
+        groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupName)
+        #groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
+        #if groupIdx < 0 then return
         @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
 
-    makeTileFreeForm: (tileDef) ->
-        tileColour = @tileColours.getNextColour()
-        cmdHandler = tileDef.cmdHandler if cmdHandler of tileDef else @automationServer.executeCommand
-        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileContainerSelector(tileDef.tierIdx)
-        tile = new SceneButton tileBasics, tileDef.iconname, tileDef.name
-        @tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile)
+    rebuildUI: =>
+        # Remove all tiers and reapply tiers/groups config
+        @tileTiers.removeAll()
+        @applyTierAndGroupConfig(@jsonConfig)
+        # Create tiles for all actions/scenes
+        for servType, actionList of @automationActionGroups
+            for action in actionList
+                # make the button
+                tileDef = { tierName: "actionsTier", groupName: action.groupName, colSpan: 1, rowSpan: 1, uri: action.actionUrl, name: action.actionName, visibility: "all", tileType: "action", iconName: if "iconName" of action then action.iconName else "bulb-on" }
+                @makeTileFromTileDef(tileDef)
+        # Re-apply the configuration for the tablet - handles favourites group etc
+        @applyTileConfig(@jsonConfig)
+        # Re-do the layout of tiles
+        @tileTiers.reDoLayout()
 
-    makeSceneButton: (tierIdx, groupIdx, name, uri, visibility = "all") ->
-        tileBasics = new TileBasics @tileColours.getNextColour(), 1, 1, @automationServer.executeCommand, uri, name, visibility, @tileTiers.getTileContainerSelector(tierIdx)
-        tile = new SceneButton tileBasics, "bulb-on", name
-        @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
+    getUIGroupIdxAddGroupIfReqd: (tierIdx, groupName) ->
+        # Get ui group for the scene
+        if groupName is "" then return -1
+        groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
+        if groupIdx < 0
+            # Make a new ui group if the room/action-group name is unknown
+            groupIdx = @tileTiers.addGroup tierIdx, groupName
+        return groupIdx
+
+    applyTierAndGroupConfig: (jsonConfig) ->
+        for groupDef in jsonConfig.groupDefinitions
+            tierIdx = @tileTiers.findTierIdx(groupDef.tierName)
+            if tierIdx < 0
+                newTier = new TileTier "#sqWrapper", groupDef.tierName
+                newTier.addToDom()
+                tierIdx = @tileTiers.addTier(newTier)
+            groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName)
+
+    applyTileConfig: (jsonConfig) ->
+        # Make tiles free-form
+        if "tileDefinitions" of jsonConfig
+            for tileDef in jsonConfig.tileDefinitions
+                @makeTileFromTileDef(tileDef)
+        # Copy tiles that should be in favourites group                
+        if "favourites" of jsonConfig
+            for favouriteDefn in jsonConfig.favourites
+                # Find existing tile matching the description
+                exTile = @tileTiers.findExistingTile(favouriteDefn.tileName)
+                if exTile isnt null
+                    tb = exTile.tileBasics
+                    tileDef = { tierName: "mainTier", groupName: "Home", colSpan: tb.colSpan, rowSpan: tb.rowSpan, uri: tb.clickParam, name: tb.tileName, visibility: tb.visibility, tileType: tb.tileType, iconName: tb.iconName }
+                    @makeTileFromTileDef(tileDef)
+        return
+
+    configReadyCb: (inConfig) =>
+        # Replace configuration info for keys that are present
+        # but don't remove config info for keys that aren't
+        for k,v of inConfig
+            @jsonConfig[k] = v
+        # Rebuild UI
+        @rebuildUI()
 
     automationServerReadyCb: (actions, serverType) =>
         # Callback when data received from the automation server (scenes/actions)
         if @checkActionGroupsChanged(@automationActionGroups, actions)
             @automationActionGroups = actions
-            @updateUIWithActionGroups()
+            @rebuildUI()
 
     checkActionGroupsChanged: (oldActionMap, newActionMap) ->
         # Deep object comparison to see if configuration has changed
@@ -214,51 +199,7 @@ class WallTabApp
             for k, v of oldAction
                 if not k of newAction then return true
                 if v isnt newAction[k] then return true
-        false
-
-    updateUIWithActionGroups: =>
-        # Clear all tiers initially
-        @tileTiers.clear()
-        @setupClockAndCalendar(false)
-        # Create tiles for all actions/scenes
-        for servType, actionList of @automationActionGroups
-            for action in actionList
-                # Get ui group for the scene
-                groupIdx = @sceneGroupIdx
-                if action.groupName isnt ""
-                    if action.groupName of @uiGroupMapping
-                        groupIdx = @uiGroupMapping[action.groupName]
-                    else
-                        # Make a new ui group if the room/action-group name is new
-                        groupIdx = @tileTiers.addGroup @sceneTierIdx, action.groupName
-                        @uiGroupMapping[action.groupName] = groupIdx
-                # make the scene button
-                @makeSceneButton @sceneTierIdx, groupIdx, action.actionName, action.actionUrl
-        # Apply the configuration for the tablet - handles favourites group etc
-        @applyJsonConfig @jsonConfig
-        # Re-do the layout of tiles
-        @tileTiers.reDoLayout()
-
-    applyJsonConfig: (jsonConfig) ->
-        # Clear just the favourites group (and add clock back in)
-        @tileTiers.clearGroup(@favouritesTierIdx, @favouritesGroupIdx)
-        @setupClockAndCalendar(true)
-        # Make tiles free-form
-        if "tileDefinitions" of jsonConfig
-            for tileDef in jsonConfig.tileDefinitions
-                makeTileFreeForm(tileDef)
-        # Copy tiles that should be in favourites group                
-        if "favourites" of jsonConfig
-            for favouriteDefn in jsonConfig.favourites
-                existingTile = @tileTiers.findExistingTile(@favouritesTierIdx, favouriteDefn.tileName)
-                if existingTile isnt null
-                    @makeSceneButton @favouritesTierIdx, @favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam
-
-    configReadyCb: (inConfig) =>
-        for k,v of inConfig
-            @jsonConfig[k] = v
-        @applyJsonConfig(@jsonConfig)
-        @tileTiers.reDoLayout()
+        return false
 
     actionOnUserIdle: =>
         $("html, body").animate({ scrollLeft: "0px" });

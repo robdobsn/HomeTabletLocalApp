@@ -1,9 +1,10 @@
 class TileBasics
-	constructor: (@bkColour, @colSpan, @rowSpan, @clickFn, @clickParam, @tileName, @visibility, @parentTag) ->
+	constructor: (@bkColour, @colSpan, @rowSpan, @clickFn, @clickParam, @tileName, @visibility, @parentTag, @tileType, @iconName) ->
 
+	setTierGroupIds: (@tierIdx, @groupIdx) ->
+		
 class TilePosition
 	constructor: (@tileValid, @xPos = 0, @yPos = 0, @colSpan = 0, @rowSpan = 0) ->
-
 
 	intersects: (tilePos) ->
 		if not @tileValid

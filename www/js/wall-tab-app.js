@@ -5,78 +5,38 @@ var WallTabApp,
 WallTabApp = (function() {
   function WallTabApp() {
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
-    this.configReadyCb = __bind(this.configReadyCb, this);
-    this.updateUIWithActionGroups = __bind(this.updateUIWithActionGroups, this);
     this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
+    this.configReadyCb = __bind(this.configReadyCb, this);
+    this.rebuildUI = __bind(this.rebuildUI, this);
     this.tileColours = new TileColours;
-    this.rdHomeServerUrl = "http://macallan:5000";
+    this.rdHomeServerUrl = "http://127.0.0.1:5000";
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
     this.automationServerUrl = this.rdHomeServerUrl + "/automation/api/v1.0";
     this.tabletConfigUrl = this.rdHomeServerUrl + "/tablet/api/v1.0/config";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
     this.veraServerUrl = "http://192.168.0.206:3480";
     this.frontDoorUrl = "http://192.168.0.221/";
-    this.blindsActions = GetBlindsActions();
     this.jsonConfig = {};
-    this.doorActions = [
-      {
-        actionNum: 0,
-        actionName: "Main Unlock",
-        groupName: "Front Door",
-        actionUrl: this.frontDoorUrl + "main-unlock"
-      }, {
-        actionNum: 0,
-        actionName: "Main Lock",
-        groupName: "Front Door",
-        actionUrl: this.frontDoorUrl + "main-lock"
-      }, {
-        actionNum: 0,
-        actionName: "Inner Unlock",
-        groupName: "Front Door",
-        actionUrl: this.frontDoorUrl + "inner-unlock"
-      }, {
-        actionNum: 0,
-        actionName: "Inner Lock",
-        groupName: "Front Door",
-        actionUrl: this.frontDoorUrl + "inner-lock"
-      }
-    ];
   }
 
   WallTabApp.prototype.go = function() {
-    var mainTier, secondTier,
-      _this = this;
+    var _this = this;
     $("body").append("<div id=\"sqWrapper\">\n</div>");
     this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
+    this.setDefaultTabletConfig();
     this.automationActionGroups = [];
-    this.uiGroupMapping = {};
-    this.automationServer = new AutomationServer(this.automationServerUrl, this.veraServerUrl, this.indigoServerUrl, this.blindsActions, this.doorActions);
+    this.automationServer = new AutomationServer(this.automationServerUrl, this.veraServerUrl, this.indigoServerUrl);
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfig = new TabletConfig(this.tabletConfigUrl);
     this.tabletConfig.setReadyCallback(this.configReadyCb);
     this.tileTiers = new TileTiers("#sqWrapper");
-    mainTier = new TileTier("#sqWrapper", "_Tier1");
-    mainTier.addToDom();
-    this.tileTiers.addTier(mainTier);
-    this.favouritesTierIdx = 0;
-    this.favouritesGroupIdx = this.tileTiers.addGroup(this.favouritesTierIdx, "Home");
-    this.calendarTierIdx = 0;
-    this.calendarGroupIdx = this.tileTiers.addGroup(this.calendarTierIdx, "Calendar");
-    this.sceneTierIdx = 0;
-    this.sceneGroupIdx = this.tileTiers.addGroup(this.sceneTierIdx, "Scenes");
-    secondTier = new TileTier("#sqWrapper", "_Tier2");
-    secondTier.addToDom();
-    this.tileTiers.addTier(secondTier);
-    this.sonosTierIdx = 1;
-    this.sonosGroupIdx = this.tileTiers.addGroup(this.sonosTierIdx, "Sonos");
-    this.tileTiers.clear();
-    this.setupClockAndCalendar(false);
     $(window).on('orientationchange', function() {
       return _this.tileTiers.reDoLayout();
     });
     $(window).on('resize', function() {
       return _this.tileTiers.reDoLayout();
     });
+    this.rebuildUI();
     this.requestActionAndConfigData();
     return setInterval(function() {
       return _this.requestActionAndConfigData();
@@ -88,114 +48,213 @@ WallTabApp = (function() {
     return this.tabletConfig.initTabletConfig();
   };
 
-  WallTabApp.prototype.addClock = function(tierIdx, groupIdx) {
-    var tile, tileBasics, visibility;
-    visibility = "all";
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), 3, 1, null, "", "clock", visibility, this.tileTiers.getTileContainerSelector(tierIdx));
+  WallTabApp.prototype.setDefaultTabletConfig = function() {
+    var groupDefinitions, tileDefinitions;
+    groupDefinitions = [
+      {
+        tierName: "mainTier",
+        groupName: "Home"
+      }, {
+        tierName: "mainTier",
+        groupName: "Calendar"
+      }, {
+        tierName: "actionsTier",
+        groupName: "Scenes"
+      }
+    ];
+    this.jsonConfig["groupDefinitions"] = groupDefinitions;
+    tileDefinitions = [
+      {
+        tierName: "mainTier",
+        groupName: "Calendar",
+        colSpan: 2,
+        rowSpan: 2,
+        uri: "",
+        name: "calendar",
+        visibility: "all",
+        tileType: "calendar",
+        iconName: "none",
+        calDayIndex: 0
+      }, {
+        tierName: "mainTier",
+        groupName: "Calendar",
+        colSpan: 2,
+        rowSpan: 1,
+        uri: "",
+        name: "clock",
+        visibility: "all",
+        tileType: "clock",
+        iconName: "none"
+      }
+    ];
+    return this.jsonConfig["tileDefinitions"] = tileDefinitions;
+  };
+
+  WallTabApp.prototype.makeTileFromTileDef = function(tileDef) {
+    if (tileDef.tileType === "calendar") {
+      return this.makeCalendarTile(tileDef);
+    } else if (tileDef.tileType === "clock") {
+      return this.makeClockTile(tileDef);
+    } else {
+      return this.makeSceneTile(tileDef);
+    }
+  };
+
+  WallTabApp.prototype.tileBasicsFromDef = function(tileDef) {
+    var tierIdx, tileBasics, tileColour;
+    tileColour = this.tileColours.getNextColour();
+    tierIdx = this.tileTiers.findTierIdx(tileDef.tierName);
+    if (tierIdx < 0) {
+      return null;
+    }
+    return tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, this.automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName);
+  };
+
+  WallTabApp.prototype.makeCalendarTile = function(tileDef) {
+    var tile, tileBasics;
+    tileBasics = this.tileBasicsFromDef(tileDef);
+    if (tileBasics === null) {
+      return;
+    }
+    tile = new CalendarTile(tileBasics, this.calendarUrl, tileDef.calDayIndex);
+    return this.addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile);
+  };
+
+  WallTabApp.prototype.makeClockTile = function(tileDef) {
+    var tile, tileBasics;
+    tileBasics = this.tileBasicsFromDef(tileDef);
+    if (tileBasics === null) {
+      return;
+    }
     tile = new Clock(tileBasics);
+    return this.addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile);
+  };
+
+  WallTabApp.prototype.makeSceneTile = function(tileDef) {
+    var tile, tileBasics;
+    tileBasics = this.tileBasicsFromDef(tileDef);
+    if (tileBasics === null) {
+      return;
+    }
+    tile = new SceneButton(tileBasics, tileDef.name);
+    return this.addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile);
+  };
+
+  WallTabApp.prototype.addTileToTierGroup = function(tierName, groupName, tile) {
+    var groupIdx, tierIdx;
+    tierIdx = this.tileTiers.findTierIdx(tierName);
+    if (tierIdx < 0) {
+      return;
+    }
+    if (groupName === "") {
+      groupName = "Scenes";
+    }
+    groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupName);
     return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };
 
-  WallTabApp.prototype.addCalendar = function(tierIdx, onlyAddToGroupIdx) {
-    var calG, calendarTileDefs, ctd, favG, lands, portr, tile, tileBasics, _i, _len, _results;
-    if (onlyAddToGroupIdx == null) {
-      onlyAddToGroupIdx = null;
-    }
-    calG = this.calendarGroupIdx;
-    favG = this.favouritesGroupIdx;
-    lands = "landscape";
-    portr = "portrait";
-    calendarTileDefs = [];
-    calendarTileDefs.push(new CalendarTileDefiniton(lands, calG, 2, 2, 0));
-    calendarTileDefs.push(new CalendarTileDefiniton(lands, calG, 2, 1, 1));
-    calendarTileDefs.push(new CalendarTileDefiniton(portr, favG, 3, 2, 0));
-    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 2, 1));
-    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 2, 2));
-    calendarTileDefs.push(new CalendarTileDefiniton(portr, calG, 3, 1, 3));
-    _results = [];
-    for (_i = 0, _len = calendarTileDefs.length; _i < _len; _i++) {
-      ctd = calendarTileDefs[_i];
-      if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== ctd.groupIdx))) {
-        tileBasics = new TileBasics(this.tileColours.getNextColour(), ctd.colSpan, ctd.rowSpan, null, "", "calendar", ctd.visibility, this.tileTiers.getTileContainerSelector(tierIdx));
-        tile = new CalendarTile(tileBasics, this.calendarUrl, ctd.calDayIndex);
-        _results.push(this.tileTiers.addTileToTierGroup(tierIdx, ctd.groupIdx, tile));
-      } else {
-        _results.push(void 0);
+  WallTabApp.prototype.rebuildUI = function() {
+    var action, actionList, servType, tileDef, _i, _len, _ref;
+    this.tileTiers.removeAll();
+    this.applyTierAndGroupConfig(this.jsonConfig);
+    _ref = this.automationActionGroups;
+    for (servType in _ref) {
+      actionList = _ref[servType];
+      for (_i = 0, _len = actionList.length; _i < _len; _i++) {
+        action = actionList[_i];
+        tileDef = {
+          tierName: "actionsTier",
+          groupName: action.groupName,
+          colSpan: 1,
+          rowSpan: 1,
+          uri: action.actionUrl,
+          name: action.actionName,
+          visibility: "all",
+          tileType: "action",
+          iconName: "iconName" in action ? action.iconName : "bulb-on"
+        };
+        this.makeTileFromTileDef(tileDef);
       }
+    }
+    this.applyTileConfig(this.jsonConfig);
+    return this.tileTiers.reDoLayout();
+  };
+
+  WallTabApp.prototype.getUIGroupIdxAddGroupIfReqd = function(tierIdx, groupName) {
+    var groupIdx;
+    if (groupName === "") {
+      return -1;
+    }
+    groupIdx = this.tileTiers.findGroupIdx(tierIdx, groupName);
+    if (groupIdx < 0) {
+      groupIdx = this.tileTiers.addGroup(tierIdx, groupName);
+    }
+    return groupIdx;
+  };
+
+  WallTabApp.prototype.applyTierAndGroupConfig = function(jsonConfig) {
+    var groupDef, groupIdx, newTier, tierIdx, _i, _len, _ref, _results;
+    _ref = jsonConfig.groupDefinitions;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      groupDef = _ref[_i];
+      tierIdx = this.tileTiers.findTierIdx(groupDef.tierName);
+      if (tierIdx < 0) {
+        newTier = new TileTier("#sqWrapper", groupDef.tierName);
+        newTier.addToDom();
+        tierIdx = this.tileTiers.addTier(newTier);
+      }
+      _results.push(groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName));
     }
     return _results;
   };
 
-  WallTabApp.prototype.setupClockAndCalendar = function(bFavouritesOnly) {
-    return;
-    if (bFavouritesOnly) {
-      this.addClock(this.favouritesTierIdx, this.favouritesGroupIdx);
-      return this.addCalendar(this.calendarTierIdx);
-    } else {
-      this.addClock(this.favouritesTierIdx, this.favouritesGroupIdx);
-      return this.addCalendar(this.calendarTierIdx, this.favouritesGroupIdx);
+  WallTabApp.prototype.applyTileConfig = function(jsonConfig) {
+    var exTile, favouriteDefn, tb, tileDef, _i, _j, _len, _len1, _ref, _ref1;
+    if ("tileDefinitions" in jsonConfig) {
+      _ref = jsonConfig.tileDefinitions;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        tileDef = _ref[_i];
+        this.makeTileFromTileDef(tileDef);
+      }
+    }
+    if ("favourites" in jsonConfig) {
+      _ref1 = jsonConfig.favourites;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        favouriteDefn = _ref1[_j];
+        exTile = this.tileTiers.findExistingTile(favouriteDefn.tileName);
+        if (exTile !== null) {
+          tb = exTile.tileBasics;
+          tileDef = {
+            tierName: "mainTier",
+            groupName: "Home",
+            colSpan: tb.colSpan,
+            rowSpan: tb.rowSpan,
+            uri: tb.clickParam,
+            name: tb.tileName,
+            visibility: tb.visibility,
+            tileType: tb.tileType,
+            iconName: tb.iconName
+          };
+          this.makeTileFromTileDef(tileDef);
+        }
+      }
     }
   };
 
-  WallTabApp.prototype.makeTileFromtileDef = function(tileDef) {
-    if (tileDef.tileType === "calendar") {
-      return makeCalendarTile(tileDef);
-    } else if (tileDef.tileType === "clock") {
-      return makeClockTile(tileDef);
-    } else {
-      return makeTileFreeForm(tileDef);
+  WallTabApp.prototype.configReadyCb = function(inConfig) {
+    var k, v;
+    for (k in inConfig) {
+      v = inConfig[k];
+      this.jsonConfig[k] = v;
     }
-  };
-
-  WallTabApp.prototype.makeCalendarTile = function(tileDef) {
-    var cmdHandler, tile, tileBasics;
-    cmdHandler = tileDef.cmdHandler(cmdHandler in tileDef ? void 0 : this.automationServer.executeCommand);
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileContainerSelector(tileDef.tierIdx));
-    tile = new CalendarTile(tileBasics, this.calendarUrl, tileDef.calDayIndex);
-    return this.tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile);
-  };
-
-  WallTabApp.prototype.makeClockTile = function(tileDef) {
-    var cmdHandler, tile, tileBasics;
-    cmdHandler = tileDef.cmdHandler(cmdHandler in tileDef ? void 0 : this.automationServer.executeCommand);
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileContainerSelector(tileDef.tierIdx));
-    tile = new ClockTile(tileBasics);
-    return this.tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile);
-  };
-
-  WallTabApp.prototype.makeUriButton = function(tierIdx, groupIdx, name, iconname, uri, colSpan, rowSpan, visibility) {
-    var tile, tileBasics;
-    if (visibility == null) {
-      visibility = "all";
-    }
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, rowSpan, "testCommand", uri, name, visibility, this.tileTiers.getTileContainerSelector(tierIdx));
-    tile = new SceneButton(tileBasics, iconname, name);
-    return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
-  };
-
-  WallTabApp.prototype.makeTileFreeForm = function(tileDef) {
-    var cmdHandler, tile, tileBasics, tileColour;
-    tileColour = this.tileColours.getNextColour();
-    cmdHandler = tileDef.cmdHandler(cmdHandler in tileDef ? void 0 : this.automationServer.executeCommand);
-    tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, cmdHandler, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileContainerSelector(tileDef.tierIdx));
-    tile = new SceneButton(tileBasics, tileDef.iconname, tileDef.name);
-    return this.tileTiers.addTileToTierGroup(tileDef.tierIdx, tileDef.groupIdx, tile);
-  };
-
-  WallTabApp.prototype.makeSceneButton = function(tierIdx, groupIdx, name, uri, visibility) {
-    var tile, tileBasics;
-    if (visibility == null) {
-      visibility = "all";
-    }
-    tileBasics = new TileBasics(this.tileColours.getNextColour(), 1, 1, this.automationServer.executeCommand, uri, name, visibility, this.tileTiers.getTileContainerSelector(tierIdx));
-    tile = new SceneButton(tileBasics, "bulb-on", name);
-    return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
+    return this.rebuildUI();
   };
 
   WallTabApp.prototype.automationServerReadyCb = function(actions, serverType) {
     if (this.checkActionGroupsChanged(this.automationActionGroups, actions)) {
       this.automationActionGroups = actions;
-      return this.updateUIWithActionGroups();
+      return this.rebuildUI();
     }
   };
 
@@ -239,64 +298,6 @@ WallTabApp = (function() {
       }
     }
     return false;
-  };
-
-  WallTabApp.prototype.updateUIWithActionGroups = function() {
-    var action, actionList, groupIdx, servType, _i, _len, _ref;
-    this.tileTiers.clear();
-    this.setupClockAndCalendar(false);
-    _ref = this.automationActionGroups;
-    for (servType in _ref) {
-      actionList = _ref[servType];
-      for (_i = 0, _len = actionList.length; _i < _len; _i++) {
-        action = actionList[_i];
-        groupIdx = this.sceneGroupIdx;
-        if (action.groupName !== "") {
-          if (action.groupName in this.uiGroupMapping) {
-            groupIdx = this.uiGroupMapping[action.groupName];
-          } else {
-            groupIdx = this.tileTiers.addGroup(this.sceneTierIdx, action.groupName);
-            this.uiGroupMapping[action.groupName] = groupIdx;
-          }
-        }
-        this.makeSceneButton(this.sceneTierIdx, groupIdx, action.actionName, action.actionUrl);
-      }
-    }
-    this.applyJsonConfig(this.jsonConfig);
-    return this.tileTiers.reDoLayout();
-  };
-
-  WallTabApp.prototype.applyJsonConfig = function(jsonConfig) {
-    var existingTile, favouriteDefn, tileDef, _i, _j, _len, _len1, _ref, _ref1, _results;
-    this.tileTiers.clearGroup(this.favouritesTierIdx, this.favouritesGroupIdx);
-    this.setupClockAndCalendar(true);
-    if ("tileDefinitions" in jsonConfig) {
-      _ref = jsonConfig.tileDefinitions;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        tileDef = _ref[_i];
-        makeTileFreeForm(tileDef);
-      }
-    }
-    if ("favourites" in jsonConfig) {
-      _ref1 = jsonConfig.favourites;
-      _results = [];
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        favouriteDefn = _ref1[_j];
-        existingTile = this.tileTiers.findExistingTile(this.favouritesTierIdx, favouriteDefn.tileName);
-        if (existingTile !== null) {
-          _results.push(this.makeSceneButton(this.favouritesTierIdx, this.favouritesGroupIdx, favouriteDefn.tileName, existingTile.tileBasics.clickParam));
-        } else {
-          _results.push(void 0);
-        }
-      }
-      return _results;
-    }
-  };
-
-  WallTabApp.prototype.configReadyCb = function(jsonConfig) {
-    this.jsonConfig = jsonConfig;
-    this.applyJsonConfig(this.jsonConfig);
-    return this.tileTiers.reDoLayout();
   };
 
   WallTabApp.prototype.actionOnUserIdle = function() {

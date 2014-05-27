@@ -6,39 +6,44 @@ var SceneButton,
 SceneButton = (function(_super) {
   __extends(SceneButton, _super);
 
-  function SceneButton(tileBasics, iconType, buttonText) {
-    this.iconType = iconType;
+  function SceneButton(tileBasics, buttonText) {
     this.buttonText = buttonText;
     SceneButton.__super__.constructor.call(this, tileBasics);
   }
 
   SceneButton.prototype.addToDoc = function(elemToAddTo) {
+    var iconName;
     SceneButton.__super__.addToDoc.call(this);
     this.contents.append("<div class=\"sqSceneButtonIcon\"><img src=\"img/light-bulb-on.png\"></img></div>\n<div class=\"sqSceneButtonText\"></div>");
-    if (this.buttonText.toLowerCase().indexOf("off") >= 0) {
-      this.iconType = "bulb-off";
-    } else if (this.buttonText.toLowerCase().indexOf(" on") >= 0) {
-      this.iconType = "bulb-on";
+    iconName = this.tileBasics.iconName;
+    if (iconName === null || iconName === "") {
+      if (this.buttonText.toLowerCase().indexOf("off") >= 0) {
+        iconName = "bulb-off";
+      } else if (this.buttonText.toLowerCase().indexOf(" on") >= 0) {
+        iconName = "bulb-on";
+      }
     }
     this.buttonText = this.buttonText.replace(" Lights", "");
     this.buttonText = this.buttonText.replace(" Light", "");
-    this.setIcon(this.iconType);
+    this.setIcon(iconName);
     return this.setText(this.buttonText);
   };
 
-  SceneButton.prototype.setIcon = function(iconType) {
+  SceneButton.prototype.setIcon = function(iconName) {
     var iconUrl;
-    this.iconType = iconType;
-    if (iconType === 'bulb-on') {
+    iconUrl = 'img/' + iconName + '.png';
+    if (iconName === 'bulb-on') {
       iconUrl = 'img/light-bulb-on.png';
-    } else if (iconType === 'bulb-off') {
+    } else if (iconName === 'bulb-off') {
       iconUrl = 'img/light-bulb-off.png';
-    } else if (iconType === 'shadesicon') {
+    } else if (iconName === 'shadesicon') {
       iconUrl = 'img/shadesicon.png';
-    } else if (iconType === 'musicicon') {
+    } else if (iconName === 'musicicon') {
       iconUrl = 'img/musicicon.png';
     }
-    return $('#' + this.tileId + " .sqSceneButtonIcon img").attr("src", iconUrl);
+    if (iconUrl !== "") {
+      return $('#' + this.tileId + " .sqSceneButtonIcon img").attr("src", iconUrl);
+    }
   };
 
   SceneButton.prototype.setText = function(textStr) {

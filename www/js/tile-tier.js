@@ -19,12 +19,17 @@ TileTier = (function() {
     this.groupsTagLocator = "#" + this.tierId + " ." + this.groupsClass;
   }
 
-  TileTier.prototype.getTileContainerSelector = function() {
+  TileTier.prototype.getTileTierSelector = function() {
     return this.groupsTagLocator + " .sqTileContainer";
   };
 
   TileTier.prototype.addToDom = function() {
     return $(this.parentTag).append("            <div id=\"" + this.tierId + "\" class=\"sqTier\">\n                <div class=\"" + this.groupTitlesClass + "\"/>\n                <div class=\"" + this.groupsClass + "\">\n    <div class=\"sqTileContainer\" style=\"width:3000px;display:block;zoom:1;\">\n    </div>\n</div>\n            </div>");
+  };
+
+  TileTier.prototype.removeAll = function() {
+    this.clearTiles();
+    return $("#" + this.tierId).remove();
   };
 
   TileTier.prototype.clearTiles = function() {
@@ -51,6 +56,20 @@ TileTier = (function() {
     newTileGroup = new TileGroup(this, this.groupTitlesTagLocator, groupIdx, groupTitle);
     this.groups.push(newTileGroup);
     return groupIdx;
+  };
+
+  TileTier.prototype.findGroupIdx = function(groupName) {
+    var group, groupIdx, _i, _len, _ref;
+    groupIdx = 0;
+    _ref = this.groups;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      group = _ref[_i];
+      if (group.groupTitle === groupName) {
+        return groupIdx;
+      }
+      groupIdx += 1;
+    }
+    return -1;
   };
 
   TileTier.prototype.calcLayout = function() {

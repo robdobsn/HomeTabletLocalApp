@@ -97,6 +97,9 @@ body {
   padding-left: 15px;
   width: 100%;
 }
+.sqGroups {
+  padding-left: 15px;
+}
 .sqInner {
   padding: 1px;
   line-height: 1;
@@ -111,7 +114,7 @@ body {
 .sqClockDow,
 .sqClockDayMonthYear {
   text-align: center;
-  font-size: 400%;
+  font-size: 300%;
 }
 ul.sqClockTime {
   margin: 0 auto;
@@ -121,11 +124,12 @@ ul.sqClockTime {
 }
 ul.sqClockTime li {
   display: inline;
-  font-size: 1000%;
+  font-size: 900%;
 }
 ul.sqClockTime li.sqClockSecs {
   display: inline;
-  font-size: 500%;
+  font-size: 100%;
+  position: absolute;
 }
 ul.sqClockTime li.sqClockPoint1,
 ul.sqClockTime li.sqClockPoint2 {
@@ -135,6 +139,7 @@ ul.sqClockTime li.sqClockPoint2 {
 }
 ul.sqClockTime li.sqClockPoint2 {
   font-size: 200%;
+  display: none;
 }
 ul.sqCalEvents {
   font-family: Verdana, Tahoma, Helvetica, sans-serif;

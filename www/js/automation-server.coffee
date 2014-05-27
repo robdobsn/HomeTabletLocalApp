@@ -6,10 +6,19 @@ class AutomationServer
 		@indigoServer.setReadyCallback(@indigoServerReadyCb)
 		@veraServer = new VeraServer(@veraServerUrl)
 		@veraServer.setReadyCallback(@veraServerReadyCb)
-		@useDirectAccessForGet = true # /android_asset/.test(window.location.pathname)
 		@useDirectAccessForExec = true # /android_asset/.test(window.location.pathname)
 		@veraActions = []
 		@indigoActions = []
+		@baseAutomationActions = {}
+		# Init default door and blinds actions - in case rdhomeserver not running
+		@doorActions = 
+	        [
+	            { actionNum: 0, actionName: "Main Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-unlock", iconName: "door-unlock" },
+	            { actionNum: 0, actionName: "Main Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-lock", iconName: "door-lock" },
+	            { actionNum: 0, actionName: "Inner Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-unlock", iconName: "door-unlock" },
+	            { actionNum: 0, actionName: "Inner Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-lock", iconName: "door-lock" }
+	        ]
+        @blindsActions = GetBlindsActions()
 
 	setReadyCallback: (@readyCallback) ->
 
@@ -22,20 +31,16 @@ class AutomationServer
 		@callBackWithSumActions()
 
 	callBackWithSumActions: =>
-		sumActions = { "vera" : @veraActions, "indigo" : @indigoActions, "blinds" : @blindsActions, "doors" : @doorActions }
-		# Each action returned is an array:
-		# [0] = action/scene number
-		# [1] = action/scene name
-		# [2] = room/group name
-		# [3] = URI to execute the action
+		sumActions = { "doors" : @doorActions, "blinds" : @blindsActions, "vera" : @veraActions, "indigo" : @indigoActions }
+		for k,v of @baseAutomationActions
+			if k isnt "vera" and k isnt "indigo" and k isnt "blinds" and k isnt "doors"
+				sumActions[k] = v
 		@readyCallback(sumActions)
 
 	getActionGroups: ->
-		if @useDirectAccessForGet
-			@indigoServer.getActionGroups()
-			@veraServer.getActionGroups()
-		else
-			@getActionGroupsFromIntermediateServer()
+		@indigoServer.getActionGroups()
+		@veraServer.getActionGroups()
+		@getActionGroupsFromIntermediateServer()
 
 	getActionGroupsFromIntermediateServer: ->
 		# Get the action-groups/scenes
@@ -43,7 +48,11 @@ class AutomationServer
 			type: "GET"
 			dataType: "json"
 			success: (data, textStatus, jqXHR) =>
-				@readyCallback(data)
+				if "vera" of data then @veraActions = data.vera
+				if "indigo" of data then @indigoActions = data.indigo
+				if "doorController" of data then @doorActions = data.doorController
+				if "blinds" of data then @blindsActions = data.blinds
+				@callBackWithSumActions
 			error: (jqXHR, textStatus, errorThrown) =>
 				console.log ("Get Actions failed: " + textStatus + " " + errorThrown)
 

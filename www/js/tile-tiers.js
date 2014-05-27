@@ -8,14 +8,46 @@ TileTiers = (function() {
   }
 
   TileTiers.prototype.addTier = function(tier) {
-    return this.tiers.push(tier);
+    this.tiers.push(tier);
+    return this.tiers.length - 1;
   };
 
-  TileTiers.prototype.getTileContainerSelector = function(tierIdx) {
+  TileTiers.prototype.removeAll = function() {
+    this.clear();
+    return this.tiers = [];
+  };
+
+  TileTiers.prototype.findTierIdx = function(tierName) {
+    var tier, tierIdx, _i, _len, _ref;
+    tierIdx = 0;
+    _ref = this.tiers;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      tier = _ref[_i];
+      if (tier.tierName === tierName) {
+        return tierIdx;
+      }
+      tierIdx += 1;
+    }
+    return -1;
+  };
+
+  TileTiers.prototype.getTileTierSelector = function(tierName) {
+    var tier, _i, _len, _ref;
+    _ref = this.tiers;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      tier = _ref[_i];
+      if (tier.tierName === tierName) {
+        return tier.getTileTierSelector();
+      }
+    }
+    return "";
+  };
+
+  TileTiers.prototype.getTierName = function(tierIdx) {
     if (tierIdx >= this.tiers.length) {
       return "";
     }
-    return this.tiers[tierIdx].getTileContainerSelector();
+    return this.tiers[tierIdx].tierName;
   };
 
   TileTiers.prototype.addGroup = function(tierIdx, groupTitle) {
@@ -30,6 +62,13 @@ TileTiers = (function() {
       return;
     }
     return this.tiers[tierIdx].clearTileGroup(groupIdx);
+  };
+
+  TileTiers.prototype.findGroupIdx = function(tierIdx, groupName) {
+    if (tierIdx >= this.tiers.length) {
+      return;
+    }
+    return this.tiers[tierIdx].findGroupIdx(groupName);
   };
 
   TileTiers.prototype.reDoLayout = function() {
@@ -47,6 +86,7 @@ TileTiers = (function() {
     if (tierIdx >= this.tiers.length) {
       return;
     }
+    tile.tileBasics.setTierGroupIds(tierIdx, groupIdx);
     return this.tiers[tierIdx].addTileToGroup(groupIdx, tile);
   };
 
@@ -56,16 +96,22 @@ TileTiers = (function() {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       tier = _ref[_i];
-      _results.push(tier.clearTiles());
+      _results.push(tier.removeAll());
     }
     return _results;
   };
 
-  TileTiers.prototype.findExistingTile = function(tierIdx, tileName) {
-    if (tierIdx >= this.tiers.length) {
-      return;
+  TileTiers.prototype.findExistingTile = function(tileName) {
+    var exTile, tier, _i, _len, _ref;
+    _ref = this.tiers;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      tier = _ref[_i];
+      exTile = tier.findExistingTile(tileName);
+      if (exTile !== null) {
+        return exTile;
+      }
     }
-    return this.tiers[tierIdx].findExistingTile(tileName);
+    return null;
   };
 
   return TileTiers;
