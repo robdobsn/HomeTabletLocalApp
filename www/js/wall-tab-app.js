@@ -9,7 +9,7 @@ WallTabApp = (function() {
     this.configReadyCb = __bind(this.configReadyCb, this);
     this.rebuildUI = __bind(this.rebuildUI, this);
     this.tileColours = new TileColours;
-    this.rdHomeServerUrl = "http://127.0.0.1:5000";
+    this.rdHomeServerUrl = "http://macallan:5000";
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
     this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
     this.automationExecUrl = this.rdHomeServerUrl;
@@ -314,8 +314,11 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.actionOnUserIdle = function() {
-    return $("html, body").animate({
+    $("html, body").animate({
       scrollLeft: "0px"
+    });
+    return $("html, body").animate({
+      scrollUp: "0px"
     });
   };
 

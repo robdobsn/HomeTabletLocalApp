@@ -89,6 +89,9 @@ TileTier = (function() {
       group = _ref[_i];
       this.groupCols.push(group.getColsInGroup(this.tilesDown, isPortrait));
     }
+    $("#" + this.tierId).css({
+      "height": document.documentElement.clientHeight + "px"
+    });
     return isPortrait;
   };
 

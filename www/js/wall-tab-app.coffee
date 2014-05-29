@@ -1,9 +1,9 @@
 class WallTabApp
     constructor: ->
         @tileColours = new TileColours
-        @rdHomeServerUrl = "http://127.0.0.1:5000"
+#        @rdHomeServerUrl = "http://127.0.0.1:5000"
 #        @rdHomeServerUrl = "http://192.168.0.97:5000"
-#        @rdHomeServerUrl = "http://macallan:5000"
+        @rdHomeServerUrl = "http://macallan:5000"
         @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
         @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
         @automationExecUrl = @rdHomeServerUrl
@@ -210,3 +210,4 @@ class WallTabApp
 
     actionOnUserIdle: =>
         $("html, body").animate({ scrollLeft: "0px" });
+        $("html, body").animate({ scrollUp: "0px" });

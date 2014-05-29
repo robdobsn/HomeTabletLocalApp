@@ -45,7 +45,7 @@ class TileTier
 		groupIdx = @groups.length
 		newTileGroup = new TileGroup this, @groupTitlesTagLocator, groupIdx, groupTitle
 		@groups.push newTileGroup
-		groupIdx
+		return groupIdx
 
 	findGroupIdx: (groupName) ->
 		groupIdx = 0
@@ -68,7 +68,10 @@ class TileTier
 		@groupCols = []
 		for group in @groups
 			@groupCols.push group.getColsInGroup(@tilesDown, isPortrait)
-		isPortrait
+		$("##{@tierId}").css {
+			"height": document.documentElement.clientHeight + "px"
+			}
+		return isPortrait
 
 	getTileSize: (colSpan, rowSpan) ->
 		[@tileWidth * colSpan + (@tileSepXPixels * (colSpan-1)), @tileHeight * rowSpan + (@tileSepYPixels * (rowSpan-1))]
@@ -80,14 +83,14 @@ class TileTier
 			xStart += @groupCols[gIdx] * @cellWidth
 			gIdx += 1
 		xStart += groupIdx * @groupSepPixels
-		xStart
+		return xStart
 
 	calcFontSizePercent: ->
 		100 * Math.max(@cellWidth, @cellHeight) / 300
 
 	getGroupTitlePos: (groupIdx) ->
 		xStart = @getGroupStartX(groupIdx)
-		[xStart, 10, "200%"]
+		return [xStart, 10, "200%"]
 
 	getCellPos: (groupIdx, colIdx, rowIdx) ->
 		xStart = @getGroupStartX(groupIdx)
@@ -95,11 +98,11 @@ class TileTier
 		cellX = xStart + colInGroup * @cellWidth
 		cellY = @groupTitlesTopMargin + rowIdx * @cellHeight
 		fontScaling = @calcFontSizePercent()
-		[cellX, cellY, fontScaling]
+		return [cellX, cellY, fontScaling]
 
 	getNextTileIdx: ->
 		@nextTileIdx += 1
-		@nextTileIdx
+		return @nextTileIdx
 
 	addTileToGroup: (groupIdx, tile) ->
 		@groups[groupIdx].addExistingTile tile 
@@ -115,4 +118,4 @@ class TileTier
 			existingTile = group.findExistingTile(tileName)
 			if existingTile	isnt null
 				break
-		existingTile
+		return existingTile
