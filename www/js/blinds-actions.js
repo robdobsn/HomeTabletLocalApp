@@ -3,7 +3,7 @@ var GenBlindsActions, GetBlindsActions;
 
 GetBlindsActions = function() {
   var actionsArray, blindsDef;
-  blindsDef = [["Games Room", [["1", "Shade 1"], ["2", "Shade 2"]], "http://192.168.0.225/blind/"], ["Grace Bath", [["1", "Blinds"]], "http://192.168.0.226/blind/"], ["Office", [["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"]], "http://192.168.0.220/blind/"]];
+  blindsDef = [["Games Room", [["1", "Shade 1"], ["2", "Shade 2"]], "http://192.168.0.225/blind/"], ["Grace Bath", [["1", "Shade"]], "http://192.168.0.226/blind/"], ["Office", [["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"]], "http://192.168.0.220/blind/"]];
   return actionsArray = GenBlindsActions(blindsDef);
 };
 
@@ -13,12 +13,13 @@ GenBlindsActions = function(blindsDefs) {
   actions = [];
   for (_i = 0, _len = blindsDefs.length; _i < _len; _i++) {
     room = blindsDefs[_i];
-    _ref = room[1];
-    for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-      win = _ref[_j];
-      for (_k = 0, _len2 = blindsDirns.length; _k < _len2; _k++) {
-        dirn = blindsDirns[_k];
+    for (_j = 0, _len1 = blindsDirns.length; _j < _len1; _j++) {
+      dirn = blindsDirns[_j];
+      _ref = room[1];
+      for (_k = 0, _len2 = _ref.length; _k < _len2; _k++) {
+        win = _ref[_k];
         actions.push({
+          tierName: "doorBlindsTier",
           actionNum: 0,
           actionName: win[1] + " " + dirn[0],
           groupName: room[0],

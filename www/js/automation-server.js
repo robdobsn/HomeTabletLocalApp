@@ -3,46 +3,53 @@ var AutomationServer,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 AutomationServer = (function() {
-  function AutomationServer(intermediateServerURL, veraServerUrl, indigoServerUrl, blindsActions, doorActions) {
-    this.intermediateServerURL = intermediateServerURL;
+  function AutomationServer(automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, fibaroServerUrl, sonosActionsUrl) {
+    this.automationActionsUrl = automationActionsUrl;
+    this.automationExecUrl = automationExecUrl;
     this.veraServerUrl = veraServerUrl;
     this.indigoServerUrl = indigoServerUrl;
-    this.blindsActions = blindsActions;
-    this.doorActions = doorActions;
+    this.fibaroServerUrl = fibaroServerUrl;
+    this.sonosActionsUrl = sonosActionsUrl;
     this.executeCommand = __bind(this.executeCommand, this);
     this.callBackWithSumActions = __bind(this.callBackWithSumActions, this);
+    this.fibaroServerReadyCb = __bind(this.fibaroServerReadyCb, this);
     this.veraServerReadyCb = __bind(this.veraServerReadyCb, this);
     this.indigoServerReadyCb = __bind(this.indigoServerReadyCb, this);
-    this.ACTIONS_URI = this.intermediateServerURL + "/actions";
-    this.EXEC_URI = this.intermediateServerURL + "/exec";
     this.indigoServer = new IndigoServer(this.indigoServerUrl);
     this.indigoServer.setReadyCallback(this.indigoServerReadyCb);
     this.veraServer = new VeraServer(this.veraServerUrl);
     this.veraServer.setReadyCallback(this.veraServerReadyCb);
+    this.fibaroServer = new FibaroServer(this.fibaroServerUrl);
+    this.fibaroServer.setReadyCallback(this.fibaroServerReadyCb);
     this.useDirectAccessForExec = true;
     this.veraActions = [];
     this.indigoActions = [];
+    this.fibaroActions = [];
     this.baseAutomationActions = {};
     this.doorActions = [
       {
+        tierName: "doorBlindsTier",
         actionNum: 0,
         actionName: "Main Unlock",
         groupName: "Front Door",
         actionUrl: this.frontDoorUrl + "main-unlock",
         iconName: "door-unlock"
       }, {
+        tierName: "doorBlindsTier",
         actionNum: 0,
         actionName: "Main Lock",
         groupName: "Front Door",
         actionUrl: this.frontDoorUrl + "main-lock",
         iconName: "door-lock"
       }, {
+        tierName: "doorBlindsTier",
         actionNum: 0,
         actionName: "Inner Unlock",
         groupName: "Front Door",
         actionUrl: this.frontDoorUrl + "inner-unlock",
         iconName: "door-unlock"
       }, {
+        tierName: "doorBlindsTier",
         actionNum: 0,
         actionName: "Inner Lock",
         groupName: "Front Door",
@@ -51,6 +58,7 @@ AutomationServer = (function() {
       }
     ];
     this.blindsActions = GetBlindsActions();
+    this.sonosActions = {};
   }
 
   AutomationServer.prototype.setReadyCallback = function(readyCallback) {
@@ -67,33 +75,41 @@ AutomationServer = (function() {
     return this.callBackWithSumActions();
   };
 
+  AutomationServer.prototype.fibaroServerReadyCb = function(actions) {
+    this.fibaroActions = actions;
+    return this.callBackWithSumActions();
+  };
+
   AutomationServer.prototype.callBackWithSumActions = function() {
     var k, sumActions, v, _ref;
     sumActions = {
       "doors": this.doorActions,
       "blinds": this.blindsActions,
       "vera": this.veraActions,
-      "indigo": this.indigoActions
+      "indigo": this.indigoActions,
+      "fibaro": this.fibaroActions
     };
     _ref = this.baseAutomationActions;
     for (k in _ref) {
       v = _ref[k];
-      if (k !== "vera" && k !== "indigo" && k !== "blinds" && k !== "doors") {
+      if (k !== "vera" && k !== "indigo" && k !== "fibaro" && k !== "blinds" && k !== "doors") {
         sumActions[k] = v;
       }
     }
+    sumActions["sonos"] = this.sonosActions;
     return this.readyCallback(sumActions);
   };
 
   AutomationServer.prototype.getActionGroups = function() {
     this.indigoServer.getActionGroups();
     this.veraServer.getActionGroups();
-    return this.getActionGroupsFromIntermediateServer();
+    this.getActionGroupsFromIntermediateServer();
+    return this.getSonosActions();
   };
 
   AutomationServer.prototype.getActionGroupsFromIntermediateServer = function() {
     var _this = this;
-    return $.ajax(this.ACTIONS_URI, {
+    return $.ajax(this.automationActionsUrl, {
       type: "GET",
       dataType: "json",
       success: function(data, textStatus, jqXHR) {
@@ -102,6 +118,9 @@ AutomationServer = (function() {
         }
         if ("indigo" in data) {
           _this.indigoActions = data.indigo;
+        }
+        if ("fibaro" in data) {
+          _this.fibaroActions = data.fibaro;
         }
         if ("doorController" in data) {
           _this.doorActions = data.doorController;
@@ -113,6 +132,21 @@ AutomationServer = (function() {
       },
       error: function(jqXHR, textStatus, errorThrown) {
         return console.log("Get Actions failed: " + textStatus + " " + errorThrown);
+      }
+    });
+  };
+
+  AutomationServer.prototype.getSonosActions = function() {
+    var _this = this;
+    return $.ajax(this.sonosActionsUrl, {
+      type: "GET",
+      dataType: "json",
+      success: function(data, textStatus, jqXHR) {
+        _this.sonosActions = data.sonos;
+        return _this.callBackWithSumActions;
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        return console.log("Get Sonos actions failed: " + textStatus + " " + errorThrown);
       }
     });
   };
@@ -129,7 +163,7 @@ AutomationServer = (function() {
         }
       });
     } else {
-      return $.ajax(this.EXEC_URI + "/" + cmdParams, {
+      return $.ajax(this.automationExecUrl + "/" + cmdParams, {
         type: "GET",
         dataType: "text",
         success: function(data, textStatus, jqXHR) {},

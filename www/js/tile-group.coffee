@@ -14,7 +14,7 @@ class TileGroup
 		@tiles = []
 
 	numTiles: ->
-		@tiles.length
+		return @tiles.length
 
 	findBestPlaceForTile: (colSpan, rowSpan, tilesDown, tilesAcross) ->
 		# Algorithm to find best location for a tile
@@ -58,7 +58,7 @@ class TileGroup
 				@tilePositions.push @findBestPlaceForTile(tile.tileBasics.colSpan, tile.tileBasics.rowSpan, tilesDown, estColCount)
 			else
 				@tilePositions.push new TilePosition false
-		estColCount
+		return estColCount
 
 	# addTile: (tileColour, colSpan) ->
 	# 	tile = new Tile tileColour, colSpan
@@ -72,7 +72,9 @@ class TileGroup
 		@tiles.push tile
 
 	sortByTileWidth: (a, b) ->
-		a.tileBasics.colSpan - b.tileBasics.colSpan
+		if a.tileBasics.colSpan is b.tileBasics.colSpan
+			return a.tileIdx - b.tileIdx
+		return a.tileBasics.colSpan - b.tileBasics.colSpan
 
 	repositionTiles: (isPortrait) ->
 		[titleX, titleY, fontSize] = @tileTier.getGroupTitlePos(@groupIdx)
@@ -98,4 +100,4 @@ class TileGroup
 			if tile.tileBasics.tileName is tileName
 				existingTile = tile
 				break
-		existingTile
+		return existingTile

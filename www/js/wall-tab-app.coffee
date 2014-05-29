@@ -5,9 +5,12 @@ class WallTabApp
 #        @rdHomeServerUrl = "http://192.168.0.97:5000"
 #        @rdHomeServerUrl = "http://macallan:5000"
         @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
-        @automationServerUrl = @rdHomeServerUrl + "/automation/api/v1.0"
+        @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
+        @automationExecUrl = @rdHomeServerUrl
+        @sonosActionsUrl = @rdHomeServerUrl + "/sonos/api/v1.0/actions"
         @tabletConfigUrl = @rdHomeServerUrl + "/tablet/api/v1.0/config"
         @indigoServerUrl = "http://IndigoServer.local:8176"
+        @fibaroServerUrl = "http://192.168.0.69"
         @veraServerUrl = "http://192.168.0.206:3480"
         @frontDoorUrl = "http://192.168.0.221/"
         @jsonConfig = {}
@@ -29,7 +32,7 @@ class WallTabApp
         @automationActionGroups = []
 
         # Communication with Vera3 & Indigo through automation server
-        @automationServer = new AutomationServer(@automationServerUrl, @veraServerUrl, @indigoServerUrl)
+        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl)
         @automationServer.setReadyCallback(@automationServerReadyCb)
 
         # Tablet config is based on the IP address of the tablet
@@ -65,7 +68,9 @@ class WallTabApp
             [
                 { tierName: "mainTier", groupName: "Home" },
                 { tierName: "mainTier", groupName: "Calendar" },
-                { tierName: "actionsTier", groupName: "Scenes" }
+                { tierName: "actionsTier", groupName: "Lights" },
+                { tierName: "sonosTier", groupName: "Kitchen" },
+                { tierName: "doorBlindsTier", groupName: "Front Door" },
             ]
         @jsonConfig["groupDefinitions"] = groupDefinitions
         tileDefinitions = 
@@ -111,8 +116,9 @@ class WallTabApp
 
     addTileToTierGroup: (tierName, groupName, tile) ->
         tierIdx = @tileTiers.findTierIdx(tierName)
+        if tierIdx < 0 then tierIdx = @tileTiers.findTierIdx("actionsTier")
         if tierIdx < 0 then return
-        if groupName is "" then groupName = "Scenes"
+        if groupName is "" then groupName = "Lights"
         groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupName)
         #groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
         #if groupIdx < 0 then return
@@ -126,7 +132,8 @@ class WallTabApp
         for servType, actionList of @automationActionGroups
             for action in actionList
                 # make the button
-                tileDef = { tierName: "actionsTier", groupName: action.groupName, colSpan: 1, rowSpan: 1, uri: action.actionUrl, name: action.actionName, visibility: "all", tileType: "action", iconName: if "iconName" of action then action.iconName else "bulb-on" }
+                tierName = if "tierName" of action then action.tierName else "actionsTier"
+                tileDef = { tierName: tierName, groupName: action.groupName, colSpan: 1, rowSpan: 1, uri: action.actionUrl, name: action.actionName, visibility: "all", tileType: "action", iconName: if "iconName" of action then action.iconName else "bulb-on" }
                 @makeTileFromTileDef(tileDef)
         # Re-apply the configuration for the tablet - handles favourites group etc
         @applyTileConfig(@jsonConfig)

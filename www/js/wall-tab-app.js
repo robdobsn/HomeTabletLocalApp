@@ -11,9 +11,12 @@ WallTabApp = (function() {
     this.tileColours = new TileColours;
     this.rdHomeServerUrl = "http://127.0.0.1:5000";
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
-    this.automationServerUrl = this.rdHomeServerUrl + "/automation/api/v1.0";
+    this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
+    this.automationExecUrl = this.rdHomeServerUrl;
+    this.sonosActionsUrl = this.rdHomeServerUrl + "/sonos/api/v1.0/actions";
     this.tabletConfigUrl = this.rdHomeServerUrl + "/tablet/api/v1.0/config";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
+    this.fibaroServerUrl = "http://192.168.0.69";
     this.veraServerUrl = "http://192.168.0.206:3480";
     this.frontDoorUrl = "http://192.168.0.221/";
     this.jsonConfig = {};
@@ -25,7 +28,7 @@ WallTabApp = (function() {
     this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
     this.setDefaultTabletConfig();
     this.automationActionGroups = [];
-    this.automationServer = new AutomationServer(this.automationServerUrl, this.veraServerUrl, this.indigoServerUrl);
+    this.automationServer = new AutomationServer(this.automationActionsUrl, this.automationExecUrl, this.veraServerUrl, this.indigoServerUrl, this.fibaroServerUrl, this.sonosActionsUrl);
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfig = new TabletConfig(this.tabletConfigUrl);
     this.tabletConfig.setReadyCallback(this.configReadyCb);
@@ -59,7 +62,13 @@ WallTabApp = (function() {
         groupName: "Calendar"
       }, {
         tierName: "actionsTier",
-        groupName: "Scenes"
+        groupName: "Lights"
+      }, {
+        tierName: "sonosTier",
+        groupName: "Kitchen"
+      }, {
+        tierName: "doorBlindsTier",
+        groupName: "Front Door"
       }
     ];
     this.jsonConfig["groupDefinitions"] = groupDefinitions;
@@ -144,17 +153,20 @@ WallTabApp = (function() {
     var groupIdx, tierIdx;
     tierIdx = this.tileTiers.findTierIdx(tierName);
     if (tierIdx < 0) {
+      tierIdx = this.tileTiers.findTierIdx("actionsTier");
+    }
+    if (tierIdx < 0) {
       return;
     }
     if (groupName === "") {
-      groupName = "Scenes";
+      groupName = "Lights";
     }
     groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupName);
     return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };
 
   WallTabApp.prototype.rebuildUI = function() {
-    var action, actionList, servType, tileDef, _i, _len, _ref;
+    var action, actionList, servType, tierName, tileDef, _i, _len, _ref;
     this.tileTiers.removeAll();
     this.applyTierAndGroupConfig(this.jsonConfig);
     _ref = this.automationActionGroups;
@@ -162,8 +174,9 @@ WallTabApp = (function() {
       actionList = _ref[servType];
       for (_i = 0, _len = actionList.length; _i < _len; _i++) {
         action = actionList[_i];
+        tierName = "tierName" in action ? action.tierName : "actionsTier";
         tileDef = {
-          tierName: "actionsTier",
+          tierName: tierName,
           groupName: action.groupName,
           colSpan: 1,
           rowSpan: 1,

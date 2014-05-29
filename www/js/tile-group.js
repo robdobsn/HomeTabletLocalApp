@@ -96,6 +96,9 @@ TileGroup = (function() {
   };
 
   TileGroup.prototype.sortByTileWidth = function(a, b) {
+    if (a.tileBasics.colSpan === b.tileBasics.colSpan) {
+      return a.tileIdx - b.tileIdx;
+    }
     return a.tileBasics.colSpan - b.tileBasics.colSpan;
   };
 
