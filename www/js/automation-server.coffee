@@ -21,6 +21,7 @@ class AutomationServer
 	        ]
         @blindsActions = GetBlindsActions()
         @sonosActions = {}
+        @soundPlayActions = {}
 
 	setReadyCallback: (@readyCallback) ->
 
@@ -42,6 +43,7 @@ class AutomationServer
 			if k isnt "vera" and k isnt "indigo" and k isnt "fibaro" and k isnt "blinds" and k isnt "doors"
 				sumActions[k] = v
 		sumActions["sonos"] = @sonosActions
+		sumActions["soundPlayActions"] = @soundPlayActions
 		@readyCallback(sumActions)
 
 	getActionGroups: ->
@@ -73,6 +75,7 @@ class AutomationServer
 			dataType: "json"
 			success: (data, textStatus, jqXHR) =>
 				@sonosActions = data.sonos
+				@soundPlayActions = data.soundsToPlay
 				@callBackWithSumActions
 			error: (jqXHR, textStatus, errorThrown) =>
 				console.log ("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + @sonosActionsUrl)
