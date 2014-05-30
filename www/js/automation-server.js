@@ -59,6 +59,7 @@ AutomationServer = (function() {
     ];
     this.blindsActions = GetBlindsActions();
     this.sonosActions = {};
+    this.soundPlayActions = {};
   }
 
   AutomationServer.prototype.setReadyCallback = function(readyCallback) {
@@ -97,6 +98,7 @@ AutomationServer = (function() {
       }
     }
     sumActions["sonos"] = this.sonosActions;
+    sumActions["soundPlayActions"] = this.soundPlayActions;
     return this.readyCallback(sumActions);
   };
 
@@ -143,6 +145,7 @@ AutomationServer = (function() {
       dataType: "json",
       success: function(data, textStatus, jqXHR) {
         _this.sonosActions = data.sonos;
+        _this.soundPlayActions = data.soundsToPlay;
         return _this.callBackWithSumActions;
       },
       error: function(jqXHR, textStatus, errorThrown) {
