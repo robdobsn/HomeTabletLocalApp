@@ -64,7 +64,7 @@ class AutomationServer
 				if "blinds" of data then @blindsActions = data.blinds
 				@callBackWithSumActions
 			error: (jqXHR, textStatus, errorThrown) =>
-				console.log ("Get Actions failed: " + textStatus + " " + errorThrown)
+				console.log ("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + @automationActionsUrl)
 
 	getSonosActions: ->
 		# Get the sonos actions
@@ -75,7 +75,7 @@ class AutomationServer
 				@sonosActions = data.sonos
 				@callBackWithSumActions
 			error: (jqXHR, textStatus, errorThrown) =>
-				console.log ("Get Sonos actions failed: " + textStatus + " " + errorThrown)
+				console.log ("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + @sonosActionsUrl)
 
 	executeCommand: (cmdParams) =>
 		if cmdParams[0..3] is "http"
@@ -85,14 +85,15 @@ class AutomationServer
 				success: (data, textStatus, jqXHR) =>
 
 				error: (jqXHR, textStatus, errorThrown) =>
-					console.log ("Direct exec command failed: " + textStatus + " " + errorThrown)
+					console.log ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams)
 		else
 			# Execute command on the intermediate server
-			$.ajax @automationExecUrl + "/" + cmdParams,
+			cmdToExec = @automationExecUrl + "/" + cmdParams
+			$.ajax cmdToExec,
 				type: "GET"
 				dataType: "text"
 				success: (data, textStatus, jqXHR) =>
 
 				error: (jqXHR, textStatus, errorThrown) =>
-					console.log ("Intermediate exec command failed: " + textStatus + " " + errorThrown)
+					console.log ("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec)
 

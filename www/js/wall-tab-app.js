@@ -9,7 +9,7 @@ WallTabApp = (function() {
     this.configReadyCb = __bind(this.configReadyCb, this);
     this.rebuildUI = __bind(this.rebuildUI, this);
     this.tileColours = new TileColours;
-    this.rdHomeServerUrl = "http://macallan:5000";
+    this.rdHomeServerUrl = "http://127.0.0.1:5000";
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
     this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
     this.automationExecUrl = this.rdHomeServerUrl;
@@ -290,11 +290,11 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.checkActionsForServer = function(oldActions, newActions) {
-    var j, k, newAction, oldAction, v, _i, _ref;
+    var j, k, newAction, oldAction, v, _i, _len;
     if (oldActions.length !== newActions.length) {
       return true;
     }
-    for (j = _i = 0, _ref = oldActions.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; j = 0 <= _ref ? ++_i : --_i) {
+    for (j = _i = 0, _len = oldActions.length; _i < _len; j = ++_i) {
       oldAction = oldActions[j];
       newAction = newActions[j];
       if (Object.keys(oldAction).length !== Object.keys(newAction).length) {

@@ -131,7 +131,7 @@ AutomationServer = (function() {
         return _this.callBackWithSumActions;
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        return console.log("Get Actions failed: " + textStatus + " " + errorThrown);
+        return console.log("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.automationActionsUrl);
       }
     });
   };
@@ -146,29 +146,31 @@ AutomationServer = (function() {
         return _this.callBackWithSumActions;
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        return console.log("Get Sonos actions failed: " + textStatus + " " + errorThrown);
+        return console.log("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.sonosActionsUrl);
       }
     });
   };
 
   AutomationServer.prototype.executeCommand = function(cmdParams) {
-    var _this = this;
+    var cmdToExec,
+      _this = this;
     if (cmdParams.slice(0, 4) === "http") {
       return $.ajax(cmdParams, {
         type: "GET",
         dataType: "text",
         success: function(data, textStatus, jqXHR) {},
         error: function(jqXHR, textStatus, errorThrown) {
-          return console.log("Direct exec command failed: " + textStatus + " " + errorThrown);
+          return console.log("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams);
         }
       });
     } else {
-      return $.ajax(this.automationExecUrl + "/" + cmdParams, {
+      cmdToExec = this.automationExecUrl + "/" + cmdParams;
+      return $.ajax(cmdToExec, {
         type: "GET",
         dataType: "text",
         success: function(data, textStatus, jqXHR) {},
         error: function(jqXHR, textStatus, errorThrown) {
-          return console.log("Intermediate exec command failed: " + textStatus + " " + errorThrown);
+          return console.log("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec);
         }
       });
     }
