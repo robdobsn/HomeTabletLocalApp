@@ -1,9 +1,9 @@
 class WallTabApp
     constructor: ->
         @tileColours = new TileColours
-        @rdHomeServerUrl = "http://127.0.0.1:5000"
+#        @rdHomeServerUrl = "http://127.0.0.1:5000"
 #        @rdHomeServerUrl = "http://192.168.0.97:5000"
-#        @rdHomeServerUrl = "http://macallan:5000"
+        @rdHomeServerUrl = "http://macallan:5000"
         @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
         @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
         @automationExecUrl = @rdHomeServerUrl
@@ -17,6 +17,7 @@ class WallTabApp
         window.soundClick = new Audio("audio/click.ogg")
         window.soundOk = new Audio("audio/blip.ogg")
         window.soundFail = new Audio("audio/fail.ogg")
+        @bAnimatingScroll = false
 
     go: ->
         # Basic body for DOM
@@ -52,6 +53,10 @@ class WallTabApp
         # And resize event
         $(window).on 'resize', =>
           @tileTiers.reDoLayout()
+
+        # Scroll: snap to tiers
+        $(window).on 'scroll', =>
+            @scrollSnapping()
 
         # Rebuild UI
         @rebuildUI()
@@ -220,3 +225,22 @@ class WallTabApp
     actionOnUserIdle: =>
         $("html, body").animate({ scrollLeft: "0px" });
         $("html, body").animate({ scrollUp: "0px" });
+
+    delay: (ms, func) ->
+        window.setTimeout(func, ms)
+
+    scrollSnapping: =>
+        return if @bAnimatingScroll? and @bAnimatingScroll is true
+        @bAnimatingScroll = true
+        @delay(500, @scrollNow)
+
+    scrollNow: =>
+        @bAnimatingScroll = false
+        if @tileTiers.numTiers() <= 1 then return
+        scrollTop = $(window).scrollTop()
+        for tier in @tileTiers.tiers
+            console.log("tier " + tier.getTierTop())
+        tierHeight =  @tileTiers.getTier(1).getTierTop()
+        scrollTo = Math.round(scrollTop/tierHeight)*tierHeight
+        $("html, body").stop().animate({ scrollTop: scrollTo }, 200);
+

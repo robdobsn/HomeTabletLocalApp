@@ -72,6 +72,18 @@ TileTier = (function() {
     return -1;
   };
 
+  TileTier.prototype.getTierHeight = function() {
+    var tierSel;
+    tierSel = $("#" + this.tierId);
+    return tierSel[0].clientHeight;
+  };
+
+  TileTier.prototype.getTierTop = function() {
+    var tierSel;
+    tierSel = $("#" + this.tierId);
+    return tierSel[0].offsetTop;
+  };
+
   TileTier.prototype.calcLayout = function() {
     var group, isPortrait, winHeight, winWidth, _i, _len, _ref;
     winWidth = $(window).width();

@@ -7,6 +7,14 @@ TileTiers = (function() {
     this.tiers = [];
   }
 
+  TileTiers.prototype.numTiers = function() {
+    return this.tiers.length;
+  };
+
+  TileTiers.prototype.getTier = function(tierIdx) {
+    return this.tiers[tierIdx];
+  };
+
   TileTiers.prototype.addTier = function(tier) {
     this.tiers.push(tier);
     return this.tiers.length - 1;

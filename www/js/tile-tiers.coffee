@@ -2,6 +2,12 @@ class TileTiers
 	constructor: (@parentTag) ->
 		@tiers = []
 
+	numTiers: ->
+		return @tiers.length
+
+	getTier: (tierIdx) ->
+		return @tiers[tierIdx]
+		
 	addTier: (tier) ->
 		@tiers.push tier
 		return @tiers.length - 1

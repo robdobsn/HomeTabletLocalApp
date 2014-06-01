@@ -27,7 +27,7 @@ class TileTier
 			    </div>
             </div>
 			"""
-
+			
 	removeAll: ->
 		@clearTiles()
 		$("##{@tierId}").remove()
@@ -54,6 +54,14 @@ class TileTier
 				return groupIdx
 			groupIdx += 1
 		return -1
+
+	getTierHeight: ->
+		tierSel = $("##{@tierId}")
+		return tierSel[0].clientHeight
+
+	getTierTop: ->
+		tierSel = $("##{@tierId}")
+		return tierSel[0].offsetTop
 
 	calcLayout: ->
 		winWidth = $(window).width()

@@ -4,12 +4,14 @@ var WallTabApp,
 
 WallTabApp = (function() {
   function WallTabApp() {
+    this.scrollNow = __bind(this.scrollNow, this);
+    this.scrollSnapping = __bind(this.scrollSnapping, this);
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
     this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
     this.configReadyCb = __bind(this.configReadyCb, this);
     this.rebuildUI = __bind(this.rebuildUI, this);
     this.tileColours = new TileColours;
-    this.rdHomeServerUrl = "http://127.0.0.1:5000";
+    this.rdHomeServerUrl = "http://macallan:5000";
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
     this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
     this.automationExecUrl = this.rdHomeServerUrl;
@@ -23,6 +25,7 @@ WallTabApp = (function() {
     window.soundClick = new Audio("audio/click.ogg");
     window.soundOk = new Audio("audio/blip.ogg");
     window.soundFail = new Audio("audio/fail.ogg");
+    this.bAnimatingScroll = false;
   }
 
   WallTabApp.prototype.go = function() {
@@ -41,6 +44,9 @@ WallTabApp = (function() {
     });
     $(window).on('resize', function() {
       return _this.tileTiers.reDoLayout();
+    });
+    $(window).on('scroll', function() {
+      return _this.scrollSnapping();
     });
     this.rebuildUI();
     this.requestActionAndConfigData();
@@ -384,6 +390,37 @@ WallTabApp = (function() {
     return $("html, body").animate({
       scrollUp: "0px"
     });
+  };
+
+  WallTabApp.prototype.delay = function(ms, func) {
+    return window.setTimeout(func, ms);
+  };
+
+  WallTabApp.prototype.scrollSnapping = function() {
+    if ((this.bAnimatingScroll != null) && this.bAnimatingScroll === true) {
+      return;
+    }
+    this.bAnimatingScroll = true;
+    return this.delay(500, this.scrollNow);
+  };
+
+  WallTabApp.prototype.scrollNow = function() {
+    var scrollTo, scrollTop, tier, tierHeight, _i, _len, _ref;
+    this.bAnimatingScroll = false;
+    if (this.tileTiers.numTiers() <= 1) {
+      return;
+    }
+    scrollTop = $(window).scrollTop();
+    _ref = this.tileTiers.tiers;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      tier = _ref[_i];
+      console.log("tier " + tier.getTierTop());
+    }
+    tierHeight = this.tileTiers.getTier(1).getTierTop();
+    scrollTo = Math.round(scrollTop / tierHeight) * tierHeight;
+    return $("html, body").stop().animate({
+      scrollTop: scrollTo
+    }, 200);
   };
 
   return WallTabApp;
