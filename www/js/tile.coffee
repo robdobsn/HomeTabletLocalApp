@@ -15,8 +15,12 @@ class Tile
 			"""
 		if @tileBasics.clickFn?
 			$("##{@tileId}").click =>
+				@playClickSound()
 				(@tileBasics.clickFn) @tileBasics.clickParam
 		@contents = $("##{@tileId}>.sqInner")
+
+	playClickSound: ->
+		window.soundClick.play() if window.soundClick?
 
 	removeFromDoc: ->
 		if @refreshId?

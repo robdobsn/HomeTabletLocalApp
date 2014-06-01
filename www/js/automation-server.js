@@ -157,13 +157,23 @@ AutomationServer = (function() {
   AutomationServer.prototype.executeCommand = function(cmdParams) {
     var cmdToExec,
       _this = this;
+    if ((cmdParams == null) || cmdParams === "") {
+      return;
+    }
     if (cmdParams.slice(0, 4) === "http") {
       return $.ajax(cmdParams, {
         type: "GET",
         dataType: "text",
-        success: function(data, textStatus, jqXHR) {},
+        success: function(data, textStatus, jqXHR) {
+          if (window.soundOk != null) {
+            return window.soundOk.play();
+          }
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-          return console.log("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams);
+          console.log("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams);
+          if (window.soundFail != null) {
+            return window.soundFail.play();
+          }
         }
       });
     } else {
@@ -171,9 +181,16 @@ AutomationServer = (function() {
       return $.ajax(cmdToExec, {
         type: "GET",
         dataType: "text",
-        success: function(data, textStatus, jqXHR) {},
+        success: function(data, textStatus, jqXHR) {
+          if (window.soundOk != null) {
+            return window.soundOk.play();
+          }
+        },
         error: function(jqXHR, textStatus, errorThrown) {
-          return console.log("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec);
+          console.log("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec);
+          if (window.soundFail != null) {
+            return window.soundFail.play();
+          }
         }
       });
     }

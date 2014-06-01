@@ -1,9 +1,9 @@
 class WallTabApp
     constructor: ->
         @tileColours = new TileColours
-#        @rdHomeServerUrl = "http://127.0.0.1:5000"
+        @rdHomeServerUrl = "http://127.0.0.1:5000"
 #        @rdHomeServerUrl = "http://192.168.0.97:5000"
-        @rdHomeServerUrl = "http://macallan:5000"
+#        @rdHomeServerUrl = "http://macallan:5000"
         @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
         @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
         @automationExecUrl = @rdHomeServerUrl
@@ -14,6 +14,9 @@ class WallTabApp
         @veraServerUrl = "http://192.168.0.206:3480"
         @frontDoorUrl = "http://192.168.0.221/"
         @jsonConfig = {}
+        window.soundClick = new Audio("audio/click.ogg")
+        window.soundOk = new Audio("audio/blip.ogg")
+        window.soundFail = new Audio("audio/fail.ogg")
 
     go: ->
         # Basic body for DOM
@@ -72,12 +75,18 @@ class WallTabApp
                 { tierName: "sonosTier", groupName: "Sonos" },
                 { tierName: "sonosTier", groupName: "Kids" },
                 { tierName: "doorBlindsTier", groupName: "Front Door" },
+                { tierName: "calendarTier", groupName: "Today" },
             ]
         @jsonConfig["groupDefinitions"] = groupDefinitions
         tileDefinitions = 
             [
                 # Calendar
                 { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 2, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 0 }
+                { tierName: "calendarTier", groupName: "Today", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 0 }
+                { tierName: "calendarTier", groupName: "Tomorrow", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 1 }
+                { tierName: "calendarTier", groupName: "Today + 2", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 2 }
+                { tierName: "calendarTier", groupName: "Today + 3", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 3 }
+                { tierName: "calendarTier", groupName: "Today + 4", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 4 }
                 # Clock
                 { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "all", tileType: "clock", iconName: "none"}
             ]

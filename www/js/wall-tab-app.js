@@ -9,7 +9,7 @@ WallTabApp = (function() {
     this.configReadyCb = __bind(this.configReadyCb, this);
     this.rebuildUI = __bind(this.rebuildUI, this);
     this.tileColours = new TileColours;
-    this.rdHomeServerUrl = "http://macallan:5000";
+    this.rdHomeServerUrl = "http://127.0.0.1:5000";
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
     this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
     this.automationExecUrl = this.rdHomeServerUrl;
@@ -20,6 +20,9 @@ WallTabApp = (function() {
     this.veraServerUrl = "http://192.168.0.206:3480";
     this.frontDoorUrl = "http://192.168.0.221/";
     this.jsonConfig = {};
+    window.soundClick = new Audio("audio/click.ogg");
+    window.soundOk = new Audio("audio/blip.ogg");
+    window.soundFail = new Audio("audio/fail.ogg");
   }
 
   WallTabApp.prototype.go = function() {
@@ -72,6 +75,9 @@ WallTabApp = (function() {
       }, {
         tierName: "doorBlindsTier",
         groupName: "Front Door"
+      }, {
+        tierName: "calendarTier",
+        groupName: "Today"
       }
     ];
     this.jsonConfig["groupDefinitions"] = groupDefinitions;
@@ -87,6 +93,61 @@ WallTabApp = (function() {
         tileType: "calendar",
         iconName: "none",
         calDayIndex: 0
+      }, {
+        tierName: "calendarTier",
+        groupName: "Today",
+        colSpan: 2,
+        rowSpan: 3,
+        uri: "",
+        name: "calendar",
+        visibility: "all",
+        tileType: "calendar",
+        iconName: "none",
+        calDayIndex: 0
+      }, {
+        tierName: "calendarTier",
+        groupName: "Tomorrow",
+        colSpan: 2,
+        rowSpan: 3,
+        uri: "",
+        name: "calendar",
+        visibility: "all",
+        tileType: "calendar",
+        iconName: "none",
+        calDayIndex: 1
+      }, {
+        tierName: "calendarTier",
+        groupName: "Today + 2",
+        colSpan: 2,
+        rowSpan: 3,
+        uri: "",
+        name: "calendar",
+        visibility: "all",
+        tileType: "calendar",
+        iconName: "none",
+        calDayIndex: 2
+      }, {
+        tierName: "calendarTier",
+        groupName: "Today + 3",
+        colSpan: 2,
+        rowSpan: 3,
+        uri: "",
+        name: "calendar",
+        visibility: "all",
+        tileType: "calendar",
+        iconName: "none",
+        calDayIndex: 3
+      }, {
+        tierName: "calendarTier",
+        groupName: "Today + 4",
+        colSpan: 2,
+        rowSpan: 3,
+        uri: "",
+        name: "calendar",
+        visibility: "all",
+        tileType: "calendar",
+        iconName: "none",
+        calDayIndex: 4
       }, {
         tierName: "mainTier",
         groupName: "Calendar",

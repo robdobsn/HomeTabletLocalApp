@@ -13,10 +13,17 @@ Tile = (function() {
     $(this.tileBasics.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileBasics.bkColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
     if (this.tileBasics.clickFn != null) {
       $("#" + this.tileId).click(function() {
+        _this.playClickSound();
         return _this.tileBasics.clickFn(_this.tileBasics.clickParam);
       });
     }
     return this.contents = $("#" + this.tileId + ">.sqInner");
+  };
+
+  Tile.prototype.playClickSound = function() {
+    if (window.soundClick != null) {
+      return window.soundClick.play();
+    }
   };
 
   Tile.prototype.removeFromDoc = function() {
