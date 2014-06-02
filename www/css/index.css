@@ -163,13 +163,13 @@ ul.sqCalEvents {
   }
   100% {
     opacity: 1.0;
-    text-shadow: 0 0 10px #00c6ff;
+    text-shadow: 0 0 10px #ffffff;
   }
 }
 @-moz-keyframes mymove {
   0% {
     opacity: 1.0;
-    text-shadow: 0 0 10px #00c6ff;
+    text-shadow: 0 0 10px #ffffff;
   }
   50% {
     opacity: 0;
@@ -177,7 +177,7 @@ ul.sqCalEvents {
   }
   100% {
     opacity: 1.0;
-    text-shadow: 0 0 10px #00c6ff;
+    text-shadow: 0 0 10px #ffffff;
   }
 }
 .sqSceneButtonIcon img {
