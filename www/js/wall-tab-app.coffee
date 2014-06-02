@@ -109,7 +109,7 @@ class WallTabApp
         tileColour = @tileColours.getNextColour()
         tierIdx = @tileTiers.findTierIdx(tileDef.tierName)
         if tierIdx < 0 then return null
-        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, @automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName
+        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, @automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, @addToFavsGroup
 
     makeCalendarTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
@@ -244,3 +244,6 @@ class WallTabApp
         scrollTo = Math.round(scrollTop/tierHeight)*tierHeight
         $("html, body").stop().animate({ scrollTop: scrollTo }, 200);
 
+    addToFavsGroup: ->
+        alert("Add to favs group")
+        

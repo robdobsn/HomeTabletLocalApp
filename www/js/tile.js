@@ -5,19 +5,88 @@ Tile = (function() {
   function Tile(tileBasics) {
     this.tileBasics = tileBasics;
     this.contentFontScaling = 1;
+    this.pressStarted = 0;
   }
 
   Tile.prototype.addToDoc = function() {
-    var _this = this;
     this.tileId = "sqTile_" + this.tileBasics.tierIdx + "_" + this.tileBasics.groupIdx + "_" + this.tileIdx;
     $(this.tileBasics.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileBasics.bkColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
-    if (this.tileBasics.clickFn != null) {
-      $("#" + this.tileId).click(function() {
-        _this.playClickSound();
-        return _this.tileBasics.clickFn(_this.tileBasics.clickParam);
+    this.addClickHandling();
+    this.contents = $("#" + this.tileId + ">.sqInner");
+    if (this.tileBasics.tierIdx === 0) {
+      return $("#" + this.tileId).draggable({
+        cancel: "a.ui-icon",
+        revert: "invalid",
+        containment: "document",
+        helper: "clone",
+        cursor: "move"
       });
     }
-    return this.contents = $("#" + this.tileId + ">.sqInner");
+  };
+
+  Tile.prototype.addClickHandling = function() {
+    var dragDistMovedTest, longPressTime,
+      _this = this;
+    longPressTime = 1500;
+    dragDistMovedTest = 20;
+    $("#" + this.tileId).on("mousedown", function(e) {
+      e.preventDefault();
+      _this.pressStarted = new Date().getTime();
+      _this.startDragXPos = e.pageX;
+      _this.startDragYPos = e.pageY;
+      return console.log("mousedown " + _this.startDragXPos + " " + _this.startDragYPos);
+    });
+    $("#" + this.tileId).on("touchstart", function(e) {
+      var touchEvent;
+      e.preventDefault();
+      _this.pressStarted = new Date().getTime();
+      touchEvent = e.originalEvent.touches[0];
+      _this.startDragXPos = touchEvent.pageX;
+      _this.startDragYPos = touchEvent.pageY;
+      return console.log("touchdown " + _this.startDragXPos + " " + _this.startDragYPos);
+    });
+    $("#" + this.tileId).on("mouseleave", function() {
+      return _this.pressStarted = 0;
+    });
+    $("#" + this.tileId).on("mousemove", function(e) {
+      var curX, curY, distMoved;
+      if (_this.pressStarted === 0) {
+        return;
+      }
+      curX = e.pageX;
+      curY = e.pageY;
+      distMoved = _this.distMoved(curX, curY);
+      if (distMoved > dragDistMovedTest) {
+        $(_this).trigger(e);
+      }
+      return console.log("mousemove " + curX + " " + curY + " " + distMoved);
+    });
+    $("#" + this.tileId).on("touchmove", function(e) {
+      var curX, curY, distMoved, touchEvent;
+      if (_this.pressStarted === 0) {
+        return;
+      }
+      e.preventDefault();
+      _this.pressStarted = new Date().getTime();
+      touchEvent = e.originalEvent.touches[0];
+      curX = touchEvent.pageX;
+      curY = touchEvent.psageY;
+      distMoved = _this.distMoved(curX, curY);
+      if (distMoved > dragDistMovedTest) {
+        $(_this).trigger(e);
+      }
+      return console.log("mousemove " + curX + " " + curY + " " + distMoved);
+    });
+    return $("#" + this.tileId).on("mouseup touchend", function() {
+      return _this.pressStarted = 0;
+    });
+  };
+
+  Tile.prototype.distMoved = function(x, y) {
+    var dist, xSep, ySep;
+    xSep = this.startDragXPos - x;
+    ySep = this.startDragYPos - y;
+    return dist = Math.sqrt(xSep * xSep + ySep * ySep);
   };
 
   Tile.prototype.playClickSound = function() {

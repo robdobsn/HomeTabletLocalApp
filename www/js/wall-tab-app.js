@@ -186,7 +186,7 @@ WallTabApp = (function() {
     if (tierIdx < 0) {
       return null;
     }
-    return tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, this.automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName);
+    return tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, this.automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, this.addToFavsGroup);
   };
 
   WallTabApp.prototype.makeCalendarTile = function(tileDef) {
@@ -421,6 +421,10 @@ WallTabApp = (function() {
     return $("html, body").stop().animate({
       scrollTop: scrollTo
     }, 200);
+  };
+
+  WallTabApp.prototype.addToFavsGroup = function() {
+    return alert("Add to favs group");
   };
 
   return WallTabApp;
