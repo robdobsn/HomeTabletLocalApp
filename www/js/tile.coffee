@@ -16,8 +16,7 @@ class Tile
 			"""
 		@addClickHandling()
 		@contents = $("##{@tileId}>.sqInner")
-		# A hack here - only tier 0 is draggable!
-		if @tileBasics.tierIdx is 0
+		if @tileBasics.isFavourite
 			$("##{@tileId}").draggable({
 		      cancel: "a.ui-icon"
 		      revert: "invalid"
@@ -28,61 +27,24 @@ class Tile
 
 	addClickHandling: ->
 		longPressTime = 1500
-		dragDistMovedTest = 20
 		$("##{@tileId}").on "mousedown", (e) =>
 			e.preventDefault()
 			@pressStarted = new Date().getTime()
-			@startDragXPos = e.pageX
-			@startDragYPos = e.pageY
-			console.log("mousedown " + @startDragXPos + " " + @startDragYPos)
+			@touchXPos = e.pageX
+			@touchYPos = e.pageY
 		$("##{@tileId}").on "touchstart", (e) =>
 			e.preventDefault()
 			@pressStarted = new Date().getTime()
 			touchEvent = e.originalEvent.touches[0]
-			@startDragXPos = touchEvent.pageX
-			@startDragYPos = touchEvent.pageY
-			console.log("touchdown " + @startDragXPos + " " + @startDragYPos)
-		$("##{@tileId}").on "mouseleave", =>
-			@pressStarted = 0
-		$("##{@tileId}").on "mousemove", (e) =>
-			if @pressStarted is 0 then return
-			curX = e.pageX
-			curY = e.pageY
-			distMoved = @distMoved(curX, curY)
-			if distMoved > dragDistMovedTest
-				$(this).trigger(e)
-			console.log("mousemove " + curX + " " + curY + " " + distMoved)
-		$("##{@tileId}").on "touchmove", (e) =>
-			if @pressStarted is 0 then return
-			e.preventDefault()
-			@pressStarted = new Date().getTime()
-			touchEvent = e.originalEvent.touches[0]
-			curX = touchEvent.pageX
-			curY = touchEvent.psageY
-			distMoved = @distMoved(curX, curY)
-			if distMoved > dragDistMovedTest
-				$(this).trigger(e)
-			console.log("mousemove " + curX + " " + curY + " " + distMoved)
+			@touchXPos = touchEvent.pageX
+			@touchYPos = touchEvent.pageY
 		$("##{@tileId}").on "mouseup touchend", =>
-#			if new Date().getTime() >= @pressStarted + longPressTime
-#				alert ("Long press")
-#			else
-#				@playClickSound()
-#				(@tileBasics.clickFn) @tileBasics.clickParam
+			if new Date().getTime() >= @pressStarted + longPressTime
+				alert ("Long press")
+			else
+				@tileBasics.mediaPlayHelper.play("click")
+				(@tileBasics.clickFn) @tileBasics.clickParam
 			@pressStarted = 0
-
-	distMoved: (x,y) ->
-		xSep = @startDragXPos - x
-		ySep = @startDragYPos - y
-		dist = Math.sqrt(xSep*xSep+ySep*ySep)
-
-#		if @tileBasics.clickFn?
-#			$("##{@tileId}").click =>
-#				@playClickSound()
-#				(@tileBasics.clickFn) @tileBasics.clickParam
-
-	playClickSound: ->
-		window.soundClick.play() if window.soundClick?
 
 	removeFromDoc: ->
 		if @refreshId?

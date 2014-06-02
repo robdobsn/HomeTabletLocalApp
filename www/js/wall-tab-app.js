@@ -22,19 +22,21 @@ WallTabApp = (function() {
     this.veraServerUrl = "http://192.168.0.206:3480";
     this.frontDoorUrl = "http://192.168.0.221/";
     this.jsonConfig = {};
-    window.soundClick = new Audio("audio/click.ogg");
-    window.soundOk = new Audio("audio/blip.ogg");
-    window.soundFail = new Audio("audio/fail.ogg");
+    this.mediaPlayHelper = new MediaPlayHelper({
+      click: "audio/click.mp3",
+      ok: "audio/blip.mp3",
+      fail: "audio/fail.mp3"
+    });
     this.bAnimatingScroll = false;
   }
 
   WallTabApp.prototype.go = function() {
     var _this = this;
-    $("body").append("<div id=\"sqWrapper\">\n</div>");
+    $("body").prepend("<div id=\"sqWrapper\">\n</div>");
     this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
     this.setDefaultTabletConfig();
     this.automationActionGroups = [];
-    this.automationServer = new AutomationServer(this.automationActionsUrl, this.automationExecUrl, this.veraServerUrl, this.indigoServerUrl, this.fibaroServerUrl, this.sonosActionsUrl);
+    this.automationServer = new AutomationServer(this.automationActionsUrl, this.automationExecUrl, this.veraServerUrl, this.indigoServerUrl, this.fibaroServerUrl, this.sonosActionsUrl, this.mediaPlayHelper);
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfig = new TabletConfig(this.tabletConfigUrl);
     this.tabletConfig.setReadyCallback(this.configReadyCb);
@@ -180,13 +182,16 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.tileBasicsFromDef = function(tileDef) {
-    var tierIdx, tileBasics, tileColour;
+    var isFavourite, tierIdx, tileBasics, tileColour;
     tileColour = this.tileColours.getNextColour();
     tierIdx = this.tileTiers.findTierIdx(tileDef.tierName);
     if (tierIdx < 0) {
       return null;
     }
-    return tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, this.automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, this.addToFavsGroup);
+    if ((tileDef.isFavourite != null) && tileDef.isFavourite) {
+      isFavourite = true;
+    }
+    return tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, this.automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, this.addToFavsGroup, this.mediaPlayHelper);
   };
 
   WallTabApp.prototype.makeCalendarTile = function(tileDef) {
@@ -317,7 +322,8 @@ WallTabApp = (function() {
             name: tb.tileName,
             visibility: tb.visibility,
             tileType: tb.tileType,
-            iconName: tb.iconName
+            iconName: tb.iconName,
+            isFavourite: true
           };
           this.makeTileFromTileDef(tileDef);
         }

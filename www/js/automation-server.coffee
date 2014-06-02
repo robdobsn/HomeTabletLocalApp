@@ -1,5 +1,5 @@
 class AutomationServer
-	constructor: (@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl) ->
+	constructor: (@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper) ->
 		@indigoServer = new IndigoServer(@indigoServerUrl)
 		@indigoServer.setReadyCallback(@indigoServerReadyCb)
 		@veraServer = new VeraServer(@veraServerUrl)
@@ -87,10 +87,10 @@ class AutomationServer
 				type: "GET"
 				dataType: "text"
 				success: (data, textStatus, jqXHR) =>
-					window.soundOk.play() if window.soundOk?
+					@mediaPlayHelper.play("ok")
 				error: (jqXHR, textStatus, errorThrown) =>
 					console.log ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams)
-					window.soundFail.play() if window.soundFail?
+					@mediaPlayHelper.play("fail")
 		else
 			# Execute command on the intermediate server
 			cmdToExec = @automationExecUrl + "/" + cmdParams
@@ -98,7 +98,7 @@ class AutomationServer
 				type: "GET"
 				dataType: "text"
 				success: (data, textStatus, jqXHR) =>
-					window.soundOk.play() if window.soundOk?
+					@mediaPlayHelper.play("ok")
 				error: (jqXHR, textStatus, errorThrown) =>
 					console.log ("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec)
-					window.soundFail.play() if window.soundFail?
+					@mediaPlayHelper.play("fail")

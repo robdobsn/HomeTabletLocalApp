@@ -2,7 +2,7 @@
 var TileBasics, TilePosition;
 
 TileBasics = (function() {
-  function TileBasics(bkColour, colSpan, rowSpan, clickFn, clickParam, tileName, visibility, parentTag, tileType, iconName) {
+  function TileBasics(bkColour, colSpan, rowSpan, clickFn, clickParam, tileName, visibility, parentTag, tileType, iconName, isFavourite, addToFavsFn, mediaPlayHelper) {
     this.bkColour = bkColour;
     this.colSpan = colSpan;
     this.rowSpan = rowSpan;
@@ -13,6 +13,9 @@ TileBasics = (function() {
     this.parentTag = parentTag;
     this.tileType = tileType;
     this.iconName = iconName;
+    this.isFavourite = isFavourite;
+    this.addToFavsFn = addToFavsFn;
+    this.mediaPlayHelper = mediaPlayHelper;
   }
 
   TileBasics.prototype.setTierGroupIds = function(tierIdx, groupIdx) {

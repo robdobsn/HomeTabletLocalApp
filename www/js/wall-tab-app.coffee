@@ -14,14 +14,17 @@ class WallTabApp
         @veraServerUrl = "http://192.168.0.206:3480"
         @frontDoorUrl = "http://192.168.0.221/"
         @jsonConfig = {}
-        window.soundClick = new Audio("audio/click.ogg")
-        window.soundOk = new Audio("audio/blip.ogg")
-        window.soundFail = new Audio("audio/fail.ogg")
+        @mediaPlayHelper = new MediaPlayHelper(
+            {
+                click: "audio/click.mp3",
+                ok: "audio/blip.mp3",
+                fail: "audio/fail.mp3"
+            })
         @bAnimatingScroll = false
 
     go: ->
         # Basic body for DOM
-        $("body").append """
+        $("body").prepend """
             <div id="sqWrapper">
             </div>
             """
@@ -36,7 +39,7 @@ class WallTabApp
         @automationActionGroups = []
 
         # Communication with Vera3 & Indigo through automation server
-        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl)
+        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper)
         @automationServer.setReadyCallback(@automationServerReadyCb)
 
         # Tablet config is based on the IP address of the tablet
@@ -109,7 +112,8 @@ class WallTabApp
         tileColour = @tileColours.getNextColour()
         tierIdx = @tileTiers.findTierIdx(tileDef.tierName)
         if tierIdx < 0 then return null
-        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, @automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, @addToFavsGroup
+        isFavourite = true if tileDef.isFavourite? and tileDef.isFavourite
+        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, @automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, @addToFavsGroup, @mediaPlayHelper
 
     makeCalendarTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
@@ -185,7 +189,7 @@ class WallTabApp
                 exTile = @tileTiers.findExistingTile(favouriteDefn.tileName)
                 if exTile isnt null
                     tb = exTile.tileBasics
-                    tileDef = { tierName: "mainTier", groupName: "Home", colSpan: tb.colSpan, rowSpan: tb.rowSpan, uri: tb.clickParam, name: tb.tileName, visibility: tb.visibility, tileType: tb.tileType, iconName: tb.iconName }
+                    tileDef = { tierName: "mainTier", groupName: "Home", colSpan: tb.colSpan, rowSpan: tb.rowSpan, uri: tb.clickParam, name: tb.tileName, visibility: tb.visibility, tileType: tb.tileType, iconName: tb.iconName, isFavourite: true }
                     @makeTileFromTileDef(tileDef)
         return
 
@@ -246,4 +250,3 @@ class WallTabApp
 
     addToFavsGroup: ->
         alert("Add to favs group")
-        

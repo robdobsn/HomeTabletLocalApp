@@ -6,7 +6,7 @@ tablet_names = [ "tabkitchen", "tabsitting", "tabgames", "tabhall", "tabmasterbe
                "tablanding", "tabgrace", "tabguest", "taboffice", "tabjoe" ]
 adbRemoteCmds = [ "setprop service.adb.tcp.port 5555", "stop adbd", "start adbd" ]
 
-# Check if we want all tablets or just one
+# Run on all tablets
 cmdStr = ""
 if len(sys.argv) > 1:
     for cmdIdx in range(1,len(sys.argv)):

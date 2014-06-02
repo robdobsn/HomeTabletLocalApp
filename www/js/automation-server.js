@@ -3,13 +3,14 @@ var AutomationServer,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 AutomationServer = (function() {
-  function AutomationServer(automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, fibaroServerUrl, sonosActionsUrl) {
+  function AutomationServer(automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, fibaroServerUrl, sonosActionsUrl, mediaPlayHelper) {
     this.automationActionsUrl = automationActionsUrl;
     this.automationExecUrl = automationExecUrl;
     this.veraServerUrl = veraServerUrl;
     this.indigoServerUrl = indigoServerUrl;
     this.fibaroServerUrl = fibaroServerUrl;
     this.sonosActionsUrl = sonosActionsUrl;
+    this.mediaPlayHelper = mediaPlayHelper;
     this.executeCommand = __bind(this.executeCommand, this);
     this.callBackWithSumActions = __bind(this.callBackWithSumActions, this);
     this.fibaroServerReadyCb = __bind(this.fibaroServerReadyCb, this);
@@ -165,15 +166,11 @@ AutomationServer = (function() {
         type: "GET",
         dataType: "text",
         success: function(data, textStatus, jqXHR) {
-          if (window.soundOk != null) {
-            return window.soundOk.play();
-          }
+          return _this.mediaPlayHelper.play("ok");
         },
         error: function(jqXHR, textStatus, errorThrown) {
           console.log("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams);
-          if (window.soundFail != null) {
-            return window.soundFail.play();
-          }
+          return _this.mediaPlayHelper.play("fail");
         }
       });
     } else {
@@ -182,15 +179,11 @@ AutomationServer = (function() {
         type: "GET",
         dataType: "text",
         success: function(data, textStatus, jqXHR) {
-          if (window.soundOk != null) {
-            return window.soundOk.play();
-          }
+          return _this.mediaPlayHelper.play("ok");
         },
         error: function(jqXHR, textStatus, errorThrown) {
           console.log("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec);
-          if (window.soundFail != null) {
-            return window.soundFail.play();
-          }
+          return _this.mediaPlayHelper.play("fail");
         }
       });
     }
