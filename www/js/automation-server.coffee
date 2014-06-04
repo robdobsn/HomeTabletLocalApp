@@ -12,6 +12,7 @@ class AutomationServer
 		@fibaroActions = []
 		@baseAutomationActions = {}
 		# Init default door and blinds actions - in case rdhomeserver not running
+		@frontDoorUrl = "http://192.168.0.221/"
 		@doorActions = 
 	        [
 	            { tierName:"doorBlindsTier", actionNum: 0, actionName: "Main Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-unlock", iconName: "door-unlock" },

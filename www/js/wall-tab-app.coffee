@@ -12,13 +12,12 @@ class WallTabApp
         @indigoServerUrl = "http://IndigoServer.local:8176"
         @fibaroServerUrl = "http://192.168.0.69"
         @veraServerUrl = "http://192.168.0.206:3480"
-        @frontDoorUrl = "http://192.168.0.221/"
         @jsonConfig = {}
         @mediaPlayHelper = new MediaPlayHelper(
             {
-                click: "audio/click.mp3",
-                ok: "audio/blip.mp3",
-                fail: "audio/fail.mp3"
+                click: "assets/click.mp3",
+                ok: "assets/blip.mp3",
+                fail: "assets/fail.mp3"
             })
         @bAnimatingScroll = false
 

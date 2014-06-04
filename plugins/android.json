@@ -15,6 +15,10 @@
                         {
                             "xml": "<feature name=\"Media\"><param name=\"android-package\" value=\"org.apache.cordova.media.AudioHandler\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"LowLatencyAudio\"><param name=\"android-package\" value=\"com.phonegap.PGLowLatencyAudio\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -45,6 +49,12 @@
     },
     "installed_plugins": {
         "org.apache.cordova.media": {
+            "PACKAGE_NAME": "com.robdobsn.hometabletlocal"
+        },
+        "com.phonegap.LowLatencyAudio": {
+            "PACKAGE_NAME": "com.robdobsn.hometabletlocal"
+        },
+        "org.apache.cordova.console": {
             "PACKAGE_NAME": "com.robdobsn.hometabletlocal"
         }
     },

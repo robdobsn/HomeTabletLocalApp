@@ -1,16 +1,6 @@
 class MediaPlayHelper
     constructor: (@soundsDict) ->
-        @players = {}
-        for soundName, soundFile of @soundsDict
-            try
-                # This is for phonegap devices
-                pth = @getPhoneGapPath() + soundFile
-                plyr = new Media( pth )
-                @players[soundName] = plyr
-            catch e
-                # This should work on a regular browser
-                plyr = new Audio( soundFile )
-                @players[soundName] = plyr
+        @soundsLoaded = {}
 
     getPhoneGapPath: ->
         path = window.location.pathname
@@ -20,6 +10,13 @@ class MediaPlayHelper
         return 'file://' + path
 
     play: (soundName) ->
-        if soundName of @players
-            plyr = @players[soundName]
-            plyr.play()
+        if soundName of @soundsDict
+            if soundName not of @soundsLoaded
+                LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, @onSuccess, @onError)
+            LowLatencyAudio.play(soundName, @onSuccess, @onError)
+
+    onSuccess: (result) ->
+        console.log("LLAUDIO result = " + result )
+
+    onError: (error) ->
+        console.log("LLAUDIO error = " + error )

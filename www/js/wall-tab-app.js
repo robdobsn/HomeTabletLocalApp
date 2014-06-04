@@ -20,12 +20,11 @@ WallTabApp = (function() {
     this.indigoServerUrl = "http://IndigoServer.local:8176";
     this.fibaroServerUrl = "http://192.168.0.69";
     this.veraServerUrl = "http://192.168.0.206:3480";
-    this.frontDoorUrl = "http://192.168.0.221/";
     this.jsonConfig = {};
     this.mediaPlayHelper = new MediaPlayHelper({
-      click: "audio/click.mp3",
-      ok: "audio/blip.mp3",
-      fail: "audio/fail.mp3"
+      click: "assets/click.mp3",
+      ok: "assets/blip.mp3",
+      fail: "assets/fail.mp3"
     });
     this.bAnimatingScroll = false;
   }

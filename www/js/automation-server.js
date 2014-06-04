@@ -27,6 +27,7 @@ AutomationServer = (function() {
     this.indigoActions = [];
     this.fibaroActions = [];
     this.baseAutomationActions = {};
+    this.frontDoorUrl = "http://192.168.0.221/";
     this.doorActions = [
       {
         tierName: "doorBlindsTier",

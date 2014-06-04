@@ -16,14 +16,14 @@ class Tile
 			"""
 		@addClickHandling()
 		@contents = $("##{@tileId}>.sqInner")
-		if @tileBasics.isFavourite
-			$("##{@tileId}").draggable({
-		      cancel: "a.ui-icon"
-		      revert: "invalid"
-		      containment: "document"
-		      helper: "clone"
-		      cursor: "move"
-		    })
+		# if @tileBasics.isFavourite
+		# 	$("##{@tileId}").draggable({
+		#       cancel: "a.ui-icon"
+		#       revert: "invalid"
+		#       containment: "document"
+		#       helper: "clone"
+		#       cursor: "move"
+		#     })
 
 	addClickHandling: ->
 		longPressTime = 1500

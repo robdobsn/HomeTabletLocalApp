@@ -12,16 +12,7 @@ Tile = (function() {
     this.tileId = "sqTile_" + this.tileBasics.tierIdx + "_" + this.tileBasics.groupIdx + "_" + this.tileIdx;
     $(this.tileBasics.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileBasics.bkColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
     this.addClickHandling();
-    this.contents = $("#" + this.tileId + ">.sqInner");
-    if (this.tileBasics.isFavourite) {
-      return $("#" + this.tileId).draggable({
-        cancel: "a.ui-icon",
-        revert: "invalid",
-        containment: "document",
-        helper: "clone",
-        cursor: "move"
-      });
-    }
+    return this.contents = $("#" + this.tileId + ">.sqInner");
   };
 
   Tile.prototype.addClickHandling = function() {

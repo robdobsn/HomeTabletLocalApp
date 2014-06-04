@@ -3,22 +3,8 @@ var MediaPlayHelper;
 
 MediaPlayHelper = (function() {
   function MediaPlayHelper(soundsDict) {
-    var e, plyr, pth, soundFile, soundName, _ref;
     this.soundsDict = soundsDict;
-    this.players = {};
-    _ref = this.soundsDict;
-    for (soundName in _ref) {
-      soundFile = _ref[soundName];
-      try {
-        pth = this.getPhoneGapPath() + soundFile;
-        plyr = new Media(pth);
-        this.players[soundName] = plyr;
-      } catch (_error) {
-        e = _error;
-        plyr = new Audio(soundFile);
-        this.players[soundName] = plyr;
-      }
-    }
+    this.soundsLoaded = {};
   }
 
   MediaPlayHelper.prototype.getPhoneGapPath = function() {
@@ -32,11 +18,20 @@ MediaPlayHelper = (function() {
   };
 
   MediaPlayHelper.prototype.play = function(soundName) {
-    var plyr;
-    if (soundName in this.players) {
-      plyr = this.players[soundName];
-      return plyr.play();
+    if (soundName in this.soundsDict) {
+      if (!(soundName in this.soundsLoaded)) {
+        LowLatencyAudio.preloadAudio(soundName, this.soundsDict[soundName], 1, this.onSuccess, this.onError);
+      }
+      return LowLatencyAudio.play(soundName, this.onSuccess, this.onError);
     }
+  };
+
+  MediaPlayHelper.prototype.onSuccess = function(result) {
+    return console.log("LLAUDIO result = " + result);
+  };
+
+  MediaPlayHelper.prototype.onError = function(error) {
+    return console.log("LLAUDIO error = " + error);
   };
 
   return MediaPlayHelper;
