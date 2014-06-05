@@ -5,17 +5,23 @@ Tile = (function() {
   function Tile(tileBasics) {
     this.tileBasics = tileBasics;
     this.contentFontScaling = 1;
-    this.pressStarted = 0;
-    this.scrollPending = false;
-    this.touchState = 0;
-    this.lastTouchTime = 0;
   }
 
   Tile.prototype.addToDoc = function() {
+    var _this = this;
     this.tileId = "sqTile_" + this.tileBasics.tierIdx + "_" + this.tileBasics.groupIdx + "_" + this.tileIdx;
     $(this.tileBasics.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileBasics.bkColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
-    this.addClickHandling();
+    if (this.tileBasics.clickFn != null) {
+      $("#" + this.tileId).click(function() {
+        _this.playClickSound();
+        return _this.tileBasics.clickFn(_this.tileBasics.clickParam);
+      });
+    }
     return this.contents = $("#" + this.tileId + ">.sqInner");
+  };
+
+  Tile.prototype.playClickSound = function() {
+    return this.tileBasics.mediaPlayHelper.play("click");
   };
 
   Tile.prototype.distMoved = function(x1, y1, x2, y2) {
@@ -24,56 +30,6 @@ Tile = (function() {
     ySep = y1 - y2;
     dist = Math.sqrt((xSep * xSep) + (ySep * ySep));
     return dist;
-  };
-
-  Tile.prototype.addClickHandling = function() {
-    var longPressTime, maxDistMovedForClick, minMsBetweenTouches,
-      _this = this;
-    longPressTime = 1500;
-    maxDistMovedForClick = 20;
-    minMsBetweenTouches = 100;
-    $("#" + this.tileId).on("touchstart", function(e) {
-      var timeNow, touchEvent;
-      e.preventDefault();
-      timeNow = new Date().getTime();
-      console.log("TimeNow " + timeNow + " LTT " + _this.lastTouchTime + " MinMS " + minMsBetweenTouches);
-      if (_this.touchState === 0 && _this.lastTouchTime + minMsBetweenTouches < timeNow) {
-        touchEvent = e.originalEvent.touches[0];
-        _this.touchStX = touchEvent.pageX;
-        _this.touchStY = touchEvent.pageY;
-        _this.scrollStX = document.body.scrollLeft;
-        _this.scrollStY = document.body.scrollTop;
-        _this.lastTouchTime = timeNow;
-        return _this.touchState = 1;
-      }
-    });
-    $("#" + this.tileId).on("touchmove", function(e) {
-      var aaaaa, touchEvent;
-      e.preventDefault();
-      touchEvent = e.originalEvent.touches[0];
-      _this.touchCurX = touchEvent.pageX;
-      _this.touchCurY = touchEvent.pageY;
-      if (_this.touchState === 1) {
-        if (_this.distMoved(_this.touchStX, _this.touchStY, _this.touchCurX, _this.touchCurY) > maxDistMovedForClick) {
-          _this.touchState = 2;
-        }
-      }
-      if (_this.touchState === 2) {
-        return aaaaa = 1;
-      }
-    });
-    return $("#" + this.tileId).on("touchend", function(e) {
-      e.preventDefault();
-      console.log("Touchend");
-      console.log("touchend " + _this.touchState + ", SS " + _this.scrollStX + "," + _this.scrollStY + " ST " + _this.touchStX + "," + _this.touchStY + " SC " + _this.touchCurX + "," + _this.touchCurY);
-      if (_this.touchState !== 0) {
-        return _this.touchState = 0;
-      }
-    });
-  };
-
-  Tile.prototype.doScroll = function(x1, y1, x2, y2) {
-    return console.log("doScroll " + x1 + ", " + y1 + " : " + x2 + ", " + y2);
   };
 
   Tile.prototype.removeFromDoc = function() {

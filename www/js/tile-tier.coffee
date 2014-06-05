@@ -2,7 +2,7 @@ class TileTier
 	constructor: (@parentTag, @tierName) ->
 		@groups = []
 		@groupCols = []
-		@groupSepPixels = 30
+		@groupSepPixels = 20
 		@groupTitlesTopMargin = 60
 		@tileSepXPixels = 20
 		@tileSepYPixels = 20
@@ -92,6 +92,11 @@ class TileTier
 			gIdx += 1
 		xStart += groupIdx * @groupSepPixels
 		return xStart
+
+	getGroupStartXPositions: ->
+		startPosns = []
+		for group, groupIdx in @groups
+			startPosns.push(getGroupStartX(groupIdx))
 
 	calcFontSizePercent: ->
 		100 * Math.max(@cellWidth, @cellHeight) / 300

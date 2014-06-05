@@ -7,7 +7,7 @@ TileTier = (function() {
     this.tierName = tierName;
     this.groups = [];
     this.groupCols = [];
-    this.groupSepPixels = 30;
+    this.groupSepPixels = 20;
     this.groupTitlesTopMargin = 60;
     this.tileSepXPixels = 20;
     this.tileSepYPixels = 20;
@@ -121,6 +121,18 @@ TileTier = (function() {
     }
     xStart += groupIdx * this.groupSepPixels;
     return xStart;
+  };
+
+  TileTier.prototype.getGroupStartXPositions = function() {
+    var group, groupIdx, startPosns, _i, _len, _ref, _results;
+    startPosns = [];
+    _ref = this.groups;
+    _results = [];
+    for (groupIdx = _i = 0, _len = _ref.length; _i < _len; groupIdx = ++_i) {
+      group = _ref[groupIdx];
+      _results.push(startPosns.push(getGroupStartX(groupIdx)));
+    }
+    return _results;
   };
 
   TileTier.prototype.calcFontSizePercent = function() {

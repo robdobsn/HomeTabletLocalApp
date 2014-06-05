@@ -19,7 +19,8 @@ class WallTabApp
                 ok: "assets/blip.mp3",
                 fail: "assets/fail.mp3"
             })
-        @bAnimatingScroll = false
+        @lastScrollEventTime = 0
+        @minTimeBetweenScrolls = 500
 
     go: ->
         # Basic body for DOM
@@ -57,8 +58,10 @@ class WallTabApp
           @tileTiers.reDoLayout()
 
         # Scroll: snap to tiers
-        $(window).on 'scroll', =>
-            @scrollSnapping()
+        $(window).on 'scrollstart', =>
+            @scrollStart()
+        $(window).on 'scrollstop', =>
+            @scrollStop()
 
         # Rebuild UI
         @rebuildUI()
@@ -229,16 +232,47 @@ class WallTabApp
         $("html, body").animate({ scrollLeft: "0px" });
         $("html, body").animate({ scrollUp: "0px" });
 
+    scrollStart: =>
+        @scrollCurTop = $(window).scrollTop()
+        @scrollCurLeft = $(window).scrollLeft()
+        console.log("Scroll start " + @scrollCurLeft + ", " + @scrollCurTop)
+
+    scrollStop: =>
+        if @lastScrollEventTime + @minTimeBetweenScrolls > new Date().getTime()
+            console.log("scrollstop ignored")
+            return
+        @lastScrollEventTime = new Date().getTime()
+        # Don't bother scrolling if only one tier
+        if @tileTiers.numTiers() <= 1 then return
+        tierHeight =  @tileTiers.getTier(1).getTierTop()
+        # Allow a small vertical scroll to snap to the next tier
+        minScrollYForWholeTier = 50
+        scrollTop = $(window).scrollTop()
+        scrollLeft = $(window).scrollLeft()
+        scrollDistY = scrollTop - @scrollCurTop
+        scrollDistX = scrollLeft - @scrollCurLeft
+        if Math.abs(scrollDistY) > minScrollYForWholeTier and Math.abs(scrollDistY) < tierHeight
+            scrollDistY = if scrollDistY > 0 then tierHeight else -tierHeight
+#        for tier in @tileTiers.tiers
+#            console.log("tier " + tier.getTierTop())
+        scrollTo = Math.round((@scrollCurTop+scrollDistY)/tierHeight)*tierHeight
+        @animatingScroll += 1
+        console.log("scroll animating " + @scrollCurLeft + ", " + @scrollCurTop + ", " + scrollDistX + ", " + scrollDistY + " TH " + tierHeight)
+        $("html, body").stop().animate({ scrollTop: scrollTo }, 100, @scrollComplete);
+
+    scrollComplete: =>
+        console.log("scroll animate done now ")
+
     delay: (ms, func) ->
         window.setTimeout(func, ms)
 
     scrollSnapping: =>
+        @lastScrollEventTime = new Date().getTime()
         return if @bAnimatingScroll? and @bAnimatingScroll is true
         @bAnimatingScroll = true
-        @delay(500, @scrollNow)
+        @delay(100, @scrollTimeout)
 
-    scrollNow: =>
-        return
+    scrollTimeout: =>
         @bAnimatingScroll = false
         if @tileTiers.numTiers() <= 1 then return
         scrollTop = $(window).scrollTop()

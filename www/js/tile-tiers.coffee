@@ -63,3 +63,7 @@ class TileTiers
 			exTile = tier.findExistingTile (tileName)
 			if exTile isnt null then return exTile
 		return null
+
+	getGroupStartXPositions: (tierIdx) ->
+		if tierIdx >= @tiers.length then return
+		return @tiers[tierIdx].getGroupStartXPositions()

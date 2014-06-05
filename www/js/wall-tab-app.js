@@ -4,8 +4,11 @@ var WallTabApp,
 
 WallTabApp = (function() {
   function WallTabApp() {
-    this.scrollNow = __bind(this.scrollNow, this);
+    this.scrollTimeout = __bind(this.scrollTimeout, this);
     this.scrollSnapping = __bind(this.scrollSnapping, this);
+    this.scrollComplete = __bind(this.scrollComplete, this);
+    this.scrollStop = __bind(this.scrollStop, this);
+    this.scrollStart = __bind(this.scrollStart, this);
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
     this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
     this.configReadyCb = __bind(this.configReadyCb, this);
@@ -26,7 +29,8 @@ WallTabApp = (function() {
       ok: "assets/blip.mp3",
       fail: "assets/fail.mp3"
     });
-    this.bAnimatingScroll = false;
+    this.lastScrollEventTime = 0;
+    this.minTimeBetweenScrolls = 500;
   }
 
   WallTabApp.prototype.go = function() {
@@ -46,8 +50,11 @@ WallTabApp = (function() {
     $(window).on('resize', function() {
       return _this.tileTiers.reDoLayout();
     });
-    $(window).on('scroll', function() {
-      return _this.scrollSnapping();
+    $(window).on('scrollstart', function() {
+      return _this.scrollStart();
+    });
+    $(window).on('scrollstop', function() {
+      return _this.scrollStop();
     });
     this.rebuildUI();
     this.requestActionAndConfigData();
@@ -397,21 +404,58 @@ WallTabApp = (function() {
     });
   };
 
+  WallTabApp.prototype.scrollStart = function() {
+    this.scrollCurTop = $(window).scrollTop();
+    this.scrollCurLeft = $(window).scrollLeft();
+    return console.log("Scroll start " + this.scrollCurLeft + ", " + this.scrollCurTop);
+  };
+
+  WallTabApp.prototype.scrollStop = function() {
+    var minScrollYForWholeTier, scrollDistX, scrollDistY, scrollLeft, scrollTo, scrollTop, tierHeight;
+    if (this.lastScrollEventTime + this.minTimeBetweenScrolls > new Date().getTime()) {
+      console.log("scrollstop ignored");
+      return;
+    }
+    this.lastScrollEventTime = new Date().getTime();
+    if (this.tileTiers.numTiers() <= 1) {
+      return;
+    }
+    tierHeight = this.tileTiers.getTier(1).getTierTop();
+    minScrollYForWholeTier = 50;
+    scrollTop = $(window).scrollTop();
+    scrollLeft = $(window).scrollLeft();
+    scrollDistY = scrollTop - this.scrollCurTop;
+    scrollDistX = scrollLeft - this.scrollCurLeft;
+    if (Math.abs(scrollDistY) > minScrollYForWholeTier && Math.abs(scrollDistY) < tierHeight) {
+      scrollDistY = scrollDistY > 0 ? tierHeight : -tierHeight;
+    }
+    scrollTo = Math.round((this.scrollCurTop + scrollDistY) / tierHeight) * tierHeight;
+    this.animatingScroll += 1;
+    console.log("scroll animating " + this.scrollCurLeft + ", " + this.scrollCurTop + ", " + scrollDistX + ", " + scrollDistY + " TH " + tierHeight);
+    return $("html, body").stop().animate({
+      scrollTop: scrollTo
+    }, 100, this.scrollComplete);
+  };
+
+  WallTabApp.prototype.scrollComplete = function() {
+    return console.log("scroll animate done now ");
+  };
+
   WallTabApp.prototype.delay = function(ms, func) {
     return window.setTimeout(func, ms);
   };
 
   WallTabApp.prototype.scrollSnapping = function() {
+    this.lastScrollEventTime = new Date().getTime();
     if ((this.bAnimatingScroll != null) && this.bAnimatingScroll === true) {
       return;
     }
     this.bAnimatingScroll = true;
-    return this.delay(500, this.scrollNow);
+    return this.delay(100, this.scrollTimeout);
   };
 
-  WallTabApp.prototype.scrollNow = function() {
+  WallTabApp.prototype.scrollTimeout = function() {
     var scrollTo, scrollTop, tier, tierHeight, _i, _len, _ref;
-    return;
     this.bAnimatingScroll = false;
     if (this.tileTiers.numTiers() <= 1) {
       return;

@@ -122,6 +122,13 @@ TileTiers = (function() {
     return null;
   };
 
+  TileTiers.prototype.getGroupStartXPositions = function(tierIdx) {
+    if (tierIdx >= this.tiers.length) {
+      return;
+    }
+    return this.tiers[tierIdx].getGroupStartXPositions();
+  };
+
   return TileTiers;
 
 })();
