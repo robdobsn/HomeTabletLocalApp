@@ -13,6 +13,7 @@ class MediaPlayHelper
         if soundName of @soundsDict
             if soundName not of @soundsLoaded
                 LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, @onSuccess, @onError)
+                @soundsLoaded[soundName] = true
             LowLatencyAudio.play(soundName, @onSuccess, @onError)
 
     onSuccess: (result) ->

@@ -411,6 +411,7 @@ WallTabApp = (function() {
 
   WallTabApp.prototype.scrollNow = function() {
     var scrollTo, scrollTop, tier, tierHeight, _i, _len, _ref;
+    return;
     this.bAnimatingScroll = false;
     if (this.tileTiers.numTiers() <= 1) {
       return;

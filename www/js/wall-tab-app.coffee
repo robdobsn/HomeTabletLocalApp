@@ -238,6 +238,7 @@ class WallTabApp
         @delay(500, @scrollNow)
 
     scrollNow: =>
+        return
         @bAnimatingScroll = false
         if @tileTiers.numTiers() <= 1 then return
         scrollTop = $(window).scrollTop()

@@ -21,6 +21,7 @@ MediaPlayHelper = (function() {
     if (soundName in this.soundsDict) {
       if (!(soundName in this.soundsLoaded)) {
         LowLatencyAudio.preloadAudio(soundName, this.soundsDict[soundName], 1, this.onSuccess, this.onError);
+        this.soundsLoaded[soundName] = true;
       }
       return LowLatencyAudio.play(soundName, this.onSuccess, this.onError);
     }
