@@ -7,10 +7,13 @@ UserIdleCatcher = (function() {
     this.interval = interval;
     this.cbFunction = cbFunction;
     this.idleTime = 0;
-    $(this).mousemove(function() {
+    $("html").mousemove(function() {
       return _this.resetIdleTimer();
     });
-    $(this).keypress(function() {
+    $("html").keypress(function() {
+      return _this.resetIdleTimer();
+    });
+    $("html").scroll(function() {
       return _this.resetIdleTimer();
     });
     window.addEventListener('touchstart', function() {

@@ -1,9 +1,11 @@
 class UserIdleCatcher
 	constructor: (@interval, @cbFunction) ->
 		@idleTime = 0
-		$(@).mousemove =>
+		$("html").mousemove =>
 	    	@resetIdleTimer()
-	    $(@).keypress => 
+	    $("html").keypress => 
+	    	@resetIdleTimer()
+	    $("html").scroll => 
 	    	@resetIdleTimer()
 	    window.addEventListener 'touchstart', =>
 	    	@resetIdleTimer()
