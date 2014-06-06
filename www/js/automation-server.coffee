@@ -1,5 +1,5 @@
 class AutomationServer
-	constructor: (@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper) ->
+	constructor: (@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper, @navigationCallback) ->
 		@indigoServer = new IndigoServer(@indigoServerUrl)
 		@indigoServer.setReadyCallback(@indigoServerReadyCb)
 		@veraServer = new VeraServer(@veraServerUrl)
@@ -92,6 +92,8 @@ class AutomationServer
 				error: (jqXHR, textStatus, errorThrown) =>
 					console.log ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams)
 					@mediaPlayHelper.play("fail")
+		else if cmdParams[0..2] is "~~~"
+			@navigationCallback(cmdParams[3..])
 		else
 			# Execute command on the intermediate server
 			cmdToExec = @automationExecUrl + "/" + cmdParams

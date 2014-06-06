@@ -18,12 +18,28 @@ MediaPlayHelper = (function() {
   };
 
   MediaPlayHelper.prototype.play = function(soundName) {
+    var bTryAudio, e, snd;
     if (soundName in this.soundsDict) {
-      if (!(soundName in this.soundsLoaded)) {
-        LowLatencyAudio.preloadAudio(soundName, this.soundsDict[soundName], 1, this.onSuccess, this.onError);
-        this.soundsLoaded[soundName] = true;
+      bTryAudio = false;
+      try {
+        if (!(soundName in this.soundsLoaded)) {
+          LowLatencyAudio.preloadAudio(soundName, this.soundsDict[soundName], 1, this.onSuccess, this.onError);
+          this.soundsLoaded[soundName] = true;
+        }
+        LowLatencyAudio.play(soundName, this.onSuccess, this.onError);
+      } catch (_error) {
+        e = _error;
+        bTryAudio = true;
       }
-      return LowLatencyAudio.play(soundName, this.onSuccess, this.onError);
+      if (bTryAudio) {
+        try {
+          snd = new Audio(this.soundsDict[soundName]);
+          return snd.play();
+        } catch (_error) {
+          e = _error;
+          return console.log("LowLatencyAudio and Audio both failed");
+        }
+      }
     }
   };
 

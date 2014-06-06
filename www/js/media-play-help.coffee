@@ -11,10 +11,20 @@ class MediaPlayHelper
 
     play: (soundName) ->
         if soundName of @soundsDict
-            if soundName not of @soundsLoaded
-                LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, @onSuccess, @onError)
-                @soundsLoaded[soundName] = true
-            LowLatencyAudio.play(soundName, @onSuccess, @onError)
+            bTryAudio = false
+            try
+                if soundName not of @soundsLoaded
+                    LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, @onSuccess, @onError)
+                    @soundsLoaded[soundName] = true
+                LowLatencyAudio.play(soundName, @onSuccess, @onError)
+            catch e
+                bTryAudio = true
+            if bTryAudio
+                try
+                    snd = new Audio(@soundsDict[soundName])
+                    snd.play()
+                catch e
+                    console.log("LowLatencyAudio and Audio both failed")
 
     onSuccess: (result) ->
         console.log("LLAUDIO result = " + result )

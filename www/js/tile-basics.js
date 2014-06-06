@@ -2,7 +2,7 @@
 var TileBasics, TilePosition;
 
 TileBasics = (function() {
-  function TileBasics(bkColour, colSpan, rowSpan, clickFn, clickParam, tileName, visibility, parentTag, tileType, iconName, isFavourite, addToFavsFn, mediaPlayHelper) {
+  function TileBasics(bkColour, colSpan, rowSpan, clickFn, clickParam, tileName, visibility, parentTag, tileType, iconName, isFavourite, mediaPlayHelper) {
     this.bkColour = bkColour;
     this.colSpan = colSpan;
     this.rowSpan = rowSpan;
@@ -14,7 +14,6 @@ TileBasics = (function() {
     this.tileType = tileType;
     this.iconName = iconName;
     this.isFavourite = isFavourite;
-    this.addToFavsFn = addToFavsFn;
     this.mediaPlayHelper = mediaPlayHelper;
   }
 

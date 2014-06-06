@@ -39,6 +39,15 @@ TileTiers = (function() {
     return -1;
   };
 
+  TileTiers.prototype.getTierTop = function(tierName) {
+    var tierIdx;
+    tierIdx = this.findTierIdx(tierName);
+    if (tierIdx < 0) {
+      return -1;
+    }
+    return this.tiers[tierIdx].getTierTop();
+  };
+
   TileTiers.prototype.getTileTierSelector = function(tierName) {
     var tier, _i, _len, _ref;
     _ref = this.tiers;
@@ -109,12 +118,12 @@ TileTiers = (function() {
     return _results;
   };
 
-  TileTiers.prototype.findExistingTile = function(tileName) {
+  TileTiers.prototype.findExistingTile = function(tileName, groupName) {
     var exTile, tier, _i, _len, _ref;
     _ref = this.tiers;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       tier = _ref[_i];
-      exTile = tier.findExistingTile(tileName);
+      exTile = tier.findExistingTile(tileName, groupName);
       if (exTile !== null) {
         return exTile;
       }
@@ -122,11 +131,18 @@ TileTiers = (function() {
     return null;
   };
 
-  TileTiers.prototype.getGroupStartXPositions = function(tierIdx) {
+  TileTiers.prototype.getGroupColXPositions = function(tierIdx) {
     if (tierIdx >= this.tiers.length) {
       return;
     }
-    return this.tiers[tierIdx].getGroupStartXPositions();
+    return this.tiers[tierIdx].getGroupColXPositions();
+  };
+
+  TileTiers.prototype.getTilesAcrossScreen = function() {
+    if (this.tiers.length > 0) {
+      return this.tiers[0].getTilesAcrossScreen();
+    }
+    return 5;
   };
 
   return TileTiers;

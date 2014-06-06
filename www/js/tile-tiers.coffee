@@ -24,6 +24,11 @@ class TileTiers
 			tierIdx += 1
 		return -1
 
+	getTierTop: (tierName) ->
+		tierIdx = @findTierIdx(tierName)
+		if tierIdx < 0 then return -1
+		return @tiers[tierIdx].getTierTop()
+
 	getTileTierSelector: (tierName) ->
 		for tier in @tiers
 			if tier.tierName is tierName
@@ -58,12 +63,17 @@ class TileTiers
 		for tier in @tiers
 			tier.removeAll()
 		
-	findExistingTile: (tileName) ->
+	findExistingTile: (tileName, groupName) ->
 		for tier in @tiers
-			exTile = tier.findExistingTile (tileName)
+			exTile = tier.findExistingTile(tileName, groupName)
 			if exTile isnt null then return exTile
 		return null
 
-	getGroupStartXPositions: (tierIdx) ->
+	getGroupColXPositions: (tierIdx) ->
 		if tierIdx >= @tiers.length then return
-		return @tiers[tierIdx].getGroupStartXPositions()
+		return @tiers[tierIdx].getGroupColXPositions()
+
+	getTilesAcrossScreen: ->
+		if @tiers.length > 0
+			return @tiers[0].getTilesAcrossScreen()
+		return 5

@@ -7,7 +7,7 @@ TileTier = (function() {
     this.tierName = tierName;
     this.groups = [];
     this.groupCols = [];
-    this.groupSepPixels = 20;
+    this.groupSepPixels = 0;
     this.groupTitlesTopMargin = 60;
     this.tileSepXPixels = 20;
     this.tileSepYPixels = 20;
@@ -17,6 +17,7 @@ TileTier = (function() {
     this.groupTitlesTagLocator = "#" + this.tierId + " ." + this.groupTitlesClass;
     this.groupsClass = "sqGroups";
     this.groupsTagLocator = "#" + this.tierId + " ." + this.groupsClass;
+    this.tilesAcross = 5;
   }
 
   TileTier.prototype.getTileTierSelector = function() {
@@ -123,16 +124,20 @@ TileTier = (function() {
     return xStart;
   };
 
-  TileTier.prototype.getGroupStartXPositions = function() {
-    var group, groupIdx, startPosns, _i, _len, _ref, _results;
-    startPosns = [];
+  TileTier.prototype.getGroupColXPositions = function() {
+    var cellPos, colIdx, colXPosns, group, groupColXPosns, groupIdx, _i, _j, _len, _ref, _ref1;
+    groupColXPosns = [];
     _ref = this.groups;
-    _results = [];
     for (groupIdx = _i = 0, _len = _ref.length; _i < _len; groupIdx = ++_i) {
       group = _ref[groupIdx];
-      _results.push(startPosns.push(getGroupStartX(groupIdx)));
+      colXPosns = [];
+      for (colIdx = _j = 0, _ref1 = this.groupCols[groupIdx] - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; colIdx = 0 <= _ref1 ? ++_j : --_j) {
+        cellPos = this.getCellPos(groupIdx, colIdx, 0);
+        colXPosns.push(cellPos[0]);
+      }
+      groupColXPosns.push(colXPosns);
     }
-    return _results;
+    return groupColXPosns;
   };
 
   TileTier.prototype.calcFontSizePercent = function() {
@@ -176,18 +181,27 @@ TileTier = (function() {
     return _results;
   };
 
-  TileTier.prototype.findExistingTile = function(tileName) {
+  TileTier.prototype.findExistingTile = function(tileName, groupName) {
     var existingTile, group, _i, _len, _ref;
     existingTile = null;
     _ref = this.groups;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       group = _ref[_i];
+      if ((groupName != null) && groupName !== null) {
+        if (group.groupTitle !== groupName) {
+          continue;
+        }
+      }
       existingTile = group.findExistingTile(tileName);
       if (existingTile !== null) {
         break;
       }
     }
     return existingTile;
+  };
+
+  TileTier.prototype.getTilesAcrossScreen = function() {
+    return this.tilesAcross;
   };
 
   return TileTier;

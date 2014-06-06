@@ -2,7 +2,7 @@ class TileTier
 	constructor: (@parentTag, @tierName) ->
 		@groups = []
 		@groupCols = []
-		@groupSepPixels = 20
+		@groupSepPixels = 0
 		@groupTitlesTopMargin = 60
 		@tileSepXPixels = 20
 		@tileSepYPixels = 20
@@ -12,6 +12,7 @@ class TileTier
 		@groupTitlesTagLocator = "#" + @tierId + " ." + @groupTitlesClass
 		@groupsClass = "sqGroups"
 		@groupsTagLocator = "#" + @tierId + " ." + @groupsClass
+		@tilesAcross = 5 # Overridden in redolayout
 
 	getTileTierSelector: ->
 		@groupsTagLocator + " .sqTileContainer"
@@ -93,10 +94,15 @@ class TileTier
 		xStart += groupIdx * @groupSepPixels
 		return xStart
 
-	getGroupStartXPositions: ->
-		startPosns = []
+	getGroupColXPositions: ->
+		groupColXPosns = []
 		for group, groupIdx in @groups
-			startPosns.push(getGroupStartX(groupIdx))
+			colXPosns = []
+			for colIdx in [0..@groupCols[groupIdx]-1]
+				cellPos = @getCellPos(groupIdx, colIdx, 0)
+				colXPosns.push(cellPos[0])
+			groupColXPosns.push(colXPosns)
+		return groupColXPosns
 
 	calcFontSizePercent: ->
 		100 * Math.max(@cellWidth, @cellHeight) / 300
@@ -125,10 +131,16 @@ class TileTier
 		for group in @groups
 			group.repositionTiles(isPortrait)
 
-	findExistingTile: (tileName) ->
+	findExistingTile: (tileName, groupName) ->
 		existingTile = null
 		for group in @groups
+			if groupName? and groupName isnt null
+				if group.groupTitle isnt groupName
+					continue
 			existingTile = group.findExistingTile(tileName)
 			if existingTile	isnt null
 				break
 		return existingTile
+
+	getTilesAcrossScreen: ->
+		return @tilesAcross

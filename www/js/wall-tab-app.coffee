@@ -20,7 +20,7 @@ class WallTabApp
                 fail: "assets/fail.mp3"
             })
         @lastScrollEventTime = 0
-        @minTimeBetweenScrolls = 500
+        @minTimeBetweenScrolls = 1000
 
     go: ->
         # Basic body for DOM
@@ -39,7 +39,7 @@ class WallTabApp
         @automationActionGroups = []
 
         # Communication with Vera3 & Indigo through automation server
-        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper)
+        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper, @navigateTo)
         @automationServer.setReadyCallback(@automationServerReadyCb)
 
         # Tablet config is based on the IP address of the tablet
@@ -91,14 +91,21 @@ class WallTabApp
         tileDefinitions = 
             [
                 # Calendar
-                { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 2, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 0 }
-                { tierName: "calendarTier", groupName: "Today", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 0 }
-                { tierName: "calendarTier", groupName: "Tomorrow", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 1 }
-                { tierName: "calendarTier", groupName: "Today + 2", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 2 }
-                { tierName: "calendarTier", groupName: "Today + 3", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 3 }
-                { tierName: "calendarTier", groupName: "Today + 4", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "all", tileType: "calendar", iconName: "none", calDayIndex: 4 }
+                { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 2, uri: "~~~calendarTier", name: "calendar", visibility: "landscape", tileType: "calendar", iconName: "none", calDayIndex: 0 }
+                { tierName: "mainTier", groupName: "Home", colSpan: 3, rowSpan: 1, uri: "~~~calendarTier", name: "calendar", visibility: "portrait", tileType: "calendar", iconName: "none", calDayIndex: 0 }
+                { tierName: "calendarTier", groupName: "Today", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "landscape", tileType: "calendar", iconName: "none", calDayIndex: 0 }
+                { tierName: "calendarTier", groupName: "Tomorrow", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "landscape", tileType: "calendar", iconName: "none", calDayIndex: 1 }
+                { tierName: "calendarTier", groupName: "Today + 2", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "landscape", tileType: "calendar", iconName: "none", calDayIndex: 2 }
+                { tierName: "calendarTier", groupName: "Today + 3", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "landscape", tileType: "calendar", iconName: "none", calDayIndex: 3 }
+                { tierName: "calendarTier", groupName: "Today + 4", colSpan: 2, rowSpan: 3, uri: "", name: "calendar", visibility: "landscape", tileType: "calendar", iconName: "none", calDayIndex: 4 }
+                { tierName: "calendarTier", groupName: "Today", colSpan: 3, rowSpan: 5, uri: "", name: "calendar", visibility: "portrait", tileType: "calendar", iconName: "none", calDayIndex: 0 }
+                { tierName: "calendarTier", groupName: "Tomorrow", colSpan: 3, rowSpan: 5, uri: "", name: "calendar", visibility: "portrait", tileType: "calendar", iconName: "none", calDayIndex: 1 }
+                { tierName: "calendarTier", groupName: "Today + 2", colSpan: 3, rowSpan: 5, uri: "", name: "calendar", visibility: "portrait", tileType: "calendar", iconName: "none", calDayIndex: 2 }
+                { tierName: "calendarTier", groupName: "Today + 3", colSpan: 3, rowSpan: 5, uri: "", name: "calendar", visibility: "portrait", tileType: "calendar", iconName: "none", calDayIndex: 3 }
+                { tierName: "calendarTier", groupName: "Today + 4", colSpan: 3, rowSpan: 5, uri: "", name: "calendar", visibility: "portrait", tileType: "calendar", iconName: "none", calDayIndex: 4 }
                 # Clock
-                { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "all", tileType: "clock", iconName: "none"}
+                { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "landscape", tileType: "clock", iconName: "none"}
+                { tierName: "mainTier", groupName: "Home", colSpan: 3, rowSpan: 1, uri: "", name: "clock", visibility: "portrait", tileType: "clock", iconName: "none"}
             ]
         @jsonConfig["tileDefinitions"] = tileDefinitions
 
@@ -115,7 +122,7 @@ class WallTabApp
         tierIdx = @tileTiers.findTierIdx(tileDef.tierName)
         if tierIdx < 0 then return null
         isFavourite = true if tileDef.isFavourite? and tileDef.isFavourite
-        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, @automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, @addToFavsGroup, @mediaPlayHelper
+        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, @automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, @mediaPlayHelper
 
     makeCalendarTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
@@ -154,7 +161,8 @@ class WallTabApp
             for action in actionList
                 # make the button
                 tierName = if "tierName" of action then action.tierName else "actionsTier"
-                tileDef = { tierName: tierName, groupName: action.groupName, colSpan: 1, rowSpan: 1, uri: action.actionUrl, name: action.actionName, visibility: "all", tileType: "action", iconName: if "iconName" of action then action.iconName else "bulb-on" }
+                iconName = if "iconName" of action then action.iconName else "bulb-on"
+                tileDef = { tierName: tierName, groupName: action.groupName, colSpan: 1, rowSpan: 1, uri: action.actionUrl, name: action.actionName, visibility: "all", tileType: "action", iconName: iconName }
                 @makeTileFromTileDef(tileDef)
         # Re-apply the configuration for the tablet - handles favourites group etc
         @applyTileConfig(@jsonConfig)
@@ -188,10 +196,11 @@ class WallTabApp
         if "favourites" of jsonConfig
             for favouriteDefn in jsonConfig.favourites
                 # Find existing tile matching the description
-                exTile = @tileTiers.findExistingTile(favouriteDefn.tileName)
+                exTile = @tileTiers.findExistingTile(favouriteDefn.tileName, favouriteDefn.groupName)
                 if exTile isnt null
                     tb = exTile.tileBasics
-                    tileDef = { tierName: "mainTier", groupName: "Home", colSpan: tb.colSpan, rowSpan: tb.rowSpan, uri: tb.clickParam, name: tb.tileName, visibility: tb.visibility, tileType: tb.tileType, iconName: tb.iconName, isFavourite: true }
+                    destGroupName = if "destGroup" of favouriteDefn then favouriteDefn["destGroup"] else "Home"
+                    tileDef = { tierName: "mainTier", groupName: destGroupName, colSpan: tb.colSpan, rowSpan: tb.rowSpan, uri: tb.clickParam, name: tb.tileName, visibility: tb.visibility, tileType: tb.tileType, iconName: tb.iconName, isFavourite: true }
                     @makeTileFromTileDef(tileDef)
         return
 
@@ -235,12 +244,13 @@ class WallTabApp
     scrollStart: =>
         @scrollCurTop = $(window).scrollTop()
         @scrollCurLeft = $(window).scrollLeft()
-        console.log("Scroll start " + @scrollCurLeft + ", " + @scrollCurTop)
+        console.log("Scrollstart " + @scrollCurLeft + ", " + @scrollCurTop)
 
     scrollStop: =>
         if @lastScrollEventTime + @minTimeBetweenScrolls > new Date().getTime()
             console.log("scrollstop ignored")
             return
+        console.log("Scrollstop " + $(window).scrollLeft() + ", " + $(window).scrollTop())
         @lastScrollEventTime = new Date().getTime()
         # Don't bother scrolling if only one tier
         if @tileTiers.numTiers() <= 1 then return
@@ -253,34 +263,44 @@ class WallTabApp
         scrollDistX = scrollLeft - @scrollCurLeft
         if Math.abs(scrollDistY) > minScrollYForWholeTier and Math.abs(scrollDistY) < tierHeight
             scrollDistY = if scrollDistY > 0 then tierHeight else -tierHeight
-#        for tier in @tileTiers.tiers
-#            console.log("tier " + tier.getTierTop())
-        scrollTo = Math.round((@scrollCurTop+scrollDistY)/tierHeight)*tierHeight
-        @animatingScroll += 1
-        console.log("scroll animating " + @scrollCurLeft + ", " + @scrollCurTop + ", " + scrollDistX + ", " + scrollDistY + " TH " + tierHeight)
-        $("html, body").stop().animate({ scrollTop: scrollTo }, 100, @scrollComplete);
+        scrollToY = Math.round((@scrollCurTop+scrollDistY)/tierHeight)*tierHeight
+        # Handle left scrolling
+        tierIdx = scrollToY / tierHeight
+        if tierIdx >= @tileTiers.numTiers() then tierIdx = @tileTiers.numTiers() - 1
+        groupColXPosns = @tileTiers.getGroupColXPositions(tierIdx)
+        scrollToX = @scrollCurLeft + scrollDistX
+        bestGroupIdx = 0
+        for groupColXPos, gpIdx in groupColXPosns
+            if scrollToX < groupColXPos[0]
+                if scrollDistX < 0 and gpIdx >= 1
+                    bestGroupIdx = gpIdx-1
+                break
+            bestGroupIdx = gpIdx
+        # If the group has more columns than the screen width
+        # then snap to the column instead of the group
+        tilesAcrossScreen = @tileTiers.getTilesAcrossScreen()
+        if groupColXPosns[bestGroupIdx].length > tilesAcrossScreen
+            bestColX = 0
+            for colX in groupColXPosns[bestGroupIdx]
+                if scrollToX < colX
+                    scrollToX = bestColX
+                    break
+                bestColX = colX
+        else
+            scrollToX = groupColXPosns[bestGroupIdx][0]
+        console.log("scroll animating " + @scrollCurLeft + ", " + @scrollCurTop + ", " + scrollDistX + ", " + scrollDistY + " TH " + tierHeight + " STX " + scrollToX + " STY " + scrollToY)
+        if scrollToX is scrollLeft
+            if scrollToY is scrollTop
+                return
+            $("html, body").stop().animate({ scrollTop: scrollToY }, 200);
+            return
+        if scrollToY is scrollTop
+            $("html, body").stop().animate({ scrollLeft: scrollToX }, 200);
+            return
+        $("html, body").stop().animate({ scrollLeft: scrollToX }, 200).animate({ scrollTop: scrollToY }, 200);
 
-    scrollComplete: =>
-        console.log("scroll animate done now ")
+    navigateTo: (tierName) =>
+        tierTop = @tileTiers.getTierTop(tierName)
+        if tierTop >= 0
+            $("html, body").stop().animate({ scrollTop: tierTop }, 200);
 
-    delay: (ms, func) ->
-        window.setTimeout(func, ms)
-
-    scrollSnapping: =>
-        @lastScrollEventTime = new Date().getTime()
-        return if @bAnimatingScroll? and @bAnimatingScroll is true
-        @bAnimatingScroll = true
-        @delay(100, @scrollTimeout)
-
-    scrollTimeout: =>
-        @bAnimatingScroll = false
-        if @tileTiers.numTiers() <= 1 then return
-        scrollTop = $(window).scrollTop()
-        for tier in @tileTiers.tiers
-            console.log("tier " + tier.getTierTop())
-        tierHeight =  @tileTiers.getTier(1).getTierTop()
-        scrollTo = Math.round(scrollTop/tierHeight)*tierHeight
-        $("html, body").stop().animate({ scrollTop: scrollTo }, 200);
-
-    addToFavsGroup: ->
-        alert("Add to favs group")

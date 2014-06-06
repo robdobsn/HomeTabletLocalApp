@@ -1,5 +1,5 @@
 class TileBasics
-	constructor: (@bkColour, @colSpan, @rowSpan, @clickFn, @clickParam, @tileName, @visibility, @parentTag, @tileType, @iconName, @isFavourite, @addToFavsFn, @mediaPlayHelper) ->
+	constructor: (@bkColour, @colSpan, @rowSpan, @clickFn, @clickParam, @tileName, @visibility, @parentTag, @tileType, @iconName, @isFavourite, @mediaPlayHelper) ->
 
 	setTierGroupIds: (@tierIdx, @groupIdx) ->
 		
