@@ -2,7 +2,7 @@ class SceneButton extends Tile
 	constructor: (tileBasics, @buttonText) ->
 		super tileBasics
 
-	addToDoc: () ->
+	addToDoc: (elemToAddTo) ->
 		super()
 		@contents.append """
 			<div class="sqSceneButtonIcon"><img src="img/light-bulb-on.png"></img></div>

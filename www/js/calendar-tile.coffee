@@ -3,11 +3,11 @@ class CalendarTile extends Tile
 		super tileBasics
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 		@calLineCount = 0; @calCharCount = 0; @calMaxLineLen = 0
-	@minutesBetweenCalendarRefreshes = 15
 
-	addToDoc: () ->
+	addToDoc: (elemToAddTo) ->
 		super()
-		@setRefreshInterval(@minutesBetweenCalendarRefreshes * 60, @requestCalUpdate, true)
+		cssTag = "sqInner"
+		@setRefreshInterval(300, @requestCalUpdate, true)
 
 	requestCalUpdate: ->
 		$.ajax @calendarURL,
@@ -102,14 +102,14 @@ class CalendarTile extends Tile
 		days = parseInt(dur[0])
 		hrs = parseInt(dur[1])
 		mins = parseInt(dur[2])
-		outStr = ""
 		if days is 0 and hrs isnt 0 and mins is 30
 			outStr = (hrs+0.5) + "h"
 		else
 			outStr = if days is 0 then "" else (days + "d")
 			outStr += if hrs is 0 then "" else (hrs + "h")
 			outStr += if mins is 0 then "" else (mins + "m")
-		return outStr
 
+class CalendarTileDefiniton
+	constructor: (@visibility, @groupIdx, @colSpan, @rowSpan, @calDayIndex) ->
 		
 

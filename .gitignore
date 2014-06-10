@@ -1,6 +1,2 @@
 platforms/
 thumbs.db
-.idea
-*.map
-node_modules
-
