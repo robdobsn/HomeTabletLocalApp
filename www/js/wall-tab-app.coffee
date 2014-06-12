@@ -21,6 +21,7 @@ class WallTabApp
             })
         @lastScrollEventTime = 0
         @minTimeBetweenScrolls = 1000
+        @hoursBetweenActionUpdates = 12
 
     go: ->
         # Basic body for DOM
@@ -70,7 +71,7 @@ class WallTabApp
         @requestActionAndConfigData()
         setInterval =>
             @requestActionAndConfigData()
-        , 600000
+        , (@hoursBetweenActionUpdates * 60 * 60 * 1000)
 
     requestActionAndConfigData: ->
         @automationServer.getActionGroups()

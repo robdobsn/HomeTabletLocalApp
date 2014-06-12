@@ -6,7 +6,7 @@ class Clock extends Tile
 		@monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 		@shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-	addToDoc: (elemToAddTo) ->
+	addToDoc: () ->
 		super()
 		@contents.append """
 			<div class="sqClockDow"></div>
@@ -19,7 +19,6 @@ class Clock extends Tile
 				<li class="sqClockSecs"></li>
 			</ul>
 			"""
-		cssTag = "sqInner"
 		@setRefreshInterval(1, @updateClock, false)
 
 	updateClock: () ->
