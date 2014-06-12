@@ -1,2 +1,6 @@
 platforms/
 thumbs.db
+
+.idea
+node_modules
+

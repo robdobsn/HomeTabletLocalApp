@@ -12,12 +12,15 @@ class MediaPlayHelper
     play: (soundName) ->
         if soundName of @soundsDict
             bTryAudio = false
-            try
-                if soundName not of @soundsLoaded
-                    LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, @onSuccess, @onError)
-                    @soundsLoaded[soundName] = true
-                LowLatencyAudio.play(soundName, @onSuccess, @onError)
-            catch e
+            if window.plugins and window.plugins.LowLatencyAudio
+                try
+                    if soundName not of @soundsLoaded
+                        window.plugins.LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, @onSuccess, @onError)
+                        @soundsLoaded[soundName] = true
+                    window.plugins.LowLatencyAudio.play(soundName, @onSuccess, @onError)
+                catch e
+                    bTryAudio = true
+            else
                 bTryAudio = true
             if bTryAudio
                 try
