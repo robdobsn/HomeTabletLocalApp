@@ -482,12 +482,14 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.actionOnUserIdle = function() {
-    $("html, body").animate({
-      scrollLeft: "0px"
-    });
+    if ($(window).scrollLeft() === 0 && $(window).scrollTop() === 0) {
+      return;
+    }
     return $("html, body").animate({
+      scrollLeft: "0px"
+    }, 200).animate({
       scrollUp: "0px"
-    });
+    }, 200);
   };
 
   WallTabApp.prototype.scrollStart = function() {
