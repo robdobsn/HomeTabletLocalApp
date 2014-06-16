@@ -239,8 +239,8 @@ class WallTabApp
         return false
 
     actionOnUserIdle: =>
-        $("html, body").animate({ scrollLeft: "0px" });
-        $("html, body").animate({ scrollUp: "0px" });
+        if $(window).scrollLeft() is 0 and $(window).scrollTop() is 0 then return
+        $("html, body").animate({ scrollLeft: "0px" }, 200).animate({ scrollUp: "0px" }, 200);
 
     scrollStart: =>
         @scrollCurTop = $(window).scrollTop()
