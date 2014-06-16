@@ -65,7 +65,7 @@ class AutomationServer
 				if "fibaro" of data then @fibaroActions = data.fibaro
 				if "doorController" of data then @doorActions = data.doorController
 				if "blinds" of data then @blindsActions = data.blinds
-				@callBackWithSumActions
+				@callBackWithSumActions()
 			error: (jqXHR, textStatus, errorThrown) =>
 				console.log ("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + @automationActionsUrl)
 
