@@ -23,6 +23,9 @@ CalendarTile = (function(_super) {
   };
 
   CalendarTile.prototype.requestCalUpdate = function() {
+    var dateTimeNow;
+    dateTimeNow = new Date();
+    console.log("ReqCalUpdate at " + dateTimeNow.toTimeString());
     return $.ajax(this.calendarURL, {
       type: "GET",
       dataType: "text",

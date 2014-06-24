@@ -10,6 +10,8 @@ class CalendarTile extends Tile
 		@setRefreshInterval(@minutesBetweenCalendarRefreshes * 60, @requestCalUpdate, true)
 
 	requestCalUpdate: ->
+		dateTimeNow = new Date()
+		console.log("ReqCalUpdate at " + dateTimeNow.toTimeString()) 
 		$.ajax @calendarURL,
 		type: "GET"
 		dataType: "text"
