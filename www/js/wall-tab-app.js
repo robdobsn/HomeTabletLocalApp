@@ -5,6 +5,7 @@ var WallTabApp,
 WallTabApp = (function() {
   function WallTabApp() {
     this.navigateTo = __bind(this.navigateTo, this);
+    this.scrollStopDelayed = __bind(this.scrollStopDelayed, this);
     this.scrollStop = __bind(this.scrollStop, this);
     this.scrollStart = __bind(this.scrollStart, this);
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
@@ -499,6 +500,17 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.scrollStop = function() {
+    if (this.scrollStopTimer != null) {
+      clearTimeout(this.scrollStopTimer);
+    }
+    return this.scrollStopTimer = setTimeout((function(_this) {
+      return function() {
+        return _this.scrollStopDelayed();
+      };
+    })(this), 2000);
+  };
+
+  WallTabApp.prototype.scrollStopDelayed = function() {
     var bestColX, bestGroupIdx, colX, gpIdx, groupColXPos, groupColXPosns, minScrollYForWholeTier, scrollDistX, scrollDistY, scrollLeft, scrollToX, scrollToY, scrollTop, tierHeight, tierIdx, tilesAcrossScreen, _i, _j, _len, _len1, _ref;
     if (this.lastScrollEventTime + this.minTimeBetweenScrolls > new Date().getTime()) {
       console.log("scrollstop ignored");

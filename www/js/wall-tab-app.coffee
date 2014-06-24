@@ -248,6 +248,14 @@ class WallTabApp
         console.log("Scrollstart " + @scrollCurLeft + ", " + @scrollCurTop)
 
     scrollStop: =>
+        # Delay this event to allow user to stop scrolling
+        if @scrollStopTimer?
+            clearTimeout(@scrollStopTimer)
+        @scrollStopTimer = setTimeout =>
+            @scrollStopDelayed()
+        , 2000
+
+    scrollStopDelayed: =>
         if @lastScrollEventTime + @minTimeBetweenScrolls > new Date().getTime()
             console.log("scrollstop ignored")
             return
