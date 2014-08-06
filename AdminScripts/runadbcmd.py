@@ -11,6 +11,13 @@ cmdStr = ""
 if len(sys.argv) > 1:
     for cmdIdx in range(1,len(sys.argv)):
         cmdStr += sys.argv[cmdIdx] + " "
+    if cmdStr[0:2] == "-t":
+        cmdSplit = cmdStr.split(" ")
+        tablet_names = [ cmdSplit[1] ]
+        cmdStr = ""
+        for cmdIdx in range(2, len(cmdSplit)):
+            cmdStr += cmdSplit[cmdIdx] + " "
+        print ("Running cmd on " + tablet_names[0])
     if cmdStr[0:3] == "adb":
         cmdStr = "adb -s {tabname}" + cmdStr[3:]
 else:
@@ -22,7 +29,7 @@ else:
     print ("adb shell ps ... list running processes")
     exit(0)
 
-print (cmdStr)
+print ("Command is " + cmdStr)
 
 os.system("adb disconnect")
 

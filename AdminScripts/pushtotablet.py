@@ -11,6 +11,7 @@ if len(sys.argv) > 1:
     if sys.argv[1] in all_tablet_names:
         tablet_names = []
         tablet_names.append(sys.argv[1])
+        print ("Operating on " + tablet_names[0])
     else:
         print "Cannot find " + sys.argv[1] + " in list of tablets"
         exit(0)
