@@ -11,7 +11,7 @@ class CalendarTile extends Tile
 
 	requestCalUpdate: ->
 		dateTimeNow = new Date()
-		console.log("ReqCalUpdate at " + dateTimeNow.toTimeString()) 
+		console.log("ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + @calendarURL) 
 		$.ajax @calendarURL,
 		type: "GET"
 		dataType: "text"
@@ -20,6 +20,7 @@ class CalendarTile extends Tile
 			jsonText = jqXHR.responseText
 			jsonData = $.parseJSON(jsonText)
 			@showCalendar(jsonData)
+			console.log "CalShown"
 
 	showCalendar: (jsonData) ->
 		if not ("calEvents" of jsonData)

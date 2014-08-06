@@ -5,9 +5,6 @@ var WallTabApp,
 WallTabApp = (function() {
   function WallTabApp() {
     this.navigateTo = __bind(this.navigateTo, this);
-    this.scrollStopDelayed = __bind(this.scrollStopDelayed, this);
-    this.scrollStop = __bind(this.scrollStop, this);
-    this.scrollStart = __bind(this.scrollStart, this);
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
     this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
     this.configReadyCb = __bind(this.configReadyCb, this);
@@ -53,17 +50,11 @@ WallTabApp = (function() {
         return _this.tileTiers.reDoLayout();
       };
     })(this));
-    $(window).on('scrollstart', (function(_this) {
-      return function() {
-        return _this.scrollStart();
-      };
-    })(this));
-    $(window).on('scrollstop', (function(_this) {
-      return function() {
-        return _this.scrollStop();
-      };
-    })(this));
     this.rebuildUI();
+    $(document).scrollsnap({
+      snaps: '.snap',
+      proximity: 250
+    });
     this.requestActionAndConfigData();
     return setInterval((function(_this) {
       return function() {
@@ -483,106 +474,14 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.actionOnUserIdle = function() {
-    if ($(window).scrollLeft() === 0 && $(window).scrollTop() === 0) {
+    if ($(window).scrollLeft() === 0 && $(window).scrollTop() < 20) {
       return;
     }
+    console.log("ScrollTop = " + $(window).scrollTop());
     return $("html, body").animate({
+      scrollTop: "0px"
+    }, 200).animate({
       scrollLeft: "0px"
-    }, 200).animate({
-      scrollUp: "0px"
-    }, 200);
-  };
-
-  WallTabApp.prototype.scrollStart = function() {
-    this.scrollCurTop = $(window).scrollTop();
-    this.scrollCurLeft = $(window).scrollLeft();
-    return console.log("Scrollstart " + this.scrollCurLeft + ", " + this.scrollCurTop);
-  };
-
-  WallTabApp.prototype.scrollStop = function() {
-    if (this.scrollStopTimer != null) {
-      clearTimeout(this.scrollStopTimer);
-    }
-    return this.scrollStopTimer = setTimeout((function(_this) {
-      return function() {
-        return _this.scrollStopDelayed();
-      };
-    })(this), 2000);
-  };
-
-  WallTabApp.prototype.scrollStopDelayed = function() {
-    var bestColX, bestGroupIdx, colX, gpIdx, groupColXPos, groupColXPosns, minScrollYForWholeTier, scrollDistX, scrollDistY, scrollLeft, scrollToX, scrollToY, scrollTop, tierHeight, tierIdx, tilesAcrossScreen, _i, _j, _len, _len1, _ref;
-    if (this.lastScrollEventTime + this.minTimeBetweenScrolls > new Date().getTime()) {
-      console.log("scrollstop ignored");
-      return;
-    }
-    console.log("Scrollstop " + $(window).scrollLeft() + ", " + $(window).scrollTop());
-    this.lastScrollEventTime = new Date().getTime();
-    if (this.tileTiers.numTiers() <= 1) {
-      return;
-    }
-    tierHeight = this.tileTiers.getTier(1).getTierTop();
-    minScrollYForWholeTier = 50;
-    scrollTop = $(window).scrollTop();
-    scrollLeft = $(window).scrollLeft();
-    scrollDistY = scrollTop - this.scrollCurTop;
-    scrollDistX = scrollLeft - this.scrollCurLeft;
-    if (Math.abs(scrollDistY) > minScrollYForWholeTier && Math.abs(scrollDistY) < tierHeight) {
-      scrollDistY = scrollDistY > 0 ? tierHeight : -tierHeight;
-    }
-    scrollToY = Math.round((this.scrollCurTop + scrollDistY) / tierHeight) * tierHeight;
-    tierIdx = scrollToY / tierHeight;
-    if (tierIdx >= this.tileTiers.numTiers()) {
-      tierIdx = this.tileTiers.numTiers() - 1;
-    }
-    groupColXPosns = this.tileTiers.getGroupColXPositions(tierIdx);
-    scrollToX = this.scrollCurLeft + scrollDistX;
-    bestGroupIdx = 0;
-    for (gpIdx = _i = 0, _len = groupColXPosns.length; _i < _len; gpIdx = ++_i) {
-      groupColXPos = groupColXPosns[gpIdx];
-      if (scrollToX < groupColXPos[0]) {
-        if (scrollDistX < 0 && gpIdx >= 1) {
-          bestGroupIdx = gpIdx - 1;
-        }
-        break;
-      }
-      bestGroupIdx = gpIdx;
-    }
-    tilesAcrossScreen = this.tileTiers.getTilesAcrossScreen();
-    if (groupColXPosns[bestGroupIdx].length > tilesAcrossScreen) {
-      bestColX = 0;
-      _ref = groupColXPosns[bestGroupIdx];
-      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-        colX = _ref[_j];
-        if (scrollToX < colX) {
-          scrollToX = bestColX;
-          break;
-        }
-        bestColX = colX;
-      }
-    } else {
-      scrollToX = groupColXPosns[bestGroupIdx][0];
-    }
-    console.log("scroll animating " + this.scrollCurLeft + ", " + this.scrollCurTop + ", " + scrollDistX + ", " + scrollDistY + " TH " + tierHeight + " STX " + scrollToX + " STY " + scrollToY);
-    if (scrollToX === scrollLeft) {
-      if (scrollToY === scrollTop) {
-        return;
-      }
-      $("html, body").stop().animate({
-        scrollTop: scrollToY
-      }, 200);
-      return;
-    }
-    if (scrollToY === scrollTop) {
-      $("html, body").stop().animate({
-        scrollLeft: scrollToX
-      }, 200);
-      return;
-    }
-    return $("html, body").stop().animate({
-      scrollLeft: scrollToX
-    }, 200).animate({
-      scrollTop: scrollToY
     }, 200);
   };
 

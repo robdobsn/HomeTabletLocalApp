@@ -21,7 +21,7 @@ class TileTier
 		# Add to html in parent tag
 		$(@parentTag).append """
             <div id="#{@tierId}" class="sqTier">
-                <div class="#{@groupTitlesClass}"/>
+                <div class="#{@groupTitlesClass} snap"/>
                 <div class="#{@groupsClass}">
 			        <div class="sqTileContainer" style="width:3000px;display:block;zoom:1;">
 			        </div>
@@ -88,7 +88,7 @@ class TileTier
 	getGroupStartX: (groupIdx) ->
 		gIdx = 0
 		xStart = 0
-		while gIdx < groupIdx
+		while gIdx < groupIdx and gIdx < @groupCols.length
 			xStart += @groupCols[gIdx] * @cellWidth
 			gIdx += 1
 		xStart += groupIdx * @groupSepPixels
@@ -110,6 +110,11 @@ class TileTier
 	getGroupTitlePos: (groupIdx) ->
 		xStart = @getGroupStartX(groupIdx)
 		return [xStart, 10, "200%"]
+
+	getGroupTitleWidth: (groupIdx) ->
+		xStart = @getGroupStartX(groupIdx)
+		xEnd = @getGroupStartX(groupIdx+1)
+		return xEnd - xStart - @groupSepPixels
 
 	getCellPos: (groupIdx, colIdx, rowIdx) ->
 		xStart = @getGroupStartX(groupIdx)

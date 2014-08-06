@@ -81,7 +81,9 @@ class TileGroup
 		$(@groupTitlesTag + " ."+@groupIdTag).css {
 			"margin-left": titleX + "px", 
 			"margin-top": titleY + "px",
-			"font-size": fontSize
+			"font-size": fontSize,
+			"width": @tileTier.getGroupTitleWidth(@groupIdx),
+			"overflow": "hidden"
 			}
 		# Order tiles so widest are at the end
 		for tile, tileIdx in @tiles

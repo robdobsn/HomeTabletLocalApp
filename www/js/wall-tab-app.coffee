@@ -58,14 +58,14 @@ class WallTabApp
         $(window).on 'resize', =>
           @tileTiers.reDoLayout()
 
-        # Scroll: snap to tiers
-        $(window).on 'scrollstart', =>
-            @scrollStart()
-        $(window).on 'scrollstop', =>
-            @scrollStop()
-
         # Rebuild UI
         @rebuildUI()
+
+        # Add scroll snapping
+        $(document).scrollsnap(
+            snaps: '.snap',
+            proximity: 250
+            )
 
         # Make initial requests for action (scene) data and config data and repeat requests at intervals
         @requestActionAndConfigData()
@@ -239,74 +239,9 @@ class WallTabApp
         return false
 
     actionOnUserIdle: =>
-        if $(window).scrollLeft() is 0 and $(window).scrollTop() is 0 then return
-        $("html, body").animate({ scrollLeft: "0px" }, 200).animate({ scrollUp: "0px" }, 200);
-
-    scrollStart: =>
-        @scrollCurTop = $(window).scrollTop()
-        @scrollCurLeft = $(window).scrollLeft()
-        console.log("Scrollstart " + @scrollCurLeft + ", " + @scrollCurTop)
-
-    scrollStop: =>
-        # Delay this event to allow user to stop scrolling
-        if @scrollStopTimer?
-            clearTimeout(@scrollStopTimer)
-        @scrollStopTimer = setTimeout =>
-            @scrollStopDelayed()
-        , 2000
-
-    scrollStopDelayed: =>
-        if @lastScrollEventTime + @minTimeBetweenScrolls > new Date().getTime()
-            console.log("scrollstop ignored")
-            return
-        console.log("Scrollstop " + $(window).scrollLeft() + ", " + $(window).scrollTop())
-        @lastScrollEventTime = new Date().getTime()
-        # Don't bother scrolling if only one tier
-        if @tileTiers.numTiers() <= 1 then return
-        tierHeight =  @tileTiers.getTier(1).getTierTop()
-        # Allow a small vertical scroll to snap to the next tier
-        minScrollYForWholeTier = 50
-        scrollTop = $(window).scrollTop()
-        scrollLeft = $(window).scrollLeft()
-        scrollDistY = scrollTop - @scrollCurTop
-        scrollDistX = scrollLeft - @scrollCurLeft
-        if Math.abs(scrollDistY) > minScrollYForWholeTier and Math.abs(scrollDistY) < tierHeight
-            scrollDistY = if scrollDistY > 0 then tierHeight else -tierHeight
-        scrollToY = Math.round((@scrollCurTop+scrollDistY)/tierHeight)*tierHeight
-        # Handle left scrolling
-        tierIdx = scrollToY / tierHeight
-        if tierIdx >= @tileTiers.numTiers() then tierIdx = @tileTiers.numTiers() - 1
-        groupColXPosns = @tileTiers.getGroupColXPositions(tierIdx)
-        scrollToX = @scrollCurLeft + scrollDistX
-        bestGroupIdx = 0
-        for groupColXPos, gpIdx in groupColXPosns
-            if scrollToX < groupColXPos[0]
-                if scrollDistX < 0 and gpIdx >= 1
-                    bestGroupIdx = gpIdx-1
-                break
-            bestGroupIdx = gpIdx
-        # If the group has more columns than the screen width
-        # then snap to the column instead of the group
-        tilesAcrossScreen = @tileTiers.getTilesAcrossScreen()
-        if groupColXPosns[bestGroupIdx].length > tilesAcrossScreen
-            bestColX = 0
-            for colX in groupColXPosns[bestGroupIdx]
-                if scrollToX < colX
-                    scrollToX = bestColX
-                    break
-                bestColX = colX
-        else
-            scrollToX = groupColXPosns[bestGroupIdx][0]
-        console.log("scroll animating " + @scrollCurLeft + ", " + @scrollCurTop + ", " + scrollDistX + ", " + scrollDistY + " TH " + tierHeight + " STX " + scrollToX + " STY " + scrollToY)
-        if scrollToX is scrollLeft
-            if scrollToY is scrollTop
-                return
-            $("html, body").stop().animate({ scrollTop: scrollToY }, 200);
-            return
-        if scrollToY is scrollTop
-            $("html, body").stop().animate({ scrollLeft: scrollToX }, 200);
-            return
-        $("html, body").stop().animate({ scrollLeft: scrollToX }, 200).animate({ scrollTop: scrollToY }, 200);
+        if $(window).scrollLeft() is 0 and $(window).scrollTop() < 20 then return
+        console.log ("ScrollTop = " + $(window).scrollTop())
+        $("html, body").animate({ scrollTop: "0px" }, 200).animate({ scrollLeft: "0px" }, 200);
 
     navigateTo: (tierName) =>
         tierTop = @tileTiers.getTierTop(tierName)

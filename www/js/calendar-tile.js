@@ -25,7 +25,7 @@ CalendarTile = (function(_super) {
   CalendarTile.prototype.requestCalUpdate = function() {
     var dateTimeNow;
     dateTimeNow = new Date();
-    console.log("ReqCalUpdate at " + dateTimeNow.toTimeString());
+    console.log("ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + this.calendarURL);
     return $.ajax(this.calendarURL, {
       type: "GET",
       dataType: "text",
@@ -35,7 +35,8 @@ CalendarTile = (function(_super) {
           var jsonData, jsonText;
           jsonText = jqXHR.responseText;
           jsonData = $.parseJSON(jsonText);
-          return _this.showCalendar(jsonData);
+          _this.showCalendar(jsonData);
+          return console.log("CalShown");
         };
       })(this)
     });
