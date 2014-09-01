@@ -14,8 +14,8 @@ WallTabApp = (function() {
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
     this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
     this.automationExecUrl = this.rdHomeServerUrl;
-    this.sonosActionsUrl = this.rdHomeServerUrl + "/sonos/api/v1.0/actions";
-    this.tabletConfigUrl = this.rdHomeServerUrl + "/tablet/api/v1.0/config";
+    this.sonosActionsUrl = "";
+    this.tabletConfigUrl = "http://macallan:5076/tabletconfig";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
     this.fibaroServerUrl = "http://192.168.0.69";
     this.veraServerUrl = "http://192.168.0.206:3480";
@@ -65,7 +65,7 @@ WallTabApp = (function() {
 
   WallTabApp.prototype.requestActionAndConfigData = function() {
     this.automationServer.getActionGroups();
-    return this.tabletConfig.initTabletConfig();
+    return this.tabletConfig.requestConfig();
   };
 
   WallTabApp.prototype.setDefaultTabletConfig = function() {
@@ -250,7 +250,7 @@ WallTabApp = (function() {
         iconName: "none"
       }
     ];
-    return this.jsonConfig["tileDefinitions"] = tileDefinitions;
+    return this.jsonConfig["tileDefs_static"] = tileDefinitions;
   };
 
   WallTabApp.prototype.makeTileFromTileDef = function(tileDef) {
@@ -332,7 +332,7 @@ WallTabApp = (function() {
       for (_i = 0, _len = actionList.length; _i < _len; _i++) {
         action = actionList[_i];
         tierName = "tierName" in action ? action.tierName : "actionsTier";
-        iconName = "iconName" in action ? action.iconName : "bulb-on";
+        iconName = "iconName" in action ? action.iconName : "";
         tileDef = {
           tierName: tierName,
           groupName: action.groupName,
@@ -381,36 +381,38 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.applyTileConfig = function(jsonConfig) {
-    var destGroupName, exTile, favouriteDefn, tb, tileDef, _i, _j, _len, _len1, _ref, _ref1;
-    if ("tileDefinitions" in jsonConfig) {
-      _ref = jsonConfig.tileDefinitions;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        tileDef = _ref[_i];
-        this.makeTileFromTileDef(tileDef);
-      }
-    }
-    if ("favourites" in jsonConfig) {
-      _ref1 = jsonConfig.favourites;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        favouriteDefn = _ref1[_j];
-        exTile = this.tileTiers.findExistingTile(favouriteDefn.tileName, favouriteDefn.groupName);
-        if (exTile !== null) {
-          tb = exTile.tileBasics;
-          destGroupName = "destGroup" in favouriteDefn ? favouriteDefn["destGroup"] : "Home";
-          tileDef = {
-            tierName: "mainTier",
-            groupName: destGroupName,
-            colSpan: tb.colSpan,
-            rowSpan: tb.rowSpan,
-            uri: tb.clickParam,
-            name: tb.tileName,
-            visibility: tb.visibility,
-            tileType: tb.tileType,
-            iconName: tb.iconName,
-            isFavourite: true
-          };
+    var destGroupName, exTile, favouriteDefn, favourites, key, tb, tileDef, val, _i, _j, _len, _len1;
+    favourites = {};
+    for (key in jsonConfig) {
+      val = jsonConfig[key];
+      if (key === "favourites") {
+        favourites = val;
+      } else if (key.search(/tileDefs_/) === 0) {
+        for (_i = 0, _len = val.length; _i < _len; _i++) {
+          tileDef = val[_i];
           this.makeTileFromTileDef(tileDef);
         }
+      }
+    }
+    for (_j = 0, _len1 = favourites.length; _j < _len1; _j++) {
+      favouriteDefn = favourites[_j];
+      exTile = this.tileTiers.findExistingTile(favouriteDefn.tileName, favouriteDefn.groupName);
+      if (exTile !== null) {
+        tb = exTile.tileBasics;
+        destGroupName = "destGroup" in favouriteDefn ? favouriteDefn["destGroup"] : "Home";
+        tileDef = {
+          tierName: "mainTier",
+          groupName: destGroupName,
+          colSpan: tb.colSpan,
+          rowSpan: tb.rowSpan,
+          uri: tb.clickParam,
+          name: tb.tileName,
+          visibility: tb.visibility,
+          tileType: tb.tileType,
+          iconName: tb.iconName,
+          isFavourite: true
+        };
+        this.makeTileFromTileDef(tileDef);
       }
     }
   };

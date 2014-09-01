@@ -7,8 +7,8 @@ class WallTabApp
         @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
         @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
         @automationExecUrl = @rdHomeServerUrl
-        @sonosActionsUrl = @rdHomeServerUrl + "/sonos/api/v1.0/actions"
-        @tabletConfigUrl = @rdHomeServerUrl + "/tablet/api/v1.0/config"
+        @sonosActionsUrl = ""
+        @tabletConfigUrl = "http://macallan:5076/tabletconfig"
         @indigoServerUrl = "http://IndigoServer.local:8176"
         @fibaroServerUrl = "http://192.168.0.69"
         @veraServerUrl = "http://192.168.0.206:3480"
@@ -75,7 +75,7 @@ class WallTabApp
 
     requestActionAndConfigData: ->
         @automationServer.getActionGroups()
-        @tabletConfig.initTabletConfig()
+        @tabletConfig.requestConfig()
 
     setDefaultTabletConfig: () ->
         groupDefinitions =
@@ -108,7 +108,7 @@ class WallTabApp
                 { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "landscape", tileType: "clock", iconName: "none"}
                 { tierName: "mainTier", groupName: "Home", colSpan: 3, rowSpan: 1, uri: "", name: "clock", visibility: "portrait", tileType: "clock", iconName: "none"}
             ]
-        @jsonConfig["tileDefinitions"] = tileDefinitions
+        @jsonConfig["tileDefs_static"] = tileDefinitions
 
     makeTileFromTileDef: (tileDef) ->
         if tileDef.tileType is "calendar"
@@ -162,7 +162,7 @@ class WallTabApp
             for action in actionList
                 # make the button
                 tierName = if "tierName" of action then action.tierName else "actionsTier"
-                iconName = if "iconName" of action then action.iconName else "bulb-on"
+                iconName = if "iconName" of action then action.iconName else ""
                 tileDef = { tierName: tierName, groupName: action.groupName, colSpan: 1, rowSpan: 1, uri: action.actionUrl, name: action.actionName, visibility: "all", tileType: "action", iconName: iconName }
                 @makeTileFromTileDef(tileDef)
         # Re-apply the configuration for the tablet - handles favourites group etc
@@ -189,20 +189,22 @@ class WallTabApp
             groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName)
 
     applyTileConfig: (jsonConfig) ->
-        # Make tiles free-form
-        if "tileDefinitions" of jsonConfig
-            for tileDef in jsonConfig.tileDefinitions
-                @makeTileFromTileDef(tileDef)
-        # Copy tiles that should be in favourites group                
-        if "favourites" of jsonConfig
-            for favouriteDefn in jsonConfig.favourites
-                # Find existing tile matching the description
-                exTile = @tileTiers.findExistingTile(favouriteDefn.tileName, favouriteDefn.groupName)
-                if exTile isnt null
-                    tb = exTile.tileBasics
-                    destGroupName = if "destGroup" of favouriteDefn then favouriteDefn["destGroup"] else "Home"
-                    tileDef = { tierName: "mainTier", groupName: destGroupName, colSpan: tb.colSpan, rowSpan: tb.rowSpan, uri: tb.clickParam, name: tb.tileName, visibility: tb.visibility, tileType: tb.tileType, iconName: tb.iconName, isFavourite: true }
+        # Go through the config groups
+        favourites = {}
+        for key,val of jsonConfig
+            if key is "favourites"
+                favourites = val
+            else if key.search(/tileDefs_/) is 0
+                for tileDef in val
                     @makeTileFromTileDef(tileDef)
+        for favouriteDefn in favourites
+            # Find existing tile matching the description
+            exTile = @tileTiers.findExistingTile(favouriteDefn.tileName, favouriteDefn.groupName)
+            if exTile isnt null
+                tb = exTile.tileBasics
+                destGroupName = if "destGroup" of favouriteDefn then favouriteDefn["destGroup"] else "Home"
+                tileDef = { tierName: "mainTier", groupName: destGroupName, colSpan: tb.colSpan, rowSpan: tb.rowSpan, uri: tb.clickParam, name: tb.tileName, visibility: tb.visibility, tileType: tb.tileType, iconName: tb.iconName, isFavourite: true }
+                @makeTileFromTileDef(tileDef)
         return
 
     configReadyCb: (inConfig) =>

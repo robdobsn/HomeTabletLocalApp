@@ -67,10 +67,11 @@ class AutomationServer
 				if "blinds" of data then @blindsActions = data.blinds
 				@callBackWithSumActions()
 			error: (jqXHR, textStatus, errorThrown) =>
-				console.log ("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + @automationActionsUrl)
+				console.error ("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + @automationActionsUrl)
 
 	getSonosActions: ->
 		# Get the sonos actions
+		if @sonosActionsUrl is "" then return
 		$.ajax @sonosActionsUrl,
 			type: "GET"
 			dataType: "json"
@@ -79,7 +80,7 @@ class AutomationServer
 				@soundPlayActions = data.soundsToPlay
 				@callBackWithSumActions
 			error: (jqXHR, textStatus, errorThrown) =>
-				console.log ("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + @sonosActionsUrl)
+				console.error ("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + @sonosActionsUrl)
 
 	executeCommand: (cmdParams) =>
 		if not cmdParams? or cmdParams is "" then return
@@ -90,7 +91,7 @@ class AutomationServer
 				success: (data, textStatus, jqXHR) =>
 					@mediaPlayHelper.play("ok")
 				error: (jqXHR, textStatus, errorThrown) =>
-					console.log ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams)
+					console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams)
 					@mediaPlayHelper.play("fail")
 		else if cmdParams[0..2] is "~~~"
 			@navigationCallback(cmdParams[3..])
@@ -103,5 +104,5 @@ class AutomationServer
 				success: (data, textStatus, jqXHR) =>
 					@mediaPlayHelper.play("ok")
 				error: (jqXHR, textStatus, errorThrown) =>
-					console.log ("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec)
+					console.error ("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec)
 					@mediaPlayHelper.play("fail")

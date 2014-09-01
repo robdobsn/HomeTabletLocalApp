@@ -138,13 +138,16 @@ AutomationServer = (function() {
       })(this),
       error: (function(_this) {
         return function(jqXHR, textStatus, errorThrown) {
-          return console.log("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.automationActionsUrl);
+          return console.error("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.automationActionsUrl);
         };
       })(this)
     });
   };
 
   AutomationServer.prototype.getSonosActions = function() {
+    if (this.sonosActionsUrl === "") {
+      return;
+    }
     return $.ajax(this.sonosActionsUrl, {
       type: "GET",
       dataType: "json",
@@ -157,7 +160,7 @@ AutomationServer = (function() {
       })(this),
       error: (function(_this) {
         return function(jqXHR, textStatus, errorThrown) {
-          return console.log("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.sonosActionsUrl);
+          return console.error("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.sonosActionsUrl);
         };
       })(this)
     });
@@ -179,7 +182,7 @@ AutomationServer = (function() {
         })(this),
         error: (function(_this) {
           return function(jqXHR, textStatus, errorThrown) {
-            console.log("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams);
+            console.error("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams);
             return _this.mediaPlayHelper.play("fail");
           };
         })(this)
@@ -198,7 +201,7 @@ AutomationServer = (function() {
         })(this),
         error: (function(_this) {
           return function(jqXHR, textStatus, errorThrown) {
-            console.log("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec);
+            console.error("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec);
             return _this.mediaPlayHelper.play("fail");
           };
         })(this)
