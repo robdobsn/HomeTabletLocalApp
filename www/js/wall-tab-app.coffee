@@ -4,7 +4,7 @@ class WallTabApp
 #        @rdHomeServerUrl = "http://127.0.0.1:5000"
 #        @rdHomeServerUrl = "http://192.168.0.97:5000"
         @rdHomeServerUrl = "http://macallan:5000"
-        @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
+        @calendarUrl = "http://macallan:5077/calendar/min/4"
         @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
         @automationExecUrl = @rdHomeServerUrl
         @sonosActionsUrl = ""
