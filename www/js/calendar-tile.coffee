@@ -75,30 +75,48 @@ class CalendarTile extends Tile
 		super(posX, posY, sizeX, sizeY, fontScaling)
 		@recalculateFontScaling()
 
-	# Provide a different font scaling based on the amount of text in the calendar box
-	recalculateFontScaling: () ->
-		if not @sizeY? or (@calLineCount is 0) then return
-		calText = @getElement(".sqCalEvents")
-		textHeight = calText.height()
-		if not textHeight? then return
-		availHeight = @sizeY * 0.9
-		startScale = availHeight / textHeight
-		@setContentFontScaling(startScale)
+	# Calculate width of text from DOM element or string. By Phil Freo <http://philfreo.com>
+	# This works but doesn't do what I want - which is to calculate the actual width of text
+	# including overflowed text in a box of fixed width - what it does is removes the box width
+	# restriction and calculates the overall width of the text at the given font size - useful
+	# in some situations but not what I need
+	calcTextWidth: (text, fontSize, boxWidth) ->
+		@fakeEl = $("<span>").hide().appendTo(document.body) unless @fakeEl?
+		@fakeEl.text(text).css("font-size", fontSize)
+		return @fakeEl.width()
+
+	findOptimumFontSize: (optHeight, docElem, initScale, maxFontScale) ->
+		availSize = (if optHeight then @sizeY else @sizeX) * 0.9
+		calText = @getElement(docElem)
+		# console.log @calcTextWidth(calText.text(), calText.css("font-size"))
+		textSize = if optHeight then calText.height() else @calcTextWidth(calText.text(), calText.css("font-size"))
+		if not textSize? then return 1.0
+		fontScale = if optHeight then availSize / textSize else initScale
+		fontScale = if fontScale > maxFontScale then maxFontScale else fontScale
+		@setContentFontScaling(fontScale)
 		sizeInc = 1.0
 		# Iterate through possible sizes in a kind of binary tree search
 		for i in [0..6]
-			calText = @getElement(".sqCalEvents")
-			textHeight = calText.height()
-			if not textHeight? then return
-			if textHeight > availHeight
-				startScale = startScale * (1 - (sizeInc/2))
-				@setContentFontScaling(startScale)
-			else if textHeight < (availHeight * 0.75)
-				startScale = startScale * (1 + sizeInc)
-				@setContentFontScaling(startScale)
+			calText = @getElement(docElem)
+			textSize = if optHeight then calText.height() else @calcTextWidth(calText.text(), calText.css("font-size"))
+			if not textSize? then return fontScale
+			if textSize > availSize
+				fontScale = fontScale * (1 - (sizeInc/2))
+				@setContentFontScaling(fontScale)
+			else if textSize < (availSize * 0.75) and fontScale < maxFontScale
+				fontScale = fontScale * (1 + sizeInc)
+				@setContentFontScaling(fontScale)
 			else
 				break
 			sizeInc *= 0.5
+		return fontScale
+
+	# Provide a different font scaling based on the amount of text in the calendar box
+	recalculateFontScaling: () ->
+		if not @sizeX? or not @sizeY? or (@calLineCount is 0) then return
+		fontScale = @findOptimumFontSize(true, ".sqCalEvents", 1.0, 2)
+		#fontScale = @findOptimumFontSize(false, ".sqCalEvents", yScale)
+		@setContentFontScaling(fontScale)
 	
 	formatDurationStr: (val) ->
 		dur = val.split(":")

@@ -84,37 +84,53 @@ CalendarTile = (function(_super) {
     return this.recalculateFontScaling();
   };
 
-  CalendarTile.prototype.recalculateFontScaling = function() {
-    var availHeight, calText, i, sizeInc, startScale, textHeight, _i;
-    if ((this.sizeY == null) || (this.calLineCount === 0)) {
-      return;
+  CalendarTile.prototype.calcTextWidth = function(text, fontSize, boxWidth) {
+    if (this.fakeEl == null) {
+      this.fakeEl = $("<span>").hide().appendTo(document.body);
     }
-    calText = this.getElement(".sqCalEvents");
-    textHeight = calText.height();
-    if (textHeight == null) {
-      return;
+    this.fakeEl.text(text).css("font-size", fontSize);
+    return this.fakeEl.width();
+  };
+
+  CalendarTile.prototype.findOptimumFontSize = function(optHeight, docElem, initScale, maxFontScale) {
+    var availSize, calText, fontScale, i, sizeInc, textSize, _i;
+    availSize = (optHeight ? this.sizeY : this.sizeX) * 0.9;
+    calText = this.getElement(docElem);
+    textSize = optHeight ? calText.height() : this.calcTextWidth(calText.text(), calText.css("font-size"));
+    if (textSize == null) {
+      return 1.0;
     }
-    availHeight = this.sizeY * 0.9;
-    startScale = availHeight / textHeight;
-    this.setContentFontScaling(startScale);
+    fontScale = optHeight ? availSize / textSize : initScale;
+    fontScale = fontScale > maxFontScale ? maxFontScale : fontScale;
+    this.setContentFontScaling(fontScale);
     sizeInc = 1.0;
     for (i = _i = 0; _i <= 6; i = ++_i) {
-      calText = this.getElement(".sqCalEvents");
-      textHeight = calText.height();
-      if (textHeight == null) {
-        return;
+      calText = this.getElement(docElem);
+      textSize = optHeight ? calText.height() : this.calcTextWidth(calText.text(), calText.css("font-size"));
+      if (textSize == null) {
+        return fontScale;
       }
-      if (textHeight > availHeight) {
-        startScale = startScale * (1 - (sizeInc / 2));
-        this.setContentFontScaling(startScale);
-      } else if (textHeight < (availHeight * 0.75)) {
-        startScale = startScale * (1 + sizeInc);
-        this.setContentFontScaling(startScale);
+      if (textSize > availSize) {
+        fontScale = fontScale * (1 - (sizeInc / 2));
+        this.setContentFontScaling(fontScale);
+      } else if (textSize < (availSize * 0.75) && fontScale < maxFontScale) {
+        fontScale = fontScale * (1 + sizeInc);
+        this.setContentFontScaling(fontScale);
       } else {
         break;
       }
       sizeInc *= 0.5;
     }
+    return fontScale;
+  };
+
+  CalendarTile.prototype.recalculateFontScaling = function() {
+    var fontScale;
+    if ((this.sizeX == null) || (this.sizeY == null) || (this.calLineCount === 0)) {
+      return;
+    }
+    fontScale = this.findOptimumFontSize(true, ".sqCalEvents", 1.0, 2);
+    return this.setContentFontScaling(fontScale);
   };
 
   CalendarTile.prototype.formatDurationStr = function(val) {
