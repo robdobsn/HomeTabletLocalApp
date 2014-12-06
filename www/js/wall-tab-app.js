@@ -248,6 +248,19 @@ WallTabApp = (function() {
         visibility: "portrait",
         tileType: "clock",
         iconName: "none"
+      }, {
+        tierName: "mainTier",
+        groupName: "Config",
+        colSpan: 1,
+        rowSpan: 1,
+        uri: "",
+        name: "TabName",
+        visibility: "landscape",
+        tileType: "config",
+        iconName: "config",
+        configType: "tabname",
+        clickFn: this.configTabNameClick,
+        groupPriority: 0
       }
     ];
     return this.jsonConfig["tileDefs_static"] = tileDefinitions;
@@ -258,13 +271,15 @@ WallTabApp = (function() {
       return this.makeCalendarTile(tileDef);
     } else if (tileDef.tileType === "clock") {
       return this.makeClockTile(tileDef);
+    } else if (tileDef.tileType === "config") {
+      return this.makeConfigTile(tileDef);
     } else {
       return this.makeSceneTile(tileDef);
     }
   };
 
   WallTabApp.prototype.tileBasicsFromDef = function(tileDef) {
-    var isFavourite, tierIdx, tileBasics, tileColour;
+    var clickFn, isFavourite, tierIdx, tileBasics, tileColour;
     tileColour = this.tileColours.getNextColour();
     tierIdx = this.tileTiers.findTierIdx(tileDef.tierName);
     if (tierIdx < 0) {
@@ -273,7 +288,11 @@ WallTabApp = (function() {
     if ((tileDef.isFavourite != null) && tileDef.isFavourite) {
       isFavourite = true;
     }
-    return tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, this.automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, this.mediaPlayHelper);
+    clickFn = this.automationServer.executeCommand;
+    if ("clickFn" in tileDef) {
+      clickFn = tileDef.clickFn;
+    }
+    return tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, clickFn, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, this.mediaPlayHelper);
   };
 
   WallTabApp.prototype.makeCalendarTile = function(tileDef) {
@@ -283,7 +302,7 @@ WallTabApp = (function() {
       return;
     }
     tile = new CalendarTile(tileBasics, this.calendarUrl, tileDef.calDayIndex);
-    return this.addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile);
+    return this.addTileToTierGroup(tileDef, tile);
   };
 
   WallTabApp.prototype.makeClockTile = function(tileDef) {
@@ -293,7 +312,17 @@ WallTabApp = (function() {
       return;
     }
     tile = new Clock(tileBasics);
-    return this.addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile);
+    return this.addTileToTierGroup(tileDef, tile);
+  };
+
+  WallTabApp.prototype.makeConfigTile = function(tileDef) {
+    var tile, tileBasics;
+    tileBasics = this.tileBasicsFromDef(tileDef);
+    if (tileBasics === null) {
+      return;
+    }
+    tile = new ConfigTile(tileBasics, tileDef.configType);
+    return this.addTileToTierGroup(tileDef, tile);
   };
 
   WallTabApp.prototype.makeSceneTile = function(tileDef) {
@@ -303,11 +332,14 @@ WallTabApp = (function() {
       return;
     }
     tile = new SceneButton(tileBasics, tileDef.name);
-    return this.addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile);
+    return this.addTileToTierGroup(tileDef, tile);
   };
 
-  WallTabApp.prototype.addTileToTierGroup = function(tierName, groupName, tile) {
-    var groupIdx, tierIdx;
+  WallTabApp.prototype.addTileToTierGroup = function(tileDef, tile) {
+    var groupIdx, groupName, groupPriority, tierIdx, tierName;
+    tierName = tileDef.tierName;
+    groupName = tileDef.groupName;
+    groupPriority = "groupPriority" in tileDef ? tileDef.groupPriority : 5;
     tierIdx = this.tileTiers.findTierIdx(tierName);
     if (tierIdx < 0) {
       tierIdx = this.tileTiers.findTierIdx("actionsTier");
@@ -318,7 +350,7 @@ WallTabApp = (function() {
     if (groupName === "") {
       groupName = "Lights";
     }
-    groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupName);
+    groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupName, groupPriority);
     return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };
 
@@ -351,20 +383,20 @@ WallTabApp = (function() {
     return this.tileTiers.reDoLayout();
   };
 
-  WallTabApp.prototype.getUIGroupIdxAddGroupIfReqd = function(tierIdx, groupName) {
+  WallTabApp.prototype.getUIGroupIdxAddGroupIfReqd = function(tierIdx, groupName, groupPriority) {
     var groupIdx;
     if (groupName === "") {
       return -1;
     }
     groupIdx = this.tileTiers.findGroupIdx(tierIdx, groupName);
     if (groupIdx < 0) {
-      groupIdx = this.tileTiers.addGroup(tierIdx, groupName);
+      groupIdx = this.tileTiers.addGroup(tierIdx, groupName, groupPriority);
     }
     return groupIdx;
   };
 
   WallTabApp.prototype.applyTierAndGroupConfig = function(jsonConfig) {
-    var groupDef, groupIdx, newTier, tierIdx, _i, _len, _ref, _results;
+    var groupDef, groupIdx, groupPriority, newTier, tierIdx, _i, _len, _ref, _results;
     _ref = jsonConfig.groupDefinitions;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -375,7 +407,8 @@ WallTabApp = (function() {
         newTier.addToDom();
         tierIdx = this.tileTiers.addTier(newTier);
       }
-      _results.push(groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName));
+      groupPriority = "groupPriority" in groupDef ? groupDef.groupPriority : 5;
+      _results.push(groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName, groupPriority));
     }
     return _results;
   };
@@ -495,6 +528,21 @@ WallTabApp = (function() {
         scrollTop: tierTop
       }, 200);
     }
+  };
+
+  WallTabApp.prototype.configTabNameClick = function() {
+    var tabName;
+    tabName = LocalStorage.get("DeviceConfigName");
+    if (tabName == null) {
+      tabName = "";
+    }
+    $("#tabnamefield").val(tabName);
+    $("#tabnameok").unbind("click");
+    $("#tabnameok").click(function() {
+      LocalStorage.set("DeviceConfigName", $("#tabnamefield").val());
+      return $("#tabnameform").hide();
+    });
+    return $("#tabnameform").show();
   };
 
   return WallTabApp;

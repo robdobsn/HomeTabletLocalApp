@@ -39,9 +39,9 @@ class TileTiers
 		if tierIdx >= @tiers.length then return ""
 		@tiers[tierIdx].tierName
 
-	addGroup: (tierIdx, groupTitle) ->
+	addGroup: (tierIdx, groupTitle, groupPriority) ->
 		if tierIdx >= @tiers.length then return
-		@tiers[tierIdx].addGroup groupTitle
+		@tiers[tierIdx].addGroup groupTitle, groupPriority
 
 	clearGroup: (tierIdx, groupIdx) ->
 		if tierIdx >= @tiers.length then return

@@ -107,6 +107,8 @@ class WallTabApp
                 # Clock
                 { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "landscape", tileType: "clock", iconName: "none"}
                 { tierName: "mainTier", groupName: "Home", colSpan: 3, rowSpan: 1, uri: "", name: "clock", visibility: "portrait", tileType: "clock", iconName: "none"}
+                # Config
+                { tierName: "mainTier", groupName: "Config", colSpan: 1, rowSpan: 1, uri: "", name: "TabName", visibility: "landscape", tileType: "config", iconName: "config", configType: "tabname", clickFn: @configTabNameClick, groupPriority: 0 }
             ]
         @jsonConfig["tileDefs_static"] = tileDefinitions
 
@@ -115,6 +117,8 @@ class WallTabApp
             @makeCalendarTile(tileDef)
         else if tileDef.tileType is "clock"
             @makeClockTile(tileDef)
+        else if tileDef.tileType is "config"
+            @makeConfigTile(tileDef)
         else
             @makeSceneTile(tileDef)
 
@@ -123,32 +127,44 @@ class WallTabApp
         tierIdx = @tileTiers.findTierIdx(tileDef.tierName)
         if tierIdx < 0 then return null
         isFavourite = true if tileDef.isFavourite? and tileDef.isFavourite
-        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, @automationServer.executeCommand, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, @mediaPlayHelper
+        clickFn = @automationServer.executeCommand
+        if "clickFn" of tileDef
+            clickFn = tileDef.clickFn
+        tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, clickFn, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, @mediaPlayHelper
 
     makeCalendarTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
         if tileBasics is null then return
         tile = new CalendarTile tileBasics, @calendarUrl, tileDef.calDayIndex
-        @addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile)
+        @addTileToTierGroup(tileDef, tile)
 
     makeClockTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
         if tileBasics is null then return
         tile = new Clock tileBasics
-        @addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile)
+        @addTileToTierGroup(tileDef, tile)
+
+    makeConfigTile: (tileDef) ->
+        tileBasics = @tileBasicsFromDef(tileDef)
+        if tileBasics is null then return
+        tile = new ConfigTile tileBasics, tileDef.configType
+        @addTileToTierGroup(tileDef, tile)
 
     makeSceneTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
         if tileBasics is null then return
         tile = new SceneButton tileBasics, tileDef.name
-        @addTileToTierGroup(tileDef.tierName, tileDef.groupName, tile)
+        @addTileToTierGroup(tileDef, tile)
 
-    addTileToTierGroup: (tierName, groupName, tile) ->
+    addTileToTierGroup: (tileDef, tile) ->
+        tierName = tileDef.tierName
+        groupName = tileDef.groupName
+        groupPriority = if "groupPriority" of tileDef then tileDef.groupPriority else 5
         tierIdx = @tileTiers.findTierIdx(tierName)
         if tierIdx < 0 then tierIdx = @tileTiers.findTierIdx("actionsTier")
         if tierIdx < 0 then return
         if groupName is "" then groupName = "Lights"
-        groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupName)
+        groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupName, groupPriority)
         #groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
         #if groupIdx < 0 then return
         @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
@@ -170,13 +186,13 @@ class WallTabApp
         # Re-do the layout of tiles
         @tileTiers.reDoLayout()
 
-    getUIGroupIdxAddGroupIfReqd: (tierIdx, groupName) ->
+    getUIGroupIdxAddGroupIfReqd: (tierIdx, groupName, groupPriority) ->
         # Get ui group for the scene
         if groupName is "" then return -1
         groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
         if groupIdx < 0
             # Make a new ui group if the room/action-group name is unknown
-            groupIdx = @tileTiers.addGroup tierIdx, groupName
+            groupIdx = @tileTiers.addGroup tierIdx, groupName, groupPriority
         return groupIdx
 
     applyTierAndGroupConfig: (jsonConfig) ->
@@ -186,7 +202,8 @@ class WallTabApp
                 newTier = new TileTier "#sqWrapper", groupDef.tierName
                 newTier.addToDom()
                 tierIdx = @tileTiers.addTier(newTier)
-            groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName)
+            groupPriority = if "groupPriority" of groupDef then groupDef.groupPriority else 5
+            groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName, groupPriority)
 
     applyTileConfig: (jsonConfig) ->
         # Go through the config groups
@@ -250,3 +267,13 @@ class WallTabApp
         if tierTop >= 0
             $("html, body").stop().animate({ scrollTop: tierTop }, 200);
 
+    configTabNameClick: ->
+        tabName = LocalStorage.get("DeviceConfigName")
+        if not tabName?
+            tabName = ""
+        $("#tabnamefield").val(tabName)
+        $("#tabnameok").unbind("click")
+        $("#tabnameok").click ->
+            LocalStorage.set("DeviceConfigName", $("#tabnamefield").val())
+            $("#tabnameform").hide()
+        $("#tabnameform").show()

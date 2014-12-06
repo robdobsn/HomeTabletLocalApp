@@ -24,11 +24,3 @@ class SceneButton extends Tile
 		@buttonText = @buttonText.replace(" Light", "")
 		@setIcon(iconName)
 		@setText(@buttonText)
-
-	setIcon: (iconName) ->
-		iconUrl = 'img/' + iconName + '.png'
-		if iconUrl isnt ""
-			$('#'+@tileId+" .sqSceneButtonIcon img").attr("src", iconUrl)
-
-	setText: (@textStr) ->
-		$('#'+@tileId+" .sqSceneButtonText").html textStr

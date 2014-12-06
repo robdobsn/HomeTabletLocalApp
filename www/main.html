@@ -34,6 +34,7 @@
         <script type="text/javascript" src="js/tile.js"></script>
         <script type="text/javascript" src="js/clock.js"></script>
         <script type="text/javascript" src="js/calendar-tile.js"></script>
+        <script type="text/javascript" src="js/config-tile.js"></script>
         <script type="text/javascript" src="js/scene-button.js"></script>
         <script type="text/javascript" src="js/user-idle-catcher.js"></script>
         <script type="text/javascript" src="js/media-play-help.js"></script>
@@ -50,5 +51,16 @@
         </script>
     </head>
     <body onload="onBodyLoad();">
+        <div id="tabnameform" style="display:none;">
+            <p>Tablet name</p>
+            <div class="formField">
+            Name: <input id="tabnamefield" name="tabnamefield" placeholder="Tablet Name" type="text">
+            </div>
+            <button id="tabnameok" 
+                    href="javascript:void(0);" 
+                    style="display:block; opacity:1;">
+                Ok
+            </button>
+        </div>
     </body>
 </html>

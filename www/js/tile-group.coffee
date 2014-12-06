@@ -1,8 +1,8 @@
 class TileGroup
-	constructor: (@tileTier, @groupTitlesTag, @groupIdx, @groupTitle) ->
+	constructor: (@tileTier, @groupTitlesTag, @groupId, @groupTitle, @groupPriority) ->
 		@tiles = []
 		@tilePositions = []
-		@groupIdTag = "sqGroupTitle" + groupIdx
+		@groupIdTag = "sqGroupTitle" + groupId
 		$(groupTitlesTag).append """
 	        <div class="sqGroupTitle #{@groupIdTag}">#{@groupTitle}
 	        </div>
@@ -76,25 +76,25 @@ class TileGroup
 			return a.tileIdx - b.tileIdx
 		return a.tileBasics.colSpan - b.tileBasics.colSpan
 
-	repositionTiles: (isPortrait) ->
-		[titleX, titleY, fontSize] = @tileTier.getGroupTitlePos(@groupIdx)
+	repositionTiles: (isPortrait, groupIdx) ->
+		[titleX, titleY, fontSize] = @tileTier.getGroupTitlePos(groupIdx)
 		$(@groupTitlesTag + " ."+@groupIdTag).css {
 			"margin-left": titleX + "px", 
 			"margin-top": titleY + "px",
 			"font-size": fontSize,
-			"width": @tileTier.getGroupTitleWidth(@groupIdx),
+			"width": @tileTier.getGroupTitleWidth(groupIdx),
 			"overflow": "hidden"
 			}
 		# Order tiles so widest are at the end
 		for tile, tileIdx in @tiles
 			if (@tilePositions[tileIdx].tileValid)
 				[tileWidth, tileHeight] = @tileTier.getTileSize(tile.tileBasics.colSpan, tile.tileBasics.rowSpan)
-				[xPos, yPos, fontScaling] = @tileTier.getCellPos(@groupIdx, @tilePositions[tileIdx].xPos, @tilePositions[tileIdx].yPos)
+				[xPos, yPos, fontScaling] = @tileTier.getCellPos(groupIdx, @tilePositions[tileIdx].xPos, @tilePositions[tileIdx].yPos)
 				tile.reposition xPos, yPos, tileWidth, tileHeight, fontScaling
-				# console.log "Grp=" + @groupIdx + "Tile=" + tile.tileBasics.tileName + "(" + tileIdx + ") Pos " + xPos + " " + yPos
+				# console.log "Grp=" + groupIdx + "Tile=" + tile.tileBasics.tileName + "(" + tileIdx + ") Pos " + xPos + " " + yPos
 			else
 				tile.setInvisible()
-				# console.log "Grp=" + @groupIdx + "Tile=" + tile.tileBasics.tileName + "(" + tileIdx + ") Invisible " + tile.tileBasics.visibility + " orient=" + isPortrait
+				# console.log "Grp=" + groupIdx + "Tile=" + tile.tileBasics.tileName + "(" + tileIdx + ") Invisible " + tile.tileBasics.visibility + " orient=" + isPortrait
 
 	findExistingTile: (tileName) ->
 		existingTile = null

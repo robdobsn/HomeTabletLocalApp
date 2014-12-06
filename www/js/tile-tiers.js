@@ -67,11 +67,11 @@ TileTiers = (function() {
     return this.tiers[tierIdx].tierName;
   };
 
-  TileTiers.prototype.addGroup = function(tierIdx, groupTitle) {
+  TileTiers.prototype.addGroup = function(tierIdx, groupTitle, groupPriority) {
     if (tierIdx >= this.tiers.length) {
       return;
     }
-    return this.tiers[tierIdx].addGroup(groupTitle);
+    return this.tiers[tierIdx].addGroup(groupTitle, groupPriority);
   };
 
   TileTiers.prototype.clearGroup = function(tierIdx, groupIdx) {

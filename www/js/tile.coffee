@@ -71,3 +71,11 @@ class Tile
 		@refreshId = setInterval =>
 			@callbackFn()
 		, intervalInSecs * 1000
+
+	setIcon: (iconName) ->
+		iconUrl = 'img/' + iconName + '.png'
+		if iconUrl isnt ""
+			$('#'+@tileId+" .sqSceneButtonIcon img").attr("src", iconUrl)
+
+	setText: (@textStr) ->
+		$('#'+@tileId+" .sqSceneButtonText").html textStr

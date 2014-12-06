@@ -2,14 +2,15 @@
 var TileGroup;
 
 TileGroup = (function() {
-  function TileGroup(tileTier, groupTitlesTag, groupIdx, groupTitle) {
+  function TileGroup(tileTier, groupTitlesTag, groupId, groupTitle, groupPriority) {
     this.tileTier = tileTier;
     this.groupTitlesTag = groupTitlesTag;
-    this.groupIdx = groupIdx;
+    this.groupId = groupId;
     this.groupTitle = groupTitle;
+    this.groupPriority = groupPriority;
     this.tiles = [];
     this.tilePositions = [];
-    this.groupIdTag = "sqGroupTitle" + groupIdx;
+    this.groupIdTag = "sqGroupTitle" + groupId;
     $(groupTitlesTag).append("<div class=\"sqGroupTitle " + this.groupIdTag + "\">" + this.groupTitle + "\n</div>");
   }
 
@@ -102,14 +103,14 @@ TileGroup = (function() {
     return a.tileBasics.colSpan - b.tileBasics.colSpan;
   };
 
-  TileGroup.prototype.repositionTiles = function(isPortrait) {
+  TileGroup.prototype.repositionTiles = function(isPortrait, groupIdx) {
     var fontScaling, fontSize, tile, tileHeight, tileIdx, tileWidth, titleX, titleY, xPos, yPos, _i, _len, _ref, _ref1, _ref2, _ref3, _results;
-    _ref = this.tileTier.getGroupTitlePos(this.groupIdx), titleX = _ref[0], titleY = _ref[1], fontSize = _ref[2];
+    _ref = this.tileTier.getGroupTitlePos(groupIdx), titleX = _ref[0], titleY = _ref[1], fontSize = _ref[2];
     $(this.groupTitlesTag + " ." + this.groupIdTag).css({
       "margin-left": titleX + "px",
       "margin-top": titleY + "px",
       "font-size": fontSize,
-      "width": this.tileTier.getGroupTitleWidth(this.groupIdx),
+      "width": this.tileTier.getGroupTitleWidth(groupIdx),
       "overflow": "hidden"
     });
     _ref1 = this.tiles;
@@ -118,7 +119,7 @@ TileGroup = (function() {
       tile = _ref1[tileIdx];
       if (this.tilePositions[tileIdx].tileValid) {
         _ref2 = this.tileTier.getTileSize(tile.tileBasics.colSpan, tile.tileBasics.rowSpan), tileWidth = _ref2[0], tileHeight = _ref2[1];
-        _ref3 = this.tileTier.getCellPos(this.groupIdx, this.tilePositions[tileIdx].xPos, this.tilePositions[tileIdx].yPos), xPos = _ref3[0], yPos = _ref3[1], fontScaling = _ref3[2];
+        _ref3 = this.tileTier.getCellPos(groupIdx, this.tilePositions[tileIdx].xPos, this.tilePositions[tileIdx].yPos), xPos = _ref3[0], yPos = _ref3[1], fontScaling = _ref3[2];
         _results.push(tile.reposition(xPos, yPos, tileWidth, tileHeight, fontScaling));
       } else {
         _results.push(tile.setInvisible());

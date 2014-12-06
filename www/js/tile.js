@@ -104,6 +104,19 @@ Tile = (function() {
     })(this), intervalInSecs * 1000);
   };
 
+  Tile.prototype.setIcon = function(iconName) {
+    var iconUrl;
+    iconUrl = 'img/' + iconName + '.png';
+    if (iconUrl !== "") {
+      return $('#' + this.tileId + " .sqSceneButtonIcon img").attr("src", iconUrl);
+    }
+  };
+
+  Tile.prototype.setText = function(textStr) {
+    this.textStr = textStr;
+    return $('#' + this.tileId + " .sqSceneButtonText").html(textStr);
+  };
+
   return Tile;
 
 })();

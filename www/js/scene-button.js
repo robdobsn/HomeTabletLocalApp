@@ -35,19 +35,6 @@ SceneButton = (function(_super) {
     return this.setText(this.buttonText);
   };
 
-  SceneButton.prototype.setIcon = function(iconName) {
-    var iconUrl;
-    iconUrl = 'img/' + iconName + '.png';
-    if (iconUrl !== "") {
-      return $('#' + this.tileId + " .sqSceneButtonIcon img").attr("src", iconUrl);
-    }
-  };
-
-  SceneButton.prototype.setText = function(textStr) {
-    this.textStr = textStr;
-    return $('#' + this.tileId + " .sqSceneButtonText").html(textStr);
-  };
-
   return SceneButton;
 
 })(Tile);

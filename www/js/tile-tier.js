@@ -51,12 +51,19 @@ TileTier = (function() {
     return this.groups[groupIdx].clearTiles();
   };
 
-  TileTier.prototype.addGroup = function(groupTitle) {
-    var groupIdx, newTileGroup;
-    groupIdx = this.groups.length;
-    newTileGroup = new TileGroup(this, this.groupTitlesTagLocator, groupIdx, groupTitle);
-    this.groups.push(newTileGroup);
-    return groupIdx;
+  TileTier.prototype.addGroup = function(groupTitle, groupPriority) {
+    var gpidx, groupId, insertIdx, newTileGroup, _i, _ref;
+    groupId = this.groups.length;
+    newTileGroup = new TileGroup(this, this.groupTitlesTagLocator, groupId, groupTitle, groupPriority);
+    insertIdx = 0;
+    for (gpidx = _i = _ref = this.groups.length - 1; _i >= 0; gpidx = _i += -1) {
+      if (this.groups[gpidx].groupPriority >= groupPriority) {
+        insertIdx = gpidx + 1;
+        break;
+      }
+    }
+    this.groups.splice(insertIdx, 0, newTileGroup);
+    return insertIdx;
   };
 
   TileTier.prototype.findGroupIdx = function(groupName) {
@@ -177,13 +184,13 @@ TileTier = (function() {
   };
 
   TileTier.prototype.reDoLayout = function() {
-    var group, isPortrait, _i, _len, _ref, _results;
+    var group, groupIdx, isPortrait, _i, _len, _ref, _results;
     isPortrait = this.calcLayout();
     _ref = this.groups;
     _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      group = _ref[_i];
-      _results.push(group.repositionTiles(isPortrait));
+    for (groupIdx = _i = 0, _len = _ref.length; _i < _len; groupIdx = ++_i) {
+      group = _ref[groupIdx];
+      _results.push(group.repositionTiles(isPortrait, groupIdx));
     }
     return _results;
   };

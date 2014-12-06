@@ -42,11 +42,16 @@ class TileTier
 		if groupIdx >= @groups.length then return
 		@groups[groupIdx].clearTiles()
 
-	addGroup: (groupTitle) ->
-		groupIdx = @groups.length
-		newTileGroup = new TileGroup this, @groupTitlesTagLocator, groupIdx, groupTitle
-		@groups.push newTileGroup
-		return groupIdx
+	addGroup: (groupTitle, groupPriority) ->
+		groupId = @groups.length
+		newTileGroup = new TileGroup this, @groupTitlesTagLocator, groupId, groupTitle, groupPriority
+		insertIdx = 0
+		for gpidx in [@groups.length-1..0] by -1
+			if @groups[gpidx].groupPriority >= groupPriority
+				insertIdx = gpidx+1
+				break
+		@groups.splice(insertIdx,0,newTileGroup)
+		return insertIdx
 
 	findGroupIdx: (groupName) ->
 		groupIdx = 0
@@ -133,8 +138,8 @@ class TileTier
 
 	reDoLayout: ->
 		isPortrait = @calcLayout()
-		for group in @groups
-			group.repositionTiles(isPortrait)
+		for group, groupIdx in @groups
+			group.repositionTiles(isPortrait, groupIdx)
 
 	findExistingTile: (tileName, groupName) ->
 		existingTile = null
