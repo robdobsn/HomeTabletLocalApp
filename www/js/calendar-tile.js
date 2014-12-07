@@ -36,7 +36,7 @@ CalendarTile = (function(_super) {
           jsonText = jqXHR.responseText;
           jsonData = $.parseJSON(jsonText);
           _this.showCalendar(jsonData);
-          return console.log("CalShown");
+          return console.log("CalShown for today+" + _this.calDayIndex);
         };
       })(this)
     });
@@ -68,6 +68,9 @@ CalendarTile = (function(_super) {
         this.calCharCount += newLine.length;
         this.calMaxLineLen = this.calMaxLineLen < newLine.length ? newLine.length : this.calMaxLineLen;
       }
+    }
+    if (newHtml === "") {
+      newHtml = "Nothing doing";
     }
     this.contents.html("<div class=\"sqCalTitle\">" + calTitle + "</div>\n<ul class=\"sqCalEvents\">\n	" + newHtml + "\n</ul>");
     return this.recalculateFontScaling();

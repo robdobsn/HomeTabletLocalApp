@@ -3,18 +3,14 @@ import sys
 
 # Note that on windows this script is best run from cmd prompt rather than in IDLE
 all_tablet_names = [ "tabkitchen", "tabsitting", "tabgames", "tabhall", "tabmasterbed",
-               "tablanding", "tabgrace", "tabguest", "taboffice", "tabjoe" ]
+               "tablanding", "tabgrace", "tabguest", "taboffice", "tabjoe", "tablobby" ]
 adbRemoteCmds = [ "setprop service.adb.tcp.port 5555", "stop adbd", "start adbd" ]
 
 # Check if we want all tablets or just one
 if len(sys.argv) > 1:
-    if sys.argv[1] in all_tablet_names:
-        tablet_names = []
-        tablet_names.append(sys.argv[1])
-        print ("Operating on " + tablet_names[0])
-    else:
-        print "Cannot find " + sys.argv[1] + " in list of tablets"
-        exit(0)
+    tablet_names = []
+    tablet_names.append(sys.argv[1])
+    print ("Operating on " + tablet_names[0])
 else:
     tablet_names = all_tablet_names
 
@@ -41,12 +37,14 @@ for tabname in tablet_names:
 
     # Connect adb on local system to remote
     result = os.system("adb connect " + tabfullplusport)
-    print "Result = " + str(result)
+    print "ADB CONNECT Result = " + str(result)
     checkCmd = "adb devices"
     result = os.system(checkCmd)
+    print "ADB DEVICES Result = " + str(result)
 
     # Install the app
     runCmd = "phonegap install --device=" + tabfullplusport + " android"
+    print "Running command ... " + runCmd
     result = os.system(runCmd)
     print "Install result = " + str(result)
     os.system("adb disconnect " + tabfullplusport)

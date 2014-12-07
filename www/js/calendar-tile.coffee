@@ -20,7 +20,7 @@ class CalendarTile extends Tile
 			jsonText = jqXHR.responseText
 			jsonData = $.parseJSON(jsonText)
 			@showCalendar(jsonData)
-			console.log "CalShown"
+			console.log "CalShown for today+" + @calDayIndex
 
 	showCalendar: (jsonData) ->
 		if not ("calEvents" of jsonData)
@@ -55,6 +55,9 @@ class CalendarTile extends Tile
 				@calCharCount += newLine.length
 				@calMaxLineLen = if @calMaxLineLen < newLine.length then newLine.length else @calMaxLineLen
 
+		# Check for non-busy day
+		if newHtml is ""
+			newHtml = "Nothing doing"
 		# Place the calendar text
 		@contents.html """
 			<div class="sqCalTitle">#{calTitle}</div>

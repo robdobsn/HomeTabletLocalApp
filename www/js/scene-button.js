@@ -17,7 +17,7 @@ SceneButton = (function(_super) {
     this.contents.append("<div class=\"sqSceneButtonIcon\"><img src=\"img/bulb-on.png\"></img></div>\n<div class=\"sqSceneButtonText\"></div>");
     iconName = this.tileBasics.iconName;
     if (iconName === null || iconName === "") {
-      if (this.buttonText.toLowerCase().indexOf("off") >= 0) {
+      if (this.buttonText.toLowerCase().indexOf(" off") >= 0) {
         iconName = "bulb-off";
       } else if (this.buttonText.toLowerCase().indexOf("nighttime") >= 0) {
         iconName = "bulb-off";

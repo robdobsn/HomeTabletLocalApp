@@ -10,7 +10,7 @@ class SceneButton extends Tile
 			"""
 		iconName = @tileBasics.iconName
 		if iconName is null or iconName is ""
-			if @buttonText.toLowerCase().indexOf("off") >= 0
+			if @buttonText.toLowerCase().indexOf(" off") >= 0
 				iconName = "bulb-off"
 			else if @buttonText.toLowerCase().indexOf("nighttime") >= 0
 				iconName = "bulb-off"
