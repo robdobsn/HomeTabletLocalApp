@@ -17,13 +17,13 @@ WallTabApp = (function() {
     this.sonosActionsUrl = "";
     this.tabletConfigUrl = "http://macallan:5076/tabletconfig";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
-    this.fibaroServerUrl = "http://192.168.0.69";
+    this.fibaroServerUrl = "http://macallan:5079";
     this.veraServerUrl = "http://192.168.0.206:3480";
     this.jsonConfig = {};
     this.mediaPlayHelper = new MediaPlayHelper({
-      click: "assets/click.mp3",
-      ok: "assets/blip.mp3",
-      fail: "assets/fail.mp3"
+      "click": "assets/click.mp3",
+      "ok": "assets/blip.mp3",
+      "fail": "assets/fail.mp3"
     });
     this.lastScrollEventTime = 0;
     this.minTimeBetweenScrolls = 1000;
@@ -255,7 +255,7 @@ WallTabApp = (function() {
         rowSpan: 1,
         uri: "",
         name: "TabName",
-        visibility: "landscape",
+        visibility: "all",
         tileType: "config",
         iconName: "config",
         configType: "tabname",

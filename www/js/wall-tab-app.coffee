@@ -10,14 +10,14 @@ class WallTabApp
         @sonosActionsUrl = ""
         @tabletConfigUrl = "http://macallan:5076/tabletconfig"
         @indigoServerUrl = "http://IndigoServer.local:8176"
-        @fibaroServerUrl = "http://192.168.0.69"
+        @fibaroServerUrl = "http://macallan:5079"
         @veraServerUrl = "http://192.168.0.206:3480"
         @jsonConfig = {}
         @mediaPlayHelper = new MediaPlayHelper(
             {
-                click: "assets/click.mp3",
-                ok: "assets/blip.mp3",
-                fail: "assets/fail.mp3"
+                "click": "assets/click.mp3",
+                "ok": "assets/blip.mp3",
+                "fail": "assets/fail.mp3"
             })
         @lastScrollEventTime = 0
         @minTimeBetweenScrolls = 1000
@@ -108,7 +108,7 @@ class WallTabApp
                 { tierName: "mainTier", groupName: "Calendar", colSpan: 2, rowSpan: 1, uri: "", name: "clock", visibility: "landscape", tileType: "clock", iconName: "none"}
                 { tierName: "mainTier", groupName: "Home", colSpan: 3, rowSpan: 1, uri: "", name: "clock", visibility: "portrait", tileType: "clock", iconName: "none"}
                 # Config
-                { tierName: "mainTier", groupName: "Config", colSpan: 1, rowSpan: 1, uri: "", name: "TabName", visibility: "landscape", tileType: "config", iconName: "config", configType: "tabname", clickFn: @configTabNameClick, groupPriority: 0 }
+                { tierName: "mainTier", groupName: "Config", colSpan: 1, rowSpan: 1, uri: "", name: "TabName", visibility: "all", tileType: "config", iconName: "config", configType: "tabname", clickFn: @configTabNameClick, groupPriority: 0 }
             ]
         @jsonConfig["tileDefs_static"] = tileDefinitions
 

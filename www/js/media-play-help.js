@@ -24,10 +24,12 @@ MediaPlayHelper = (function() {
       if (window.plugins && window.plugins.LowLatencyAudio) {
         try {
           if (!(soundName in this.soundsLoaded)) {
-            window.plugins.LowLatencyAudio.preloadAudio(soundName, this.soundsDict[soundName], 1, this.onSuccess, this.onError);
+            console.log("Preloading audio " + soundName);
+            window.plugins.LowLatencyAudio.preloadAudio(soundName, this.soundsDict[soundName], 1, 1, this.onSuccess, this.onErrorPreload);
             this.soundsLoaded[soundName] = true;
           }
-          window.plugins.LowLatencyAudio.play(soundName, this.onSuccess, this.onError);
+          console.log("Playing audio");
+          window.plugins.LowLatencyAudio.play(soundName, this.onSuccess, this.onErrorPlay);
         } catch (_error) {
           e = _error;
           bTryAudio = true;
@@ -48,11 +50,15 @@ MediaPlayHelper = (function() {
   };
 
   MediaPlayHelper.prototype.onSuccess = function(result) {
-    return console.log("LLAUDIO result = " + result);
+    return console.log("LowLatencyAudio success result = " + result);
   };
 
-  MediaPlayHelper.prototype.onError = function(error) {
-    return console.log("LLAUDIO error = " + error);
+  MediaPlayHelper.prototype.onErrorPreload = function(error) {
+    return console.log("LowLatencyAudio preload error = " + error);
+  };
+
+  MediaPlayHelper.prototype.onErrorPlay = function(error) {
+    return console.log("LowLatencyAudio play error = " + error);
   };
 
   return MediaPlayHelper;

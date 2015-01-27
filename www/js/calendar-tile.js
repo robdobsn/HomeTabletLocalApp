@@ -35,8 +35,7 @@ CalendarTile = (function(_super) {
           var jsonData, jsonText;
           jsonText = jqXHR.responseText;
           jsonData = $.parseJSON(jsonText);
-          _this.showCalendar(jsonData);
-          return console.log("CalShown for today+" + _this.calDayIndex);
+          return _this.showCalendar(jsonData);
         };
       })(this)
     });

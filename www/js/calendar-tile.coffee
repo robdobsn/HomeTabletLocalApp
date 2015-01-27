@@ -20,7 +20,7 @@ class CalendarTile extends Tile
 			jsonText = jqXHR.responseText
 			jsonData = $.parseJSON(jsonText)
 			@showCalendar(jsonData)
-			console.log "CalShown for today+" + @calDayIndex
+			# console.log "CalShown for today+" + @calDayIndex
 
 	showCalendar: (jsonData) ->
 		if not ("calEvents" of jsonData)

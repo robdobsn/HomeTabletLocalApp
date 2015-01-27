@@ -15,9 +15,11 @@ class MediaPlayHelper
             if window.plugins and window.plugins.LowLatencyAudio
                 try
                     if soundName not of @soundsLoaded
-                        window.plugins.LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, @onSuccess, @onError)
+                        console.log "Preloading audio " + soundName
+                        window.plugins.LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, 1, @onSuccess, @onErrorPreload)
                         @soundsLoaded[soundName] = true
-                    window.plugins.LowLatencyAudio.play(soundName, @onSuccess, @onError)
+                    console.log "Playing audio"
+                    window.plugins.LowLatencyAudio.play(soundName, @onSuccess, @onErrorPlay)
                 catch e
                     bTryAudio = true
             else
@@ -30,7 +32,10 @@ class MediaPlayHelper
                     console.log("LowLatencyAudio and Audio both failed")
 
     onSuccess: (result) ->
-        console.log("LLAUDIO result = " + result )
+        console.log("LowLatencyAudio success result = " + result )
 
-    onError: (error) ->
-        console.log("LLAUDIO error = " + error )
+    onErrorPreload: (error) ->
+        console.log("LowLatencyAudio preload error = " + error )
+
+    onErrorPlay: (error) ->
+        console.log("LowLatencyAudio play error = " + error )

@@ -108,6 +108,7 @@ AutomationServer = (function() {
   AutomationServer.prototype.getActionGroups = function() {
     this.indigoServer.getActionGroups();
     this.veraServer.getActionGroups();
+    this.fibaroServer.getActionGroups();
     this.getActionGroupsFromIntermediateServer();
     return this.getSonosActions();
   };
