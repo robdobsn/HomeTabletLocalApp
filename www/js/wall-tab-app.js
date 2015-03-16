@@ -28,6 +28,7 @@ WallTabApp = (function() {
     this.lastScrollEventTime = 0;
     this.minTimeBetweenScrolls = 1000;
     this.hoursBetweenActionUpdates = 12;
+    return;
   }
 
   WallTabApp.prototype.go = function() {
@@ -56,7 +57,7 @@ WallTabApp = (function() {
       proximity: 250
     });
     this.requestActionAndConfigData();
-    return setInterval((function(_this) {
+    setInterval((function(_this) {
       return function() {
         return _this.requestActionAndConfigData();
       };
@@ -263,18 +264,18 @@ WallTabApp = (function() {
         groupPriority: 0
       }
     ];
-    return this.jsonConfig["tileDefs_static"] = tileDefinitions;
+    this.jsonConfig["tileDefs_static"] = tileDefinitions;
   };
 
   WallTabApp.prototype.makeTileFromTileDef = function(tileDef) {
     if (tileDef.tileType === "calendar") {
-      return this.makeCalendarTile(tileDef);
+      this.makeCalendarTile(tileDef);
     } else if (tileDef.tileType === "clock") {
-      return this.makeClockTile(tileDef);
+      this.makeClockTile(tileDef);
     } else if (tileDef.tileType === "config") {
-      return this.makeConfigTile(tileDef);
+      this.makeConfigTile(tileDef);
     } else {
-      return this.makeSceneTile(tileDef);
+      this.makeSceneTile(tileDef);
     }
   };
 
@@ -292,7 +293,8 @@ WallTabApp = (function() {
     if ("clickFn" in tileDef) {
       clickFn = tileDef.clickFn;
     }
-    return tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, clickFn, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, this.mediaPlayHelper);
+    tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, clickFn, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, this.mediaPlayHelper);
+    return tileBasics;
   };
 
   WallTabApp.prototype.makeCalendarTile = function(tileDef) {
@@ -302,7 +304,7 @@ WallTabApp = (function() {
       return;
     }
     tile = new CalendarTile(tileBasics, this.calendarUrl, tileDef.calDayIndex);
-    return this.addTileToTierGroup(tileDef, tile);
+    this.addTileToTierGroup(tileDef, tile);
   };
 
   WallTabApp.prototype.makeClockTile = function(tileDef) {
@@ -312,7 +314,7 @@ WallTabApp = (function() {
       return;
     }
     tile = new Clock(tileBasics);
-    return this.addTileToTierGroup(tileDef, tile);
+    this.addTileToTierGroup(tileDef, tile);
   };
 
   WallTabApp.prototype.makeConfigTile = function(tileDef) {
@@ -322,7 +324,7 @@ WallTabApp = (function() {
       return;
     }
     tile = new ConfigTile(tileBasics, tileDef.configType);
-    return this.addTileToTierGroup(tileDef, tile);
+    this.addTileToTierGroup(tileDef, tile);
   };
 
   WallTabApp.prototype.makeSceneTile = function(tileDef) {
@@ -332,7 +334,7 @@ WallTabApp = (function() {
       return;
     }
     tile = new SceneButton(tileBasics, tileDef.name);
-    return this.addTileToTierGroup(tileDef, tile);
+    this.addTileToTierGroup(tileDef, tile);
   };
 
   WallTabApp.prototype.addTileToTierGroup = function(tileDef, tile) {
@@ -351,7 +353,7 @@ WallTabApp = (function() {
       groupName = "Lights";
     }
     groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupName, groupPriority);
-    return this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
+    this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
   };
 
   WallTabApp.prototype.rebuildUI = function() {
@@ -380,7 +382,7 @@ WallTabApp = (function() {
       }
     }
     this.applyTileConfig(this.jsonConfig);
-    return this.tileTiers.reDoLayout();
+    this.tileTiers.reDoLayout();
   };
 
   WallTabApp.prototype.getUIGroupIdxAddGroupIfReqd = function(tierIdx, groupName, groupPriority) {
@@ -396,9 +398,8 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.applyTierAndGroupConfig = function(jsonConfig) {
-    var groupDef, groupIdx, groupPriority, newTier, tierIdx, _i, _len, _ref, _results;
+    var groupDef, groupIdx, groupPriority, newTier, tierIdx, _i, _len, _ref;
     _ref = jsonConfig.groupDefinitions;
-    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       groupDef = _ref[_i];
       tierIdx = this.tileTiers.findTierIdx(groupDef.tierName);
@@ -408,9 +409,8 @@ WallTabApp = (function() {
         tierIdx = this.tileTiers.addTier(newTier);
       }
       groupPriority = "groupPriority" in groupDef ? groupDef.groupPriority : 5;
-      _results.push(groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName, groupPriority));
+      groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName, groupPriority);
     }
-    return _results;
   };
 
   WallTabApp.prototype.applyTileConfig = function(jsonConfig) {
@@ -456,13 +456,13 @@ WallTabApp = (function() {
       v = inConfig[k];
       this.jsonConfig[k] = v;
     }
-    return this.rebuildUI();
+    this.rebuildUI();
   };
 
   WallTabApp.prototype.automationServerReadyCb = function(actions, serverType) {
     if (this.checkActionGroupsChanged(this.automationActionGroups, actions)) {
       this.automationActionGroups = actions;
-      return this.rebuildUI();
+      this.rebuildUI();
     }
   };
 
@@ -513,7 +513,7 @@ WallTabApp = (function() {
       return;
     }
     console.log("ScrollTop = " + $(window).scrollTop());
-    return $("html, body").animate({
+    $("html, body").animate({
       scrollTop: "0px"
     }, 200).animate({
       scrollLeft: "0px"
@@ -524,14 +524,14 @@ WallTabApp = (function() {
     var tierTop;
     tierTop = this.tileTiers.getTierTop(tierName);
     if (tierTop >= 0) {
-      return $("html, body").stop().animate({
+      $("html, body").stop().animate({
         scrollTop: tierTop
       }, 200);
     }
   };
 
   WallTabApp.prototype.configTabNameClick = function() {
-    var tabName;
+    var callog, indlog, tabName;
     tabName = LocalStorage.get("DeviceConfigName");
     if (tabName == null) {
       tabName = "";
@@ -542,7 +542,10 @@ WallTabApp = (function() {
       LocalStorage.set("DeviceConfigName", $("#tabnamefield").val());
       return $("#tabnameform").hide();
     });
-    return $("#tabnameform").show();
+    $("#tabnameform").show();
+    callog = LocalStorage.getEventsText("CalLog");
+    indlog = LocalStorage.getEventsText("IndLog");
+    $("#eventLog").val("Calendar Log\n" + callog + "Indigo Log\n" + indlog);
   };
 
   return WallTabApp;

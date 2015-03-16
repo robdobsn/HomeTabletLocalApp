@@ -5,6 +5,10 @@ IndigoServer = (function() {
   function IndigoServer(serverURL) {
     this.serverURL = serverURL;
     this.ACTIONS_URI = this.serverURL + "/actions.json";
+    this.numRefreshFailuresSinceSuccess = 0;
+    this.firstRefreshAfterFailSecs = 10;
+    this.nextRefreshesAfterFailSecs = 60;
+    return;
   }
 
   IndigoServer.prototype.setReadyCallback = function(dataReadyCallback) {
@@ -22,6 +26,16 @@ IndigoServer = (function() {
           _this.scenes.sort(_this.sortByRoomName);
           _this.dataReadyCallback(_this.scenes);
           console.log("Indigo data = " + JSON.stringify(_this.scenes));
+          _this.numRefreshFailuresSinceSuccess = 0;
+        };
+      })(this),
+      error: (function(_this) {
+        return function(jqXHR, textStatus, errorThrown) {
+          LocalStorage.logEvent("IndLog", "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown);
+          _this.numRefreshFailuresSinceSuccess++;
+          setTimeout(function() {
+            return _this.getActionGroups;
+          }, (_this.numRefreshFailuresSinceSuccess === 1 ? _this.firstRefreshAfterFailSecs * 1000 : _this.nextRefreshesAfterFailSecs * 1000));
         };
       })(this)
     });
@@ -63,7 +77,7 @@ IndigoServer = (function() {
   IndigoServer.prototype.getActionGroupsXML = function() {
     var matchRe;
     matchRe = /<action\b[^>]href="(.*?).xml"[^>]*>(.*?)<\/action>/;
-    return $.ajax(this.ACTIONS_URI, {
+    $.ajax(this.ACTIONS_URI, {
       type: "GET",
       dataType: "xml",
       crossDomain: true,

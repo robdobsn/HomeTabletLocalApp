@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import input
 import os
 import sys
 
@@ -6,7 +8,7 @@ all_tablet_names = ["tabgames",
                     "tabhall",
                     "tabmasterbed",
                     "tablanding",
-                    # "tabgrace",
+                    "192.168.0.78", # "tabgrace"
                     # "tabguest",
                     "taboffice",
                     "tabjoe",
@@ -34,7 +36,7 @@ for tabname in tablet_names:
 print()
 
 # Get admin pw for tablets
-tablet_pw = input("Enter password for tablets: ")
+tablet_pw = input("Enter password for walltablet(s): ")
 
 # First build the phonegap app
 # buildCmd = "phonegap build android"
@@ -43,7 +45,7 @@ tablet_pw = input("Enter password for tablets: ")
 
 # Now install on each tablet
 for tabname in tablet_names:
-    print("Attempting installation on " + tabname)
+    print("Attempting connection to " + tabname)
 
     # Using plink which is like putty but takes a command to run remotely as parameter
     tabfullname = tabname+".local"

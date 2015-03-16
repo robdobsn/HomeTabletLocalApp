@@ -5,6 +5,7 @@ Tile = (function() {
   function Tile(tileBasics) {
     this.tileBasics = tileBasics;
     this.contentFontScaling = 1;
+    return;
   }
 
   Tile.prototype.addToDoc = function() {
@@ -18,11 +19,11 @@ Tile = (function() {
         };
       })(this));
     }
-    return this.contents = $("#" + this.tileId + ">.sqInner");
+    this.contents = $("#" + this.tileId + ">.sqInner");
   };
 
   Tile.prototype.playClickSound = function() {
-    return this.tileBasics.mediaPlayHelper.play("click");
+    this.tileBasics.mediaPlayHelper.play("click");
   };
 
   Tile.prototype.distMoved = function(x1, y1, x2, y2) {
@@ -37,7 +38,7 @@ Tile = (function() {
     if (this.refreshId != null) {
       clearInterval(this.refreshId);
     }
-    return $('#' + this.tileId).remove();
+    $('#' + this.tileId).remove();
   };
 
   Tile.prototype.setTileIndex = function(tileIdx) {
@@ -50,11 +51,11 @@ Tile = (function() {
     this.sizeX = sizeX;
     this.sizeY = sizeY;
     this.fontScaling = fontScaling;
-    return this.setPositionCss(this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
+    this.setPositionCss(this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
   };
 
   Tile.prototype.setPositionCss = function(posX, posY, sizeX, sizeY, fontScaling) {
-    return $('#' + this.tileId).css({
+    $('#' + this.tileId).css({
       "margin-left": posX + "px",
       "margin-top": posY + "px",
       "width": sizeX + "px",
@@ -66,7 +67,7 @@ Tile = (function() {
 
   Tile.prototype.setContentFontScaling = function(contentFontScaling) {
     this.contentFontScaling = contentFontScaling;
-    return this.setPositionCss(this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
+    this.setPositionCss(this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
   };
 
   Tile.prototype.getElement = function(element) {
@@ -87,7 +88,7 @@ Tile = (function() {
   };
 
   Tile.prototype.setInvisible = function() {
-    return $('#' + this.tileId).css({
+    $('#' + this.tileId).css({
       "display": "none"
     });
   };
@@ -97,7 +98,7 @@ Tile = (function() {
     if (firstCallNow) {
       this.callbackFn();
     }
-    return this.refreshId = setInterval((function(_this) {
+    this.refreshId = setInterval((function(_this) {
       return function() {
         return _this.callbackFn();
       };
@@ -108,13 +109,13 @@ Tile = (function() {
     var iconUrl;
     iconUrl = 'img/' + iconName + '.png';
     if (iconUrl !== "") {
-      return $('#' + this.tileId + " .sqSceneButtonIcon img").attr("src", iconUrl);
+      $('#' + this.tileId + " .sqSceneButtonIcon img").attr("src", iconUrl);
     }
   };
 
   Tile.prototype.setText = function(textStr) {
     this.textStr = textStr;
-    return $('#' + this.tileId + " .sqSceneButtonText").html(textStr);
+    $('#' + this.tileId + " .sqSceneButtonText").html(textStr);
   };
 
   return Tile;

@@ -1,8 +1,13 @@
 class IndigoServer
 	constructor: (@serverURL) ->
 		@ACTIONS_URI = @serverURL + "/actions.json"
+		@numRefreshFailuresSinceSuccess = 0
+		@firstRefreshAfterFailSecs = 10
+		@nextRefreshesAfterFailSecs = 60
+		return
 
 	setReadyCallback: (@dataReadyCallback) ->
+		return
 
 	getActionGroups: ->
 		$.ajax @ACTIONS_URI,
@@ -14,6 +19,14 @@ class IndigoServer
 				@scenes.sort @sortByRoomName
 				@dataReadyCallback(@scenes)
 				console.log "Indigo data = " + JSON.stringify(@scenes)
+				@numRefreshFailuresSinceSuccess = 0
+				return
+			error: (jqXHR, textStatus, errorThrown) =>
+				LocalStorage.logEvent("IndLog", "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown)
+				@numRefreshFailuresSinceSuccess++
+				setTimeout =>
+					@getActionGroups
+				, (if @numRefreshFailuresSinceSuccess is 1 then @firstRefreshAfterFailSecs * 1000 else @nextRefreshesAfterFailSecs * 1000)
 				return
 		return
 
@@ -63,4 +76,5 @@ class IndigoServer
 					actions[actions.length] = actionDict
 					console.log "Adding action " + JSON.stringify(actionDict)
 				@dataReadyCallback(actions)
+		return
 

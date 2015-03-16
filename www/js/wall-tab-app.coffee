@@ -22,6 +22,7 @@ class WallTabApp
         @lastScrollEventTime = 0
         @minTimeBetweenScrolls = 1000
         @hoursBetweenActionUpdates = 12
+        return
 
     go: ->
         # Basic body for DOM
@@ -72,10 +73,11 @@ class WallTabApp
         setInterval =>
             @requestActionAndConfigData()
         , (@hoursBetweenActionUpdates * 60 * 60 * 1000)
+        return
 
     requestActionAndConfigData: ->
         @automationServer.getActionGroups()
-        @tabletConfig.requestConfig()
+        return @tabletConfig.requestConfig()
 
     setDefaultTabletConfig: () ->
         groupDefinitions =
@@ -111,6 +113,7 @@ class WallTabApp
                 { tierName: "mainTier", groupName: "Config", colSpan: 1, rowSpan: 1, uri: "", name: "TabName", visibility: "all", tileType: "config", iconName: "config", configType: "tabname", clickFn: @configTabNameClick, groupPriority: 0 }
             ]
         @jsonConfig["tileDefs_static"] = tileDefinitions
+        return
 
     makeTileFromTileDef: (tileDef) ->
         if tileDef.tileType is "calendar"
@@ -121,6 +124,7 @@ class WallTabApp
             @makeConfigTile(tileDef)
         else
             @makeSceneTile(tileDef)
+        return
 
     tileBasicsFromDef: (tileDef) ->
         tileColour = @tileColours.getNextColour()
@@ -131,30 +135,35 @@ class WallTabApp
         if "clickFn" of tileDef
             clickFn = tileDef.clickFn
         tileBasics = new TileBasics tileColour, tileDef.colSpan, tileDef.rowSpan, clickFn, tileDef.uri, tileDef.name, tileDef.visibility, @tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, @mediaPlayHelper
+        return tileBasics
 
     makeCalendarTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
         if tileBasics is null then return
         tile = new CalendarTile tileBasics, @calendarUrl, tileDef.calDayIndex
         @addTileToTierGroup(tileDef, tile)
+        return
 
     makeClockTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
         if tileBasics is null then return
         tile = new Clock tileBasics
         @addTileToTierGroup(tileDef, tile)
+        return
 
     makeConfigTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
         if tileBasics is null then return
         tile = new ConfigTile tileBasics, tileDef.configType
         @addTileToTierGroup(tileDef, tile)
+        return
 
     makeSceneTile: (tileDef) ->
         tileBasics = @tileBasicsFromDef(tileDef)
         if tileBasics is null then return
         tile = new SceneButton tileBasics, tileDef.name
         @addTileToTierGroup(tileDef, tile)
+        return
 
     addTileToTierGroup: (tileDef, tile) ->
         tierName = tileDef.tierName
@@ -168,6 +177,7 @@ class WallTabApp
         #groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
         #if groupIdx < 0 then return
         @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
+        return
 
     rebuildUI: =>
         # Remove all tiers and reapply tiers/groups config
@@ -185,6 +195,7 @@ class WallTabApp
         @applyTileConfig(@jsonConfig)
         # Re-do the layout of tiles
         @tileTiers.reDoLayout()
+        return
 
     getUIGroupIdxAddGroupIfReqd: (tierIdx, groupName, groupPriority) ->
         # Get ui group for the scene
@@ -204,6 +215,7 @@ class WallTabApp
                 tierIdx = @tileTiers.addTier(newTier)
             groupPriority = if "groupPriority" of groupDef then groupDef.groupPriority else 5
             groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName, groupPriority)
+        return
 
     applyTileConfig: (jsonConfig) ->
         # Go through the config groups
@@ -231,12 +243,14 @@ class WallTabApp
             @jsonConfig[k] = v
         # Rebuild UI
         @rebuildUI()
+        return
 
     automationServerReadyCb: (actions, serverType) =>
         # Callback when data received from the automation server (scenes/actions)
         if @checkActionGroupsChanged(@automationActionGroups, actions)
             @automationActionGroups = actions
             @rebuildUI()
+        return
 
     checkActionGroupsChanged: (oldActionMap, newActionMap) ->
         # Deep object comparison to see if configuration has changed
@@ -261,11 +275,13 @@ class WallTabApp
         if $(window).scrollLeft() is 0 and $(window).scrollTop() < 20 then return
         console.log ("ScrollTop = " + $(window).scrollTop())
         $("html, body").animate({ scrollTop: "0px" }, 200).animate({ scrollLeft: "0px" }, 200);
+        return
 
     navigateTo: (tierName) =>
         tierTop = @tileTiers.getTierTop(tierName)
         if tierTop >= 0
             $("html, body").stop().animate({ scrollTop: tierTop }, 200);
+        return
 
     configTabNameClick: ->
         tabName = LocalStorage.get("DeviceConfigName")
@@ -277,3 +293,7 @@ class WallTabApp
             LocalStorage.set("DeviceConfigName", $("#tabnamefield").val())
             $("#tabnameform").hide()
         $("#tabnameform").show()
+        callog = LocalStorage.getEventsText("CalLog")
+        indlog = LocalStorage.getEventsText("IndLog")
+        $("#eventLog").val("Calendar Log\n" + callog + "Indigo Log\n" + indlog)
+        return

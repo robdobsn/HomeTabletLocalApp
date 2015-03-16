@@ -15,18 +15,22 @@ CalendarTile = (function(_super) {
     this.calCharCount = 0;
     this.calMaxLineLen = 0;
     this.minutesBetweenCalendarRefreshes = 15;
+    this.firstRefreshAfterFailSecs = 10;
+    this.nextRefreshesAfterFailSecs = 60;
+    this.numRefreshFailuresSinceSuccess = 0;
+    return;
   }
 
   CalendarTile.prototype.addToDoc = function() {
     CalendarTile.__super__.addToDoc.call(this);
-    return this.setRefreshInterval(this.minutesBetweenCalendarRefreshes * 60, this.requestCalUpdate, true);
+    this.setRefreshInterval(this.minutesBetweenCalendarRefreshes * 60, this.requestCalUpdate, true);
   };
 
   CalendarTile.prototype.requestCalUpdate = function() {
     var dateTimeNow;
     dateTimeNow = new Date();
     console.log("ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + this.calendarURL);
-    return $.ajax(this.calendarURL, {
+    $.ajax(this.calendarURL, {
       type: "GET",
       dataType: "text",
       crossDomain: true,
@@ -35,7 +39,17 @@ CalendarTile = (function(_super) {
           var jsonData, jsonText;
           jsonText = jqXHR.responseText;
           jsonData = $.parseJSON(jsonText);
-          return _this.showCalendar(jsonData);
+          _this.showCalendar(jsonData);
+          _this.numRefreshFailuresSinceSuccess = 0;
+        };
+      })(this),
+      error: (function(_this) {
+        return function(jqXHR, textStatus, errorThrown) {
+          LocalStorage.logEvent("CalLog", "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown);
+          _this.numRefreshFailuresSinceSuccess++;
+          setTimeout(function() {
+            return _this.requestCalUpdate;
+          }, (_this.numRefreshFailuresSinceSuccess === 1 ? _this.firstRefreshAfterFailSecs * 1000 : _this.nextRefreshesAfterFailSecs * 1000));
         };
       })(this)
     });
@@ -72,7 +86,7 @@ CalendarTile = (function(_super) {
       newHtml = "Nothing doing";
     }
     this.contents.html("<div class=\"sqCalTitle\">" + calTitle + "</div>\n<ul class=\"sqCalEvents\">\n	" + newHtml + "\n</ul>");
-    return this.recalculateFontScaling();
+    this.recalculateFontScaling();
   };
 
   CalendarTile.prototype.toZeroPadStr = function(value, digits) {
@@ -83,7 +97,7 @@ CalendarTile = (function(_super) {
 
   CalendarTile.prototype.reposition = function(posX, posY, sizeX, sizeY, fontScaling) {
     CalendarTile.__super__.reposition.call(this, posX, posY, sizeX, sizeY, fontScaling);
-    return this.recalculateFontScaling();
+    this.recalculateFontScaling();
   };
 
   CalendarTile.prototype.calcTextWidth = function(text, fontSize, boxWidth) {
@@ -132,7 +146,7 @@ CalendarTile = (function(_super) {
       return;
     }
     fontScale = this.findOptimumFontSize(true, ".sqCalEvents", 1.0, 2);
-    return this.setContentFontScaling(fontScale);
+    this.setContentFontScaling(fontScale);
   };
 
   CalendarTile.prototype.formatDurationStr = function(val) {

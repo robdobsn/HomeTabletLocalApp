@@ -1,6 +1,7 @@
 class SceneButton extends Tile
 	constructor: (tileBasics, @buttonText) ->
 		super tileBasics
+		return
 
 	addToDoc: (elemToAddTo) ->
 		super()
@@ -24,3 +25,4 @@ class SceneButton extends Tile
 		@buttonText = @buttonText.replace(" Light", "")
 		@setIcon(iconName)
 		@setText(@buttonText)
+		return

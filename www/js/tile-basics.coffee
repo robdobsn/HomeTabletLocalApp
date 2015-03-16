@@ -1,11 +1,14 @@
 class TileBasics
 	constructor: (@bkColour, @colSpan, @rowSpan, @clickFn, @clickParam, @tileName, @visibility, @parentTag, @tileType, @iconName, @isFavourite, @mediaPlayHelper) ->
+		return
 
 	setTierGroupIds: (@tierIdx, @groupIdx) ->
-		
+		return
+
 class TilePosition
 	constructor: (@tileValid, @xPos = 0, @yPos = 0, @colSpan = 0, @rowSpan = 0) ->
-
+		return
+		
 	intersects: (tilePos) ->
 		if not @tileValid
 			return false
@@ -18,6 +21,5 @@ class TilePosition
 		if @yPos + @rowSpan - 1 < tilePos.yPos
 			return false
 		return true
-
 
 

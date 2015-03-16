@@ -5,6 +5,7 @@ MediaPlayHelper = (function() {
   function MediaPlayHelper(soundsDict) {
     this.soundsDict = soundsDict;
     this.soundsLoaded = {};
+    return;
   }
 
   MediaPlayHelper.prototype.getPhoneGapPath = function() {
@@ -40,25 +41,25 @@ MediaPlayHelper = (function() {
       if (bTryAudio) {
         try {
           snd = new Audio(this.soundsDict[soundName]);
-          return snd.play();
+          snd.play();
         } catch (_error) {
           e = _error;
-          return console.log("LowLatencyAudio and Audio both failed");
+          console.log("LowLatencyAudio and Audio both failed");
         }
       }
     }
   };
 
   MediaPlayHelper.prototype.onSuccess = function(result) {
-    return console.log("LowLatencyAudio success result = " + result);
+    console.log("LowLatencyAudio success result = " + result);
   };
 
   MediaPlayHelper.prototype.onErrorPreload = function(error) {
-    return console.log("LowLatencyAudio preload error = " + error);
+    console.log("LowLatencyAudio preload error = " + error);
   };
 
   MediaPlayHelper.prototype.onErrorPlay = function(error) {
-    return console.log("LowLatencyAudio play error = " + error);
+    console.log("LowLatencyAudio play error = " + error);
   };
 
   return MediaPlayHelper;

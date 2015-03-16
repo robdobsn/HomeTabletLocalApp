@@ -5,6 +5,7 @@ class Clock extends Tile
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 		@monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 		@shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+		return
 
 	addToDoc: () ->
 		super()
@@ -20,6 +21,7 @@ class Clock extends Tile
 			</ul>
 			"""
 		@setRefreshInterval(1, @updateClock, false)
+		return
 
 	updateClock: () ->
 		dt = new Date()
@@ -27,3 +29,5 @@ class Clock extends Tile
 		$('#'+@tileId+" .sqClockHours").html (if dt.getHours() < 10 then "0" else "") + dt.getHours()
 		$('#'+@tileId+" .sqClockMins").html (if dt.getMinutes() < 10 then "0" else "") + dt.getMinutes()
 		$('#'+@tileId+" .sqClockSecs").html (if dt.getSeconds() < 10 then "0" else "") + dt.getSeconds()
+		return
+

@@ -1,6 +1,7 @@
 class Tile
 	constructor: (@tileBasics) ->
 		@contentFontScaling = 1
+		return
 
 	addToDoc: ->
 		@tileId = "sqTile_" + @tileBasics.tierIdx + "_" + @tileBasics.groupIdx + "_" + @tileIdx
@@ -18,9 +19,11 @@ class Tile
 				@playClickSound()
 				(@tileBasics.clickFn) @tileBasics.clickParam
 		@contents = $("##{@tileId}>.sqInner")
+		return
 
 	playClickSound: ->
 		@tileBasics.mediaPlayHelper.play("click")
+		return
 
 	distMoved: (x1, y1, x2, y2) ->
 		xSep = x1 - x2
@@ -32,11 +35,13 @@ class Tile
 		if @refreshId?
 			clearInterval(@refreshId)
 		$('#'+@tileId).remove()
+		return
 
 	setTileIndex: (@tileIdx) ->
 
 	reposition: (@posX, @posY, @sizeX, @sizeY, @fontScaling) ->
 		@setPositionCss(@posX, @posY, @sizeX, @sizeY, @fontScaling)
+		return
 
 	setPositionCss: (posX, posY, sizeX, sizeY, fontScaling) ->
 		$('#'+@tileId).css {
@@ -47,12 +52,14 @@ class Tile
 			"font-size": (fontScaling * @contentFontScaling) + "%",
 			"display": "block"
 			}
+		return
 
 	setContentFontScaling: (@contentFontScaling) ->
 		@setPositionCss(@posX, @posY, @sizeX, @sizeY, @fontScaling)
+		return
 
 	getElement: (element) ->
-		$('#'+@tileId + " " + element)
+		return $('#'+@tileId + " " + element)
 
 	isVisible: (isPortrait) ->
 		if @tileBasics.visibility is "all" then return true
@@ -63,7 +70,8 @@ class Tile
 	setInvisible: ->
 		$('#'+@tileId).css {
 			"display": "none"
-			}		
+			}
+		return
 
 	setRefreshInterval: (intervalInSecs, @callbackFn, firstCallNow) ->
 		if firstCallNow
@@ -71,11 +79,14 @@ class Tile
 		@refreshId = setInterval =>
 			@callbackFn()
 		, intervalInSecs * 1000
+		return
 
 	setIcon: (iconName) ->
 		iconUrl = 'img/' + iconName + '.png'
 		if iconUrl isnt ""
 			$('#'+@tileId+" .sqSceneButtonIcon img").attr("src", iconUrl)
+		return
 
 	setText: (@textStr) ->
 		$('#'+@tileId+" .sqSceneButtonText").html textStr
+		return

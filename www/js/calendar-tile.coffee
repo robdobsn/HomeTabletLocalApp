@@ -4,23 +4,38 @@ class CalendarTile extends Tile
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 		@calLineCount = 0; @calCharCount = 0; @calMaxLineLen = 0
 		@minutesBetweenCalendarRefreshes = 15
+		@firstRefreshAfterFailSecs = 10
+		@nextRefreshesAfterFailSecs = 60
+		@numRefreshFailuresSinceSuccess = 0
+		return
 
 	addToDoc: () ->
 		super()
 		@setRefreshInterval(@minutesBetweenCalendarRefreshes * 60, @requestCalUpdate, true)
+		return
 
 	requestCalUpdate: ->
 		dateTimeNow = new Date()
 		console.log("ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + @calendarURL) 
 		$.ajax @calendarURL,
-		type: "GET"
-		dataType: "text"
-		crossDomain: true
-		success: (data, textStatus, jqXHR) =>
-			jsonText = jqXHR.responseText
-			jsonData = $.parseJSON(jsonText)
-			@showCalendar(jsonData)
-			# console.log "CalShown for today+" + @calDayIndex
+			type: "GET"
+			dataType: "text"
+			crossDomain: true
+			success: (data, textStatus, jqXHR) =>
+				jsonText = jqXHR.responseText
+				jsonData = $.parseJSON(jsonText)
+				@showCalendar(jsonData)
+				@numRefreshFailuresSinceSuccess = 0
+				# console.log "CalShown for today+" + @calDayIndex
+				return
+			error: (jqXHR, textStatus, errorThrown) =>
+				LocalStorage.logEvent("CalLog", "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown)
+				@numRefreshFailuresSinceSuccess++
+				setTimeout =>
+					@requestCalUpdate
+				, (if @numRefreshFailuresSinceSuccess is 1 then @firstRefreshAfterFailSecs * 1000 else @nextRefreshesAfterFailSecs * 1000)
+				return
+		return
 
 	showCalendar: (jsonData) ->
 		if not ("calEvents" of jsonData)
@@ -67,16 +82,18 @@ class CalendarTile extends Tile
 			"""
 		# Calculate optimal font size
 		@recalculateFontScaling()
+		return
 
 	# Utility function for leading zeroes
 	toZeroPadStr: (value, digits) ->
 		s = "0000" + value
-		s.substr(s.length-digits)
+		return s.substr(s.length-digits)
 
 	# Override reposition to handle font scaling
 	reposition: (posX, posY, sizeX, sizeY, fontScaling) ->
 		super(posX, posY, sizeX, sizeY, fontScaling)
 		@recalculateFontScaling()
+		return
 
 	# Calculate width of text from DOM element or string. By Phil Freo <http://philfreo.com>
 	# This works but doesn't do what I want - which is to calculate the actual width of text
@@ -120,6 +137,7 @@ class CalendarTile extends Tile
 		fontScale = @findOptimumFontSize(true, ".sqCalEvents", 1.0, 2)
 		#fontScale = @findOptimumFontSize(false, ".sqCalEvents", yScale)
 		@setContentFontScaling(fontScale)
+		return
 	
 	formatDurationStr: (val) ->
 		dur = val.split(":")

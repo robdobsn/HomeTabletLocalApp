@@ -24,6 +24,46 @@ LocalStorage = (function() {
     return false;
   };
 
+  LocalStorage.logEvent = function(logKey, eventText) {
+    var logData, now;
+    logData = this.get(logKey);
+    if (logData != null) {
+      while (logData.length > 10) {
+        logData.shift();
+      }
+    } else {
+      logData = [];
+    }
+    now = new Date();
+    logData.push({
+      timestamp: now,
+      eventText: eventText
+    });
+    this.set(logKey, logData);
+  };
+
+  LocalStorage.formatDate = function(d) {
+    return d.getFullYear() + "/" + this.padZero(d.getMonth() + 1, 2) + "/" + this.padZero(d.getDate(), 2) + " " + this.padZero(d.getHours(), 2) + ":" + this.padZero(d.getMinutes(), 2) + ":" + this.padZero(d.getSeconds(), 2);
+  };
+
+  LocalStorage.padZero = function(val, zeroes) {
+    return ("00000000" + val).slice(-zeroes);
+  };
+
+  LocalStorage.getEventsText = function(logKey) {
+    var ev, logData, outStr, _i, _len;
+    logData = this.get(logKey);
+    if (logData == null) {
+      return "";
+    }
+    outStr = "";
+    for (_i = 0, _len = logData.length; _i < _len; _i++) {
+      ev = logData[_i];
+      outStr += ev.timestamp + " " + ev.eventText + "\n";
+    }
+    return outStr;
+  };
+
   return LocalStorage;
 
 })();

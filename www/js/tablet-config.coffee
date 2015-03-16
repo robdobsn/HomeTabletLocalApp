@@ -1,7 +1,9 @@
 class TabletConfig
 	constructor: (@configURL) ->
+		return
 
 	setReadyCallback: (@readyCallback) ->
+		return
 
 	requestConfig: ->
 		reqURL = @configURL
@@ -25,4 +27,5 @@ class TabletConfig
 					LocalStorage.set("DeviceConfigName", tabName)
 					console.log("DeviceConfigName set to " + tabName)
 				@readyCallback(jsonData)
+		return
 

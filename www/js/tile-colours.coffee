@@ -21,10 +21,11 @@ class TileColours
 			"#0050ef"           # cobalt
 			]
 		@curTileColour = 0
+		return
 
 	getNextColour: ->
 		colour = @tileColours[@curTileColour]
 		@curTileColour += 1
 		if @curTileColour >= @tileColours.length
 			@curTileColour = 0
-		colour
+		return colour

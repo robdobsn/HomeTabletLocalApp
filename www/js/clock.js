@@ -12,12 +12,13 @@ Clock = (function(_super) {
     this.shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     this.monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     this.shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return;
   }
 
   Clock.prototype.addToDoc = function() {
     Clock.__super__.addToDoc.call(this);
     this.contents.append("<div class=\"sqClockDow\"></div>\n<div class=\"sqClockDayMonthYear\"></div>\n<ul class=\"sqClockTime\">\n	<li class=\"sqClockHours\">4</li> \n	<li class=\"sqClockPoint1\">:</li> \n	<li class=\"sqClockMins\"></li> \n	<li class=\"sqClockPoint2\">:</li> \n	<li class=\"sqClockSecs\"></li>\n</ul>");
-    return this.setRefreshInterval(1, this.updateClock, false);
+    this.setRefreshInterval(1, this.updateClock, false);
   };
 
   Clock.prototype.updateClock = function() {
@@ -26,7 +27,7 @@ Clock = (function(_super) {
     $('#' + this.tileId + " .sqClockDayMonthYear").html(this.shortDayNames[dt.getDay()] + " " + dt.getDate() + " " + this.shortMonthNames[dt.getMonth()] + " " + dt.getFullYear());
     $('#' + this.tileId + " .sqClockHours").html((dt.getHours() < 10 ? "0" : "") + dt.getHours());
     $('#' + this.tileId + " .sqClockMins").html((dt.getMinutes() < 10 ? "0" : "") + dt.getMinutes());
-    return $('#' + this.tileId + " .sqClockSecs").html((dt.getSeconds() < 10 ? "0" : "") + dt.getSeconds());
+    $('#' + this.tileId + " .sqClockSecs").html((dt.getSeconds() < 10 ? "0" : "") + dt.getSeconds());
   };
 
   return Clock;

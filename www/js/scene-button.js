@@ -9,6 +9,7 @@ SceneButton = (function(_super) {
   function SceneButton(tileBasics, buttonText) {
     this.buttonText = buttonText;
     SceneButton.__super__.constructor.call(this, tileBasics);
+    return;
   }
 
   SceneButton.prototype.addToDoc = function(elemToAddTo) {
@@ -32,7 +33,7 @@ SceneButton = (function(_super) {
     this.buttonText = this.buttonText.replace(" Lights", "");
     this.buttonText = this.buttonText.replace(" Light", "");
     this.setIcon(iconName);
-    return this.setText(this.buttonText);
+    this.setText(this.buttonText);
   };
 
   return SceneButton;

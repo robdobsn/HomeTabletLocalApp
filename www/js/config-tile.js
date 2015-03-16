@@ -9,6 +9,7 @@ ConfigTile = (function(_super) {
   function ConfigTile(tileBasics, configType) {
     this.configType = configType;
     ConfigTile.__super__.constructor.call(this, tileBasics);
+    return;
   }
 
   ConfigTile.prototype.addToDoc = function() {
@@ -21,7 +22,7 @@ ConfigTile = (function(_super) {
       buttonText = "Tablet Name";
     }
     this.setIcon(iconName);
-    return this.setText(buttonText);
+    this.setText(buttonText);
   };
 
   return ConfigTile;

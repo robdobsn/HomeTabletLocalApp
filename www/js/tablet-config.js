@@ -4,6 +4,7 @@ var TabletConfig;
 TabletConfig = (function() {
   function TabletConfig(configURL) {
     this.configURL = configURL;
+    return;
   }
 
   TabletConfig.prototype.setReadyCallback = function(readyCallback) {
@@ -18,7 +19,7 @@ TabletConfig = (function() {
       reqURL = reqURL + "/" + tabName;
     }
     console.log("Requesting tablet config with URL " + reqURL);
-    return $.ajax(reqURL, {
+    $.ajax(reqURL, {
       type: "GET",
       dataType: "text",
       crossDomain: true,

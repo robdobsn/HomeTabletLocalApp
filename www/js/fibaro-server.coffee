@@ -2,8 +2,10 @@ class FibaroServer
 	constructor: (@serverURL) ->
 		@ROOMS_URL = @serverURL + "/api/rooms"
 		@SCENES_URL = @serverURL + "/api/scenes"
+		return
 
 	setReadyCallback: (@dataReadyCallback) ->
+		return
 		
 	getActionGroups: ->
 		# xmlhttp = new XMLHttpRequest()
@@ -49,6 +51,7 @@ class FibaroServer
 						console.log "Fibaro data = " + JSON.stringify(@scenes)
 						return
 				return
+		return
 
 	makeBasicAuth: (username, password) ->
 		tok = username + ':' + password

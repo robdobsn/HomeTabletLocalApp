@@ -1,6 +1,7 @@
 class ConfigTile extends Tile
 	constructor: (tileBasics, @configType) ->
 		super tileBasics
+		return
 
 	addToDoc: () ->
 		super()
@@ -14,5 +15,6 @@ class ConfigTile extends Tile
 			buttonText = "Tablet Name"
 		@setIcon(iconName)
 		@setText(buttonText)
+		return
 
 	

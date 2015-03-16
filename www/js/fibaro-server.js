@@ -6,6 +6,7 @@ FibaroServer = (function() {
     this.serverURL = serverURL;
     this.ROOMS_URL = this.serverURL + "/api/rooms";
     this.SCENES_URL = this.serverURL + "/api/scenes";
+    return;
   }
 
   FibaroServer.prototype.setReadyCallback = function(dataReadyCallback) {
@@ -14,7 +15,7 @@ FibaroServer = (function() {
 
   FibaroServer.prototype.getActionGroups = function() {
     console.log("Get from Fibaro " + this.ROOMS_URL);
-    return $.ajax(this.ROOMS_URL, {
+    $.ajax(this.ROOMS_URL, {
       type: "GET",
       dataType: "json",
       crossDomain: true,

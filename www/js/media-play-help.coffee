@@ -1,6 +1,7 @@
 class MediaPlayHelper
     constructor: (@soundsDict) ->
         @soundsLoaded = {}
+        return
 
     getPhoneGapPath: ->
         path = window.location.pathname
@@ -30,12 +31,17 @@ class MediaPlayHelper
                     snd.play()
                 catch e
                     console.log("LowLatencyAudio and Audio both failed")
+        return
 
     onSuccess: (result) ->
         console.log("LowLatencyAudio success result = " + result )
+        return
 
     onErrorPreload: (error) ->
         console.log("LowLatencyAudio preload error = " + error )
+        return
 
     onErrorPlay: (error) ->
         console.log("LowLatencyAudio play error = " + error )
+        return
+        
