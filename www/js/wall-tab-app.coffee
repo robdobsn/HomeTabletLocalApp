@@ -10,6 +10,7 @@ class WallTabApp
         @sonosActionsUrl = ""
         @tabletConfigUrl = "http://macallan:5076/tabletconfig"
         @indigoServerUrl = "http://IndigoServer.local:8176"
+        @indigo2ServerUrl = "http://IndigoDown.local:8176"
         @fibaroServerUrl = "http://macallan:5079"
         @veraServerUrl = "http://192.168.0.206:3480"
         @jsonConfig = {}
@@ -41,7 +42,7 @@ class WallTabApp
         @automationActionGroups = []
 
         # Communication with Vera3 & Indigo through automation server
-        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper, @navigateTo)
+        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @indigo2ServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper, @navigateTo)
         @automationServer.setReadyCallback(@automationServerReadyCb)
 
         # Tablet config is based on the IP address of the tablet

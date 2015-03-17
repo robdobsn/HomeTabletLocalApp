@@ -1,7 +1,9 @@
 class AutomationServer
-	constructor: (@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper, @navigationCallback) ->
+	constructor: (@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @indigo2ServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper, @navigationCallback) ->
 		@indigoServer = new IndigoServer(@indigoServerUrl)
 		@indigoServer.setReadyCallback(@indigoServerReadyCb)
+		@indigo2Server = new IndigoServer(@indigo2ServerUrl)
+		@indigo2Server.setReadyCallback(@indigo2ServerReadyCb)
 		@veraServer = new VeraServer(@veraServerUrl)
 		@veraServer.setReadyCallback(@veraServerReadyCb)
 		@fibaroServer = new FibaroServer(@fibaroServerUrl)
@@ -9,6 +11,7 @@ class AutomationServer
 		@useDirectAccessForExec = true # /android_asset/.test(window.location.pathname)
 		@veraActions = []
 		@indigoActions = []
+		@indigo2Actions = []
 		@fibaroActions = []
 		@baseAutomationActions = {}
 		# Init default door and blinds actions - in case rdhomeserver not running
@@ -30,6 +33,10 @@ class AutomationServer
 		@indigoActions = actions
 		@callBackWithSumActions()
 
+	indigo2ServerReadyCb: (actions) =>
+		@indigo2Actions = actions
+		@callBackWithSumActions()
+
 	veraServerReadyCb: (actions) =>
 		@veraActions = actions
 		@callBackWithSumActions()
@@ -39,9 +46,9 @@ class AutomationServer
 		@callBackWithSumActions()
 
 	callBackWithSumActions: =>
-		sumActions = { "doors" : @doorActions, "blinds" : @blindsActions, "vera" : @veraActions, "indigo" : @indigoActions, "fibaro" : @fibaroActions }
+		sumActions = { "doors" : @doorActions, "blinds" : @blindsActions, "vera" : @veraActions, "indigo" : @indigoActions, "indigo2" : @indigo2Actions, "fibaro" : @fibaroActions }
 		for k,v of @baseAutomationActions
-			if k isnt "vera" and k isnt "indigo" and k isnt "fibaro" and k isnt "blinds" and k isnt "doors"
+			if k isnt "vera" and k isnt "indigo" and k isnt "indigo2" and k isnt "fibaro" and k isnt "blinds" and k isnt "doors"
 				sumActions[k] = v
 		sumActions["sonos"] = @sonosActions
 		sumActions["soundPlayActions"] = @soundPlayActions
@@ -49,6 +56,7 @@ class AutomationServer
 
 	getActionGroups: ->
 		@indigoServer.getActionGroups()
+		@indigo2Server.getActionGroups()
 		@veraServer.getActionGroups()
 		@fibaroServer.getActionGroups()
 		@getActionGroupsFromIntermediateServer()
@@ -62,6 +70,7 @@ class AutomationServer
 			success: (data, textStatus, jqXHR) =>
 				if "vera" of data then @veraActions = data.vera
 				if "indigo" of data then @indigoActions = data.indigo
+				if "indigo2" of data then @indigo2Actions = data.indigo2
 				if "fibaro" of data then @fibaroActions = data.fibaro
 				if "doorController" of data then @doorActions = data.doorController
 				if "blinds" of data then @blindsActions = data.blinds

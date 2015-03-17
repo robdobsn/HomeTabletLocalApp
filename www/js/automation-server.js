@@ -3,11 +3,12 @@ var AutomationServer,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 AutomationServer = (function() {
-  function AutomationServer(automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, fibaroServerUrl, sonosActionsUrl, mediaPlayHelper, navigationCallback) {
+  function AutomationServer(automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, indigo2ServerUrl, fibaroServerUrl, sonosActionsUrl, mediaPlayHelper, navigationCallback) {
     this.automationActionsUrl = automationActionsUrl;
     this.automationExecUrl = automationExecUrl;
     this.veraServerUrl = veraServerUrl;
     this.indigoServerUrl = indigoServerUrl;
+    this.indigo2ServerUrl = indigo2ServerUrl;
     this.fibaroServerUrl = fibaroServerUrl;
     this.sonosActionsUrl = sonosActionsUrl;
     this.mediaPlayHelper = mediaPlayHelper;
@@ -16,9 +17,12 @@ AutomationServer = (function() {
     this.callBackWithSumActions = __bind(this.callBackWithSumActions, this);
     this.fibaroServerReadyCb = __bind(this.fibaroServerReadyCb, this);
     this.veraServerReadyCb = __bind(this.veraServerReadyCb, this);
+    this.indigo2ServerReadyCb = __bind(this.indigo2ServerReadyCb, this);
     this.indigoServerReadyCb = __bind(this.indigoServerReadyCb, this);
     this.indigoServer = new IndigoServer(this.indigoServerUrl);
     this.indigoServer.setReadyCallback(this.indigoServerReadyCb);
+    this.indigo2Server = new IndigoServer(this.indigo2ServerUrl);
+    this.indigo2Server.setReadyCallback(this.indigo2ServerReadyCb);
     this.veraServer = new VeraServer(this.veraServerUrl);
     this.veraServer.setReadyCallback(this.veraServerReadyCb);
     this.fibaroServer = new FibaroServer(this.fibaroServerUrl);
@@ -26,6 +30,7 @@ AutomationServer = (function() {
     this.useDirectAccessForExec = true;
     this.veraActions = [];
     this.indigoActions = [];
+    this.indigo2Actions = [];
     this.fibaroActions = [];
     this.baseAutomationActions = {};
     this.frontDoorUrl = "http://192.168.0.221/";
@@ -74,6 +79,11 @@ AutomationServer = (function() {
     return this.callBackWithSumActions();
   };
 
+  AutomationServer.prototype.indigo2ServerReadyCb = function(actions) {
+    this.indigo2Actions = actions;
+    return this.callBackWithSumActions();
+  };
+
   AutomationServer.prototype.veraServerReadyCb = function(actions) {
     this.veraActions = actions;
     return this.callBackWithSumActions();
@@ -91,12 +101,13 @@ AutomationServer = (function() {
       "blinds": this.blindsActions,
       "vera": this.veraActions,
       "indigo": this.indigoActions,
+      "indigo2": this.indigo2Actions,
       "fibaro": this.fibaroActions
     };
     _ref = this.baseAutomationActions;
     for (k in _ref) {
       v = _ref[k];
-      if (k !== "vera" && k !== "indigo" && k !== "fibaro" && k !== "blinds" && k !== "doors") {
+      if (k !== "vera" && k !== "indigo" && k !== "indigo2" && k !== "fibaro" && k !== "blinds" && k !== "doors") {
         sumActions[k] = v;
       }
     }
@@ -107,6 +118,7 @@ AutomationServer = (function() {
 
   AutomationServer.prototype.getActionGroups = function() {
     this.indigoServer.getActionGroups();
+    this.indigo2Server.getActionGroups();
     this.veraServer.getActionGroups();
     this.fibaroServer.getActionGroups();
     this.getActionGroupsFromIntermediateServer();
@@ -124,6 +136,9 @@ AutomationServer = (function() {
           }
           if ("indigo" in data) {
             _this.indigoActions = data.indigo;
+          }
+          if ("indigo2" in data) {
+            _this.indigo2Actions = data.indigo2;
           }
           if ("fibaro" in data) {
             _this.fibaroActions = data.fibaro;

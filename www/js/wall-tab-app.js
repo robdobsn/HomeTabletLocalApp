@@ -17,6 +17,7 @@ WallTabApp = (function() {
     this.sonosActionsUrl = "";
     this.tabletConfigUrl = "http://macallan:5076/tabletconfig";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
+    this.indigo2ServerUrl = "http://IndigoDown.local:8176";
     this.fibaroServerUrl = "http://macallan:5079";
     this.veraServerUrl = "http://192.168.0.206:3480";
     this.jsonConfig = {};
@@ -36,7 +37,7 @@ WallTabApp = (function() {
     this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
     this.setDefaultTabletConfig();
     this.automationActionGroups = [];
-    this.automationServer = new AutomationServer(this.automationActionsUrl, this.automationExecUrl, this.veraServerUrl, this.indigoServerUrl, this.fibaroServerUrl, this.sonosActionsUrl, this.mediaPlayHelper, this.navigateTo);
+    this.automationServer = new AutomationServer(this.automationActionsUrl, this.automationExecUrl, this.veraServerUrl, this.indigoServerUrl, this.indigo2ServerUrl, this.fibaroServerUrl, this.sonosActionsUrl, this.mediaPlayHelper, this.navigateTo);
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfig = new TabletConfig(this.tabletConfigUrl);
     this.tabletConfig.setReadyCallback(this.configReadyCb);
