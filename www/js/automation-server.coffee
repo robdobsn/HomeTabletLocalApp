@@ -57,9 +57,9 @@ class AutomationServer
 	getActionGroups: ->
 		@indigoServer.getActionGroups()
 		@indigo2Server.getActionGroups()
-		@veraServer.getActionGroups()
-		@fibaroServer.getActionGroups()
-		@getActionGroupsFromIntermediateServer()
+		# @veraServer.getActionGroups()
+		# @fibaroServer.getActionGroups()
+		# @getActionGroupsFromIntermediateServer()
 		@getSonosActions()
 
 	getActionGroupsFromIntermediateServer: ->
