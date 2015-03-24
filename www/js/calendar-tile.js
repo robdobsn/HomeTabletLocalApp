@@ -45,7 +45,7 @@ CalendarTile = (function(_super) {
       })(this),
       error: (function(_this) {
         return function(jqXHR, textStatus, errorThrown) {
-          LocalStorage.logEvent("CalLog", "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown);
+          LocalStorage.logEvent("CalLog", "AjaxFail Status = " + textStatus + " URL=" + _this.calendarURL + " Error= " + errorThrown);
           _this.numRefreshFailuresSinceSuccess++;
           setTimeout(function() {
             return _this.requestCalUpdate;

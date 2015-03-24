@@ -25,15 +25,32 @@ TabletConfig = (function() {
       crossDomain: true,
       success: (function(_this) {
         return function(data, textStatus, jqXHR) {
-          var jsonData, jsonText;
+          var curTabName, jsonData, jsonText;
           jsonText = jqXHR.responseText;
           jsonData = $.parseJSON(jsonText);
           tabName = jsonData["deviceName"];
-          if (tabName != null) {
+          curTabName = LocalStorage.get("DeviceConfigName");
+          if ((tabName != null) && tabName !== curTabName) {
             LocalStorage.set("DeviceConfigName", tabName);
-            console.log("DeviceConfigName set to " + tabName);
+            console.log("DeviceConfigName was " + curTabName + " now set to " + tabName);
+            LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName);
           }
-          return _this.readyCallback(jsonData);
+          _this.readyCallback(jsonData);
+          LocalStorage.set(reqURL, jsonData);
+          console.log("Storing data for " + reqURL + " = " + JSON.stringify(jsonData));
+        };
+      })(this),
+      error: (function(_this) {
+        return function(jqXHR, textStatus, errorThrown) {
+          var storedData;
+          reqURL = "http://macallan:5076/tabletconfig/tablanding";
+          storedData = LocalStorage.get(reqURL);
+          console.log("Config Getting data stored for " + reqURL + " result = " + storedData);
+          if (storedData != null) {
+            console.log("Using stored data" + JSON.stringify(storedData));
+            console.log("Using stored data for " + reqURL);
+            _this.readyCallback(storedData);
+          }
         };
       })(this)
     });

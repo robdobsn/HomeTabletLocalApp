@@ -16,29 +16,41 @@ IndigoServer = (function() {
   };
 
   IndigoServer.prototype.getActionGroups = function() {
+    console.log("Requesting Indigo data from " + this.ACTIONS_URI);
     $.ajax(this.ACTIONS_URI, {
       type: "GET",
       dataType: "json",
       crossDomain: true,
       success: (function(_this) {
         return function(data, textStatus, jqXHR) {
-          _this.scenes = _this.getScenes(data);
-          _this.scenes.sort(_this.sortByRoomName);
-          _this.dataReadyCallback(_this.scenes);
-          console.log("Indigo data = " + JSON.stringify(_this.scenes));
+          _this.processRecvdActions(data);
+          console.log("Received Indigo data from " + _this.ACTIONS_URI);
           _this.numRefreshFailuresSinceSuccess = 0;
+          LocalStorage.set(_this.ACTIONS_URI, data);
         };
       })(this),
       error: (function(_this) {
         return function(jqXHR, textStatus, errorThrown) {
-          LocalStorage.logEvent("IndLog", "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown);
+          var storedData;
+          LocalStorage.logEvent("IndLog", "AjaxFail Status= " + textStatus + " URL= " + _this.ACTIONS_URI + " Error= " + errorThrown);
           _this.numRefreshFailuresSinceSuccess++;
           setTimeout(function() {
             return _this.getActionGroups;
           }, (_this.numRefreshFailuresSinceSuccess === 1 ? _this.firstRefreshAfterFailSecs * 1000 : _this.nextRefreshesAfterFailSecs * 1000));
+          storedData = LocalStorage.get(_this.ACTIONS_URI);
+          if (storedData != null) {
+            console.log("Using stored data for " + _this.ACTIONS_URI);
+            _this.processRecvdActions(storedData);
+          }
         };
       })(this)
     });
+  };
+
+  IndigoServer.prototype.processRecvdActions = function(data) {
+    this.scenes = this.getScenes(data);
+    this.scenes.sort(this.sortByRoomName);
+    return this.dataReadyCallback(this.scenes);
   };
 
   IndigoServer.prototype.sortByRoomName = function(a, b) {

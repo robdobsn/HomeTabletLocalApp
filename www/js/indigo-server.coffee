@@ -10,25 +10,38 @@ class IndigoServer
 		return
 
 	getActionGroups: ->
+		console.log "Requesting Indigo data from " + @ACTIONS_URI
 		$.ajax @ACTIONS_URI,
 			type: "GET"
 			dataType: "json"
 			crossDomain: true
 			success: (data, textStatus, jqXHR) =>
-				@scenes = @getScenes(data)
-				@scenes.sort @sortByRoomName
-				@dataReadyCallback(@scenes)
-				console.log "Indigo data = " + JSON.stringify(@scenes)
+				@processRecvdActions(data)
+				# console.log "Indigo data = " + JSON.stringify(@scenes)
+				console.log "Received Indigo data from " + @ACTIONS_URI
 				@numRefreshFailuresSinceSuccess = 0
+				LocalStorage.set(@ACTIONS_URI, data)
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
-				LocalStorage.logEvent("IndLog", "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown)
+				LocalStorage.logEvent("IndLog", "AjaxFail Status= " + textStatus + " URL= " + @ACTIONS_URI + " Error= " + errorThrown)
 				@numRefreshFailuresSinceSuccess++
 				setTimeout =>
 					@getActionGroups
 				, (if @numRefreshFailuresSinceSuccess is 1 then @firstRefreshAfterFailSecs * 1000 else @nextRefreshesAfterFailSecs * 1000)
+				# Use stored data if available
+				storedData = LocalStorage.get(@ACTIONS_URI)
+				# console.log "Getting data stored for " + @ACTIONS_URI + " result = " + storedData
+				if storedData?
+					# console.log "Using stored data" + JSON.stringify(storedData)
+					console.log "Using stored data for " + @ACTIONS_URI
+					@processRecvdActions(storedData)
 				return
 		return
+
+	processRecvdActions: (data) ->
+		@scenes = @getScenes(data)
+		@scenes.sort @sortByRoomName
+		@dataReadyCallback(@scenes)
 
 	sortByRoomName: (a, b) ->
 		if a.groupName < b.groupName then return -1

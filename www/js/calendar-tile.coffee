@@ -29,7 +29,8 @@ class CalendarTile extends Tile
 				# console.log "CalShown for today+" + @calDayIndex
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
-				LocalStorage.logEvent("CalLog", "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown)
+				LocalStorage.logEvent("CalLog", "AjaxFail Status = " + textStatus + " URL=" + @calendarURL + " Error= " + errorThrown)
+				# console.log "GetCalError " + "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown
 				@numRefreshFailuresSinceSuccess++
 				setTimeout =>
 					@requestCalUpdate

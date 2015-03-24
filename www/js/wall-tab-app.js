@@ -16,6 +16,7 @@ WallTabApp = (function() {
     this.automationExecUrl = this.rdHomeServerUrl;
     this.sonosActionsUrl = "";
     this.tabletConfigUrl = "http://macallan:5076/tabletconfig";
+    this.tabletLogUrl = "http://macallan:5076/log";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
     this.indigo2ServerUrl = "http://IndigoDown.local:8176";
     this.fibaroServerUrl = "http://macallan:5079";
@@ -29,6 +30,8 @@ WallTabApp = (function() {
     this.lastScrollEventTime = 0;
     this.minTimeBetweenScrolls = 1000;
     this.hoursBetweenActionUpdates = 12;
+    this.minsBetweenEventLogChecks = 1;
+    this.maxEventsPerLogSend = 50;
     return;
   }
 
@@ -57,6 +60,12 @@ WallTabApp = (function() {
       snaps: '.snap',
       proximity: 250
     });
+    this.checkEventLogs();
+    setInterval((function(_this) {
+      return function() {
+        return _this.checkEventLogs();
+      };
+    })(this), this.minsBetweenEventLogChecks * 60 * 1000);
     this.requestActionAndConfigData();
     setInterval((function(_this) {
       return function() {
@@ -532,7 +541,7 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.configTabNameClick = function() {
-    var callog, indlog, tabName;
+    var tabName;
     tabName = LocalStorage.get("DeviceConfigName");
     if (tabName == null) {
       tabName = "";
@@ -544,9 +553,54 @@ WallTabApp = (function() {
       return $("#tabnameform").hide();
     });
     $("#tabnameform").show();
-    callog = LocalStorage.getEventsText("CalLog");
-    indlog = LocalStorage.getEventsText("IndLog");
-    $("#eventLog").val("Calendar Log\n" + callog + "Indigo Log\n" + indlog);
+  };
+
+  WallTabApp.prototype.checkEventLogs = function() {
+    var ev, evList, evListJson, i, logCat, logCats, _i, _j, _len, _ref;
+    evList = [];
+    logCats = ["CalLog", "IndLog", "CnfLog"];
+    for (_i = 0, _len = logCats.length; _i < _len; _i++) {
+      logCat = logCats[_i];
+      for (i = _j = 0, _ref = this.maxEventsPerLogSend; 0 <= _ref ? _j < _ref : _j > _ref; i = 0 <= _ref ? ++_j : --_j) {
+        ev = LocalStorage.getEvent(logCat);
+        if (ev != null) {
+          console.log("Logging event from " + logCat + " = " + JSON.stringify(ev));
+          evList.push({
+            logCat: logCat,
+            timestamp: ev.timestamp,
+            eventText: ev.eventText
+          });
+        } else {
+          break;
+        }
+      }
+    }
+    if (evList.length > 0) {
+      evListJson = JSON.stringify(evList);
+      return $.ajax({
+        url: this.tabletLogUrl,
+        type: 'POST',
+        data: evListJson,
+        contentType: "application/json",
+        success: (function(_this) {
+          return function(data, status, response) {
+            return console.log("logged events success");
+          };
+        })(this),
+        error: (function(_this) {
+          return function(jqXHR, textStatus, errorThrown) {
+            var _k, _len1, _results;
+            console.error("Error log failed: " + textStatus + " " + errorThrown);
+            _results = [];
+            for (_k = 0, _len1 = evList.length; _k < _len1; _k++) {
+              ev = evList[_k];
+              _results.push(LocalStorage.log(ev.logCat, ev.eventText, ev.timestamp));
+            }
+            return _results;
+          };
+        })(this)
+      });
+    }
   };
 
   return WallTabApp;

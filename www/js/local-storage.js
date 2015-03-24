@@ -24,11 +24,12 @@ LocalStorage = (function() {
     return false;
   };
 
-  LocalStorage.logEvent = function(logKey, eventText) {
+  LocalStorage.logEvent = function(logKey, eventText, timestamp) {
     var logData, now;
+    console.log("Key " + logKey + " text " + eventText + " time " + timestamp);
     logData = this.get(logKey);
     if (logData != null) {
-      while (logData.length > 10) {
+      while (logData.length > 100) {
         logData.shift();
       }
     } else {
@@ -36,7 +37,7 @@ LocalStorage = (function() {
     }
     now = new Date();
     logData.push({
-      timestamp: now,
+      timestamp: timestamp != null ? timestamp : now,
       eventText: eventText
     });
     this.set(logKey, logData);
@@ -62,6 +63,20 @@ LocalStorage = (function() {
       outStr += ev.timestamp + " " + ev.eventText + "\n";
     }
     return outStr;
+  };
+
+  LocalStorage.getEvent = function(logKey) {
+    var logData, retEv;
+    logData = this.get(logKey);
+    if (logData == null) {
+      return null;
+    }
+    if (logData.length <= 0) {
+      return null;
+    }
+    retEv = logData.shift();
+    this.set(logKey, logData);
+    return retEv;
   };
 
   return LocalStorage;

@@ -23,9 +23,23 @@ class TabletConfig
 				jsonText = jqXHR.responseText
 				jsonData = $.parseJSON(jsonText)
 				tabName = jsonData["deviceName"]
-				if tabName?
+				curTabName = LocalStorage.get("DeviceConfigName")
+				if tabName? and tabName isnt curTabName
 					LocalStorage.set("DeviceConfigName", tabName)
-					console.log("DeviceConfigName set to " + tabName)
+					console.log("DeviceConfigName was " + curTabName + " now set to " + tabName)
+					LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
 				@readyCallback(jsonData)
+				LocalStorage.set(reqURL, jsonData)
+				console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
+				return
+			error: (jqXHR, textStatus, errorThrown) =>
+				# Use stored data if available
+				reqURL = "http://macallan:5076/tabletconfig/tablanding"
+				storedData = LocalStorage.get(reqURL)
+				console.log "Config Getting data stored for " + reqURL + " result = " + storedData
+				if storedData?
+					console.log "Using stored data" + JSON.stringify(storedData)
+					console.log "Using stored data for " + reqURL
+					@readyCallback(storedData)
+				return
 		return
-

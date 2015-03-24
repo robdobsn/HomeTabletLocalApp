@@ -13,16 +13,17 @@ class LocalStorage
 			return true
 		return false
 
-	@logEvent: (logKey, eventText) ->
+	@logEvent: (logKey, eventText, timestamp) ->
+		console.log "Key " + logKey + " text " + eventText + " time " + timestamp
 		logData = @get(logKey)
 		if logData?
-			while logData.length > 10
+			while logData.length > 100
 				logData.shift()
 		else
 			logData = []
 		now = new Date()
 		logData.push
-			timestamp: now
+			timestamp: if timestamp? then timestamp else now
 			eventText: eventText
 		@set(logKey, logData)
 		return
@@ -42,3 +43,13 @@ class LocalStorage
 		for ev in logData
 			outStr += ev.timestamp + " " + ev.eventText + "\n"
 		return outStr
+
+	@getEvent: (logKey) ->
+		logData = @get(logKey)
+		if not logData?
+			return null
+		if logData.length <= 0
+			return null
+		retEv = logData.shift()
+		@set(logKey, logData)
+		return retEv

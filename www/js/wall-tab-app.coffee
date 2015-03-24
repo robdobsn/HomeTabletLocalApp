@@ -9,6 +9,7 @@ class WallTabApp
         @automationExecUrl = @rdHomeServerUrl
         @sonosActionsUrl = ""
         @tabletConfigUrl = "http://macallan:5076/tabletconfig"
+        @tabletLogUrl = "http://macallan:5076/log"
         @indigoServerUrl = "http://IndigoServer.local:8176"
         @indigo2ServerUrl = "http://IndigoDown.local:8176"
         @fibaroServerUrl = "http://macallan:5079"
@@ -23,6 +24,8 @@ class WallTabApp
         @lastScrollEventTime = 0
         @minTimeBetweenScrolls = 1000
         @hoursBetweenActionUpdates = 12
+        @minsBetweenEventLogChecks = 1
+        @maxEventsPerLogSend = 50
         return
 
     go: ->
@@ -68,6 +71,12 @@ class WallTabApp
             snaps: '.snap',
             proximity: 250
             )
+
+        # Check event logs frequently
+        @checkEventLogs()
+        setInterval =>
+            @checkEventLogs()
+        , (@minsBetweenEventLogChecks * 60 * 1000)
 
         # Make initial requests for action (scene) data and config data and repeat requests at intervals
         @requestActionAndConfigData()
@@ -294,7 +303,33 @@ class WallTabApp
             LocalStorage.set("DeviceConfigName", $("#tabnamefield").val())
             $("#tabnameform").hide()
         $("#tabnameform").show()
-        callog = LocalStorage.getEventsText("CalLog")
-        indlog = LocalStorage.getEventsText("IndLog")
-        $("#eventLog").val("Calendar Log\n" + callog + "Indigo Log\n" + indlog)
         return
+
+    checkEventLogs: ->
+        evList = []
+        logCats = ["CalLog", "IndLog", "CnfLog"]
+        for logCat in logCats
+            for i in [0...@maxEventsPerLogSend]
+                ev = LocalStorage.getEvent(logCat)
+                if ev?
+                    console.log "Logging event from " + logCat + " = " + JSON.stringify(ev)
+                    evList.push
+                        logCat: logCat
+                        timestamp: ev.timestamp
+                        eventText: ev.eventText
+                else
+                    break
+        if evList.length > 0
+            evListJson = JSON.stringify(evList)
+            $.ajax 
+                url: @tabletLogUrl
+                type: 'POST'
+                data: evListJson
+                contentType: "application/json"
+                success: (data, status, response) =>
+                    console.log "logged events success"
+                error: (jqXHR, textStatus, errorThrown) =>
+                    console.error ("Error log failed: " + textStatus + " " + errorThrown)
+                    # If logging failed then re-log the events
+                    for ev in evList
+                        LocalStorage.log(ev.logCat, ev.eventText, ev.timestamp)
