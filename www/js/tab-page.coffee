@@ -1,5 +1,5 @@
 class TabPage
-	constructor: (@parentTag, @pageDef, @defaultActionFn, @mediaPlayHelper) ->
+	constructor: (@parentTag, @pageDef, @defaultActionFn) ->
 		@tileColours = new TileColours
 		@tiles = []
 		@titlesTopMargin = 60
@@ -18,6 +18,7 @@ class TabPage
 		@colTitleClass = "sqColTitle"
 		@tilesColumns = 2 # Overridden in redolayout
 		@nextTileIdx = 0
+		@columnTypes = {}
 		return
 
 	updateDom: ->
@@ -71,36 +72,45 @@ class TabPage
 		return tile
 
 	makeTileFromTileDef: (tileDef) ->
-		tileBasics = @tileBasicsFromDef(tileDef)
-		if tileBasics is null then return
+		# Ensure tileDef is clean
+		tileDef = @tileDefCleanCheck(tileDef)
+		#Make the tile
 		if tileDef.tileType is "calendar"
-			tile = new CalendarTile tileBasics, @calendarUrl, tileDef.calDayIndex
+			tile = new CalendarTile tileDef, @calendarUrl, tileDef.calDayIndex
 		else if tileDef.tileType is "clock"
-			tile = new Clock tileBasics
+			tile = new Clock tileDef
 		else if tileDef.tileType is "config"
-			tile = new ConfigTile tileBasics, tileDef.configType
+			tile = new ConfigTile tileDef, tileDef.configType
 		else
-			tile = new SceneButton tileBasics
+			tile = new SceneButton tileDef
 		tile.setTileIndex(@nextTileIdx++)
 		return tile
 
-	tileBasicsFromDef: (tileDef) ->
-		tileColour = @tileColours.getNextColour()
-		clickFn = @defaultActionFn
-		if "clickFn" of tileDef
-			clickFn = tileDef.clickFn
-		colSpan = if tileDef.colSpan? then tileDef.colSpan else 1
-		rowSpan = if tileDef.rowSpan? then tileDef.rowSpan else 1
-		uri = if tileDef.uri? then tileDef.uri else ""
-		vis = if tileDef.visibility? then tileDef.visibility else "both"
-		name = if tileDef.name? then tileDef.name else tileDef.tileName
-		tileText = if tileDef.tileText? then tileDef.tileText else name
-		iconName = if tileDef.iconName? then tileDef.iconName else ""
-		positionCue = if tileDef.positionCue? then tileDef.positionCue else ""
-		isFavourite = false
-		tileBasics = new TileBasics tileColour, colSpan, rowSpan, clickFn, uri, name, tileText, vis, @tilesSelector, tileDef.tileType, iconName, isFavourite, positionCue, @mediaPlayHelper
-		tileBasics.setTierGroupIds(0,0)
-		return tileBasics
+	tileDefCleanCheck: (tileDef) ->
+		tileDef.parentTag = @tilesSelector
+		if "tileColour" not of tileDef
+			tileDef.tileColour = @tileColours.getNextColour()
+		if "clickFn" not of tileDef
+			tileDef.clickFn = @defaultActionFn
+		if "colSpan" not of tileDef
+			tileDef.colSpan = 1
+		if "rowSpan" not of tileDef
+			tileDef.rowSpan = 1
+		if "uri" not of tileDef
+			tileDef.uri = ""
+		if "visibility" not of tileDef
+			tileDef.visibility = "both"
+		if "tileName" not of tileDef
+			tileDef.tileName = ""
+		if "tileText" not of tileDef
+			tileDef.tileText = ""
+		if "iconName" not of tileDef
+			tileDef.iconName = ""
+		if "positionCue" not of tileDef
+			tileDef.positionCue = ""
+		tileDef.tierIdx = 0
+		tileDef.groupIdx = 0
+		return tileDef
 
 	getPageHeight: ->
 		pageSel = $("##{@pageId}")
@@ -130,6 +140,8 @@ class TabPage
 				@tilesAcross += colDef.colSpan
 				if colDef.title? and colDef.title isnt ""
 					@noTitles = false
+				colType = if colDef.colType? then colDef.colType else ""
+				@columnTypes[colType] = { frontTileCount: 0, endTileCount: 0 }
 			@columnsAcross = @columnsDef.length
 		@cellWidth = (winWidth - @pageBorders[1] - @pageBorders[3] - (@groupSepPixels * Math.floor((@tilesAcross - 1) / 3))) / @tilesAcross
 		@cellHeight = (winHeight - @pageBorders[0] - @pageBorders[2] - (if @noTitles then 0 else @titlesTopMargin)) / @tilesDown
@@ -151,7 +163,7 @@ class TabPage
 		return xStart + cellXIdx * @cellWidth
 
 	getTileSize: (tile) ->
-		[@tileWidth * tile.tileBasics.colSpan + (@tileSepXPixels * (tile.tileBasics.colSpan-1)), @tileHeight * tile.tileBasics.rowSpan + (@tileSepYPixels * (tile.tileBasics.rowSpan-1))]
+		[@tileWidth * tile.tileDef.colSpan + (@tileSepXPixels * (tile.tileDef.colSpan-1)), @tileHeight * tile.tileDef.rowSpan + (@tileSepYPixels * (tile.tileDef.rowSpan-1))]
 
 	calcFontSizePercent: ->
 		100 * Math.max(@cellWidth, @cellHeight) / 300
@@ -163,12 +175,14 @@ class TabPage
 		return 400
 
 	getCellPos: (tile) ->
+		# if tile.colType of @columnTypes
+
 		# Normal flow
 		colIdx = Math.floor(@tileLayoutCount / @tilesDown)
 		rowIdx = Math.floor(@tileLayoutCount % @tilesDown)
 		# Check for special positioning cues
-		if tile.tileBasics.positionCue is "end"
-			rowIdx = @tilesDown - tile.tileBasics.rowSpan
+		if tile.tileDef.positionCue is "end"
+			rowIdx = @tilesDown - tile.tileDef.rowSpan
 			colIdx = @columnsAcross - 2
 		else
 			@tileLayoutCount++
@@ -179,7 +193,7 @@ class TabPage
 		return [cellX, cellY, fontScaling]
 
 	reDoLayout: ->
-		isPortrait = @calcLayout()
+		return @calcLayout()
 
 	getTilesAcrossScreen: ->
 		return @tilesAcross

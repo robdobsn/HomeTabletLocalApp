@@ -1,10 +1,3 @@
-class TileBasics
-	constructor: (@bkColour, @colSpan, @rowSpan, @clickFn, @clickParam, @tileName, @tileText, @visibility, @parentTag, @tileType, @iconName, @isFavourite, @positionCue, @mediaPlayHelper) ->
-		return
-
-	setTierGroupIds: (@tierIdx, @groupIdx) ->
-		return
-
 class TilePosition
 	constructor: (@tileValid, @xPos = 0, @yPos = 0, @colSpan = 0, @rowSpan = 0) ->
 		return

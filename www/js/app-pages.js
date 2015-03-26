@@ -74,7 +74,7 @@ AppPages = (function() {
               "rowSpan": 2,
               "colSpan": 2
             }, {
-              "tileType": "action",
+              "tileType": "favourite",
               "tileName": "Grace Off",
               "groupName": "Grace Bed",
               "url": "http://graceoff",
@@ -82,7 +82,7 @@ AppPages = (function() {
               "rowSpan": 1,
               "colSpan": 2
             }, {
-              "tileType": "action",
+              "tileType": "favourite",
               "tileName": "Grace Off",
               "groupName": "Grace Bed",
               "url": "http://graceoff",
@@ -90,7 +90,7 @@ AppPages = (function() {
               "rowSpan": 1,
               "colSpan": 2
             }, {
-              "tileType": "action",
+              "tileType": "favourite",
               "tileName": "Grace Off",
               "groupName": "Grace Bed",
               "url": "http://graceoff",
@@ -98,7 +98,7 @@ AppPages = (function() {
               "rowSpan": 1,
               "colSpan": 2
             }, {
-              "tileType": "action",
+              "tileType": "favourite",
               "tileName": "Grace Off",
               "groupName": "Grace Bed",
               "url": "http://graceoff",
@@ -106,7 +106,7 @@ AppPages = (function() {
               "rowSpan": 1,
               "colSpan": 2
             }, {
-              "tileType": "action",
+              "tileType": "favourite",
               "tileName": "Grace Off",
               "groupName": "Grace Bed",
               "url": "http://graceoff",
@@ -114,7 +114,7 @@ AppPages = (function() {
               "rowSpan": 1,
               "colSpan": 2
             }, {
-              "tileType": "action",
+              "tileType": "favourite",
               "tileName": "Grace Off",
               "groupName": "Grace Bed",
               "url": "http://graceoff",
@@ -122,7 +122,7 @@ AppPages = (function() {
               "rowSpan": 1,
               "colSpan": 2
             }, {
-              "tileType": "action",
+              "tileType": "favourite",
               "tileName": "Grace Off",
               "groupName": "Grace Bed",
               "url": "http://graceoff",
@@ -130,7 +130,7 @@ AppPages = (function() {
               "rowSpan": 1,
               "colSpan": 2
             }, {
-              "tileType": "action",
+              "tileType": "favourite",
               "tileName": "Grace Off",
               "groupName": "Grace Bed",
               "url": "http://graceoff",
@@ -138,13 +138,9 @@ AppPages = (function() {
               "rowSpan": 1,
               "colSpan": 2
             }, {
-              "tileType": "action",
-              "tileName": "Grace Off",
-              "groupName": "Grace Bed",
-              "url": "http://graceoff",
-              "tileText": "Grace OFF",
-              "rowSpan": 1,
-              "colSpan": 2
+              "tileType": "nav",
+              "tileName": "Rooms",
+              "colType": "nav"
             }
           ]
         }
@@ -158,9 +154,17 @@ AppPages = (function() {
       this.curPage = "Home";
     }
     if (this.curPage in this.tabletConfig.pages) {
-      newPage = new TabPage(this.parentTag, this.tabletConfig.pages[this.curPage], this.defaultActionFn);
+      newPage = new TabPage(this.parentTag, this.tabletConfig.pages[this.curPage], this.buttonCallback);
       return newPage.updateDom();
     }
+  };
+
+  AppPages.prototype.buttonCallback = function(context) {
+    return console.log("Pressed " + JSON.stringify(context));
+  };
+
+  AppPages.prototype.playClickSound = function() {
+    this.mediaPlayHelper.play("click");
   };
 
   return AppPages;

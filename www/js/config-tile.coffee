@@ -1,6 +1,6 @@
 class ConfigTile extends Tile
-	constructor: (tileBasics, @configType) ->
-		super tileBasics
+	constructor: (tileDef, @configType) ->
+		super tileDef
 		return
 
 	addToDoc: () ->

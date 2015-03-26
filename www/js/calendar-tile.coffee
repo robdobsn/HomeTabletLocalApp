@@ -1,6 +1,6 @@
 class CalendarTile extends Tile
-	constructor: (tileBasics, @calendarURL, @calDayIndex) ->
-		super tileBasics
+	constructor: (tileDef, @calendarURL, @calDayIndex) ->
+		super tileDef
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 		@calLineCount = 0; @calCharCount = 0; @calMaxLineLen = 0
 		@minutesBetweenCalendarRefreshes = 15

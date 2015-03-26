@@ -6,10 +6,10 @@ var CalendarTile,
 CalendarTile = (function(_super) {
   __extends(CalendarTile, _super);
 
-  function CalendarTile(tileBasics, calendarURL, calDayIndex) {
+  function CalendarTile(tileDef, calendarURL, calDayIndex) {
     this.calendarURL = calendarURL;
     this.calDayIndex = calDayIndex;
-    CalendarTile.__super__.constructor.call(this, tileBasics);
+    CalendarTile.__super__.constructor.call(this, tileDef);
     this.shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     this.calLineCount = 0;
     this.calCharCount = 0;

@@ -2,8 +2,8 @@
 var Tile;
 
 Tile = (function() {
-  function Tile(tileBasics) {
-    this.tileBasics = tileBasics;
+  function Tile(tileDef) {
+    this.tileDef = tileDef;
     this.contentFontScaling = 1;
     this.iconHeight = 50;
     this.buttonTextX = 20;
@@ -11,21 +11,16 @@ Tile = (function() {
   }
 
   Tile.prototype.addToDoc = function() {
-    this.tileId = "sqTile_" + this.tileBasics.tierIdx + "_" + this.tileBasics.groupIdx + "_" + this.tileIdx;
-    $(this.tileBasics.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileBasics.bkColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
-    if (this.tileBasics.clickFn != null) {
+    this.tileId = "sqTile_" + this.tileDef.tierIdx + "_" + this.tileDef.groupIdx + "_" + this.tileIdx;
+    $(this.tileDef.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileDef.tileColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
+    if (this.tileDef.clickFn != null) {
       $("#" + this.tileId).click((function(_this) {
         return function() {
-          _this.playClickSound();
-          return _this.tileBasics.clickFn(_this.tileBasics.clickParam);
+          return _this.tileDef.clickFn(_this.tileDef);
         };
       })(this));
     }
     this.contents = $("#" + this.tileId + ">.sqInner");
-  };
-
-  Tile.prototype.playClickSound = function() {
-    this.tileBasics.mediaPlayHelper.play("click");
   };
 
   Tile.prototype.distMoved = function(x1, y1, x2, y2) {
@@ -90,13 +85,13 @@ Tile = (function() {
   };
 
   Tile.prototype.isVisible = function(isPortrait) {
-    if (this.tileBasics.visibility === "all") {
+    if (this.tileDef.visibility === "all") {
       return true;
     }
-    if (this.tileBasics.visibility === "portrait" && isPortrait) {
+    if (this.tileDef.visibility === "portrait" && isPortrait) {
       return true;
     }
-    if (this.tileBasics.visibility === "landscape" && (!isPortrait)) {
+    if (this.tileDef.visibility === "landscape" && (!isPortrait)) {
       return true;
     }
     return false;

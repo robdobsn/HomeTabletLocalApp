@@ -6,9 +6,9 @@ var ConfigTile,
 ConfigTile = (function(_super) {
   __extends(ConfigTile, _super);
 
-  function ConfigTile(tileBasics, configType) {
+  function ConfigTile(tileDef, configType) {
     this.configType = configType;
-    ConfigTile.__super__.constructor.call(this, tileBasics);
+    ConfigTile.__super__.constructor.call(this, tileDef);
     return;
   }
 

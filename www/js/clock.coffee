@@ -1,6 +1,6 @@
 class Clock extends Tile
-	constructor: (tileBasics) ->
-		super tileBasics
+	constructor: (tileDef) ->
+		super tileDef
 		@dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 		@monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]

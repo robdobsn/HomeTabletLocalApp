@@ -1,30 +1,25 @@
 class Tile
-	constructor: (@tileBasics) ->
+	constructor: (@tileDef) ->
 		@contentFontScaling = 1
 		@iconHeight = 50
 		@buttonTextX = 20
 		return
 
 	addToDoc: ->
-		@tileId = "sqTile_" + @tileBasics.tierIdx + "_" + @tileBasics.groupIdx + "_" + @tileIdx
-		$(@tileBasics.parentTag).append """
+		@tileId = "sqTile_" + @tileDef.tierIdx + "_" + @tileDef.groupIdx + "_" + @tileIdx
+		$(@tileDef.parentTag).append """
 			<a class="sqTile" id="#{@tileId}" 
 					href="javascript:void(0);" 
-					style="background-color:#{@tileBasics.bkColour};
+					style="background-color:#{@tileDef.tileColour};
 							display:block; opacity:1;">
 			  <div class="sqInner">
 			  </div>
 			</a>
 			"""
-		if @tileBasics.clickFn?
+		if @tileDef.clickFn?
 			$("##{@tileId}").click =>
-				@playClickSound()
-				(@tileBasics.clickFn) @tileBasics.clickParam
+				(@tileDef.clickFn) @tileDef
 		@contents = $("##{@tileId}>.sqInner")
-		return
-
-	playClickSound: ->
-		@tileBasics.mediaPlayHelper.play("click")
 		return
 
 	distMoved: (x1, y1, x2, y2) ->
@@ -69,9 +64,9 @@ class Tile
 		return $('#'+@tileId + " " + element)
 
 	isVisible: (isPortrait) ->
-		if @tileBasics.visibility is "all" then return true
-		if @tileBasics.visibility is "portrait" and isPortrait then return true
-		if @tileBasics.visibility is "landscape" and (not isPortrait) then return true
+		if @tileDef.visibility is "all" then return true
+		if @tileDef.visibility is "portrait" and isPortrait then return true
+		if @tileDef.visibility is "landscape" and (not isPortrait) then return true
 		return false
 
 	setInvisible: ->

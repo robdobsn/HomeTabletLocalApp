@@ -2,11 +2,10 @@
 var TabPage;
 
 TabPage = (function() {
-  function TabPage(parentTag, pageDef, defaultActionFn, mediaPlayHelper) {
+  function TabPage(parentTag, pageDef, defaultActionFn) {
     this.parentTag = parentTag;
     this.pageDef = pageDef;
     this.defaultActionFn = defaultActionFn;
-    this.mediaPlayHelper = mediaPlayHelper;
     this.tileColours = new TileColours;
     this.tiles = [];
     this.titlesTopMargin = 60;
@@ -25,6 +24,7 @@ TabPage = (function() {
     this.colTitleClass = "sqColTitle";
     this.tilesColumns = 2;
     this.nextTileIdx = 0;
+    this.columnTypes = {};
     return;
   }
 
@@ -79,43 +79,56 @@ TabPage = (function() {
   };
 
   TabPage.prototype.makeTileFromTileDef = function(tileDef) {
-    var tile, tileBasics;
-    tileBasics = this.tileBasicsFromDef(tileDef);
-    if (tileBasics === null) {
-      return;
-    }
+    var tile;
+    tileDef = this.tileDefCleanCheck(tileDef);
     if (tileDef.tileType === "calendar") {
-      tile = new CalendarTile(tileBasics, this.calendarUrl, tileDef.calDayIndex);
+      tile = new CalendarTile(tileDef, this.calendarUrl, tileDef.calDayIndex);
     } else if (tileDef.tileType === "clock") {
-      tile = new Clock(tileBasics);
+      tile = new Clock(tileDef);
     } else if (tileDef.tileType === "config") {
-      tile = new ConfigTile(tileBasics, tileDef.configType);
+      tile = new ConfigTile(tileDef, tileDef.configType);
     } else {
-      tile = new SceneButton(tileBasics);
+      tile = new SceneButton(tileDef);
     }
     tile.setTileIndex(this.nextTileIdx++);
     return tile;
   };
 
-  TabPage.prototype.tileBasicsFromDef = function(tileDef) {
-    var clickFn, colSpan, iconName, isFavourite, name, positionCue, rowSpan, tileBasics, tileColour, tileText, uri, vis;
-    tileColour = this.tileColours.getNextColour();
-    clickFn = this.defaultActionFn;
-    if ("clickFn" in tileDef) {
-      clickFn = tileDef.clickFn;
+  TabPage.prototype.tileDefCleanCheck = function(tileDef) {
+    tileDef.parentTag = this.tilesSelector;
+    if (!("tileColour" in tileDef)) {
+      tileDef.tileColour = this.tileColours.getNextColour();
     }
-    colSpan = tileDef.colSpan != null ? tileDef.colSpan : 1;
-    rowSpan = tileDef.rowSpan != null ? tileDef.rowSpan : 1;
-    uri = tileDef.uri != null ? tileDef.uri : "";
-    vis = tileDef.visibility != null ? tileDef.visibility : "both";
-    name = tileDef.name != null ? tileDef.name : tileDef.tileName;
-    tileText = tileDef.tileText != null ? tileDef.tileText : name;
-    iconName = tileDef.iconName != null ? tileDef.iconName : "";
-    positionCue = tileDef.positionCue != null ? tileDef.positionCue : "";
-    isFavourite = false;
-    tileBasics = new TileBasics(tileColour, colSpan, rowSpan, clickFn, uri, name, tileText, vis, this.tilesSelector, tileDef.tileType, iconName, isFavourite, positionCue, this.mediaPlayHelper);
-    tileBasics.setTierGroupIds(0, 0);
-    return tileBasics;
+    if (!("clickFn" in tileDef)) {
+      tileDef.clickFn = this.defaultActionFn;
+    }
+    if (!("colSpan" in tileDef)) {
+      tileDef.colSpan = 1;
+    }
+    if (!("rowSpan" in tileDef)) {
+      tileDef.rowSpan = 1;
+    }
+    if (!("uri" in tileDef)) {
+      tileDef.uri = "";
+    }
+    if (!("visibility" in tileDef)) {
+      tileDef.visibility = "both";
+    }
+    if (!("tileName" in tileDef)) {
+      tileDef.tileName = "";
+    }
+    if (!("tileText" in tileDef)) {
+      tileDef.tileText = "";
+    }
+    if (!("iconName" in tileDef)) {
+      tileDef.iconName = "";
+    }
+    if (!("positionCue" in tileDef)) {
+      tileDef.positionCue = "";
+    }
+    tileDef.tierIdx = 0;
+    tileDef.groupIdx = 0;
+    return tileDef;
   };
 
   TabPage.prototype.getPageHeight = function() {
@@ -129,7 +142,7 @@ TabPage = (function() {
   };
 
   TabPage.prototype.calcLayout = function() {
-    var colDef, isPortrait, winHeight, winWidth, _i, _len, _ref;
+    var colDef, colType, isPortrait, winHeight, winWidth, _i, _len, _ref;
     winWidth = $(window).width();
     winHeight = $(window).height();
     isPortrait = winWidth < winHeight;
@@ -154,6 +167,11 @@ TabPage = (function() {
         if ((colDef.title != null) && colDef.title !== "") {
           this.noTitles = false;
         }
+        colType = colDef.colType != null ? colDef.colType : "";
+        this.columnTypes[colType] = {
+          frontTileCount: 0,
+          endTileCount: 0
+        };
       }
       this.columnsAcross = this.columnsDef.length;
     }
@@ -179,7 +197,7 @@ TabPage = (function() {
   };
 
   TabPage.prototype.getTileSize = function(tile) {
-    return [this.tileWidth * tile.tileBasics.colSpan + (this.tileSepXPixels * (tile.tileBasics.colSpan - 1)), this.tileHeight * tile.tileBasics.rowSpan + (this.tileSepYPixels * (tile.tileBasics.rowSpan - 1))];
+    return [this.tileWidth * tile.tileDef.colSpan + (this.tileSepXPixels * (tile.tileDef.colSpan - 1)), this.tileHeight * tile.tileDef.rowSpan + (this.tileSepYPixels * (tile.tileDef.rowSpan - 1))];
   };
 
   TabPage.prototype.calcFontSizePercent = function() {
@@ -198,8 +216,8 @@ TabPage = (function() {
     var cellX, cellY, colIdx, fontScaling, rowIdx;
     colIdx = Math.floor(this.tileLayoutCount / this.tilesDown);
     rowIdx = Math.floor(this.tileLayoutCount % this.tilesDown);
-    if (tile.tileBasics.positionCue === "end") {
-      rowIdx = this.tilesDown - tile.tileBasics.rowSpan;
+    if (tile.tileDef.positionCue === "end") {
+      rowIdx = this.tilesDown - tile.tileDef.rowSpan;
       colIdx = this.columnsAcross - 2;
     } else {
       this.tileLayoutCount++;
@@ -211,8 +229,7 @@ TabPage = (function() {
   };
 
   TabPage.prototype.reDoLayout = function() {
-    var isPortrait;
-    return isPortrait = this.calcLayout();
+    return this.calcLayout();
   };
 
   TabPage.prototype.getTilesAcrossScreen = function() {

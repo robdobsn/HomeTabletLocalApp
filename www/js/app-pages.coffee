@@ -43,22 +43,29 @@ class AppPages
 					]
 					tiles: [
 						{ "tileType": "clock", "tileName": "Clock", "groupName": "Clock", "positionCue": "end", "rowSpan": 2, "colSpan": 2 },
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
-						{ "tileType": "action", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "favourite", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "favourite", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "favourite", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "favourite", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "favourite", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "favourite", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "favourite", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "favourite", "tileName": "Grace Off", "groupName": "Grace Bed", "url": "http://graceoff", "tileText": "Grace OFF", "rowSpan": 1, "colSpan": 2 }
+						{ "tileType": "nav", "tileName": "Rooms", "colType":"nav"}
 					]
 
 	display: ->
 		if @curPage is "" then @curPage = "Home"
 		if @curPage of @tabletConfig.pages
-			newPage = new TabPage(@parentTag, @tabletConfig.pages[@curPage], @defaultActionFn)
+			newPage = new TabPage(@parentTag, @tabletConfig.pages[@curPage], @buttonCallback)
 			newPage.updateDom()
+
+	buttonCallback: (context) ->
+		console.log "Pressed " + JSON.stringify(context)
+
+	playClickSound: ->
+		@mediaPlayHelper.play("click")
+		return
 
     # addTileToTierGroup: (tileDef, tile) ->
     #     tierName = tileDef.tierName

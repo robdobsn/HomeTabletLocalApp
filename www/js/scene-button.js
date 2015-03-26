@@ -6,9 +6,8 @@ var SceneButton,
 SceneButton = (function(_super) {
   __extends(SceneButton, _super);
 
-  function SceneButton(tileBasics) {
-    SceneButton.__super__.constructor.call(this, tileBasics);
-    this.buttonText = tileBasics.tileText;
+  function SceneButton(tileDef) {
+    SceneButton.__super__.constructor.call(this, tileDef);
     return;
   }
 
@@ -16,24 +15,12 @@ SceneButton = (function(_super) {
     var iconName;
     SceneButton.__super__.addToDoc.call(this);
     this.contents.append("<div class=\"sqSceneButtonIcon\"><img src=\"img/bulb-on.png\"></img></div>\n<div class=\"sqSceneButtonText\"></div>");
-    iconName = this.tileBasics.iconName;
+    iconName = this.tileDef.iconName;
     if (iconName === null || iconName === "") {
-      if (this.buttonText.toLowerCase().indexOf(" off") >= 0) {
-        iconName = "bulb-off";
-      } else if (this.buttonText.toLowerCase().indexOf("nighttime") >= 0) {
-        iconName = "bulb-off";
-      } else if (this.buttonText.toLowerCase().indexOf(" on") >= 0) {
-        iconName = "bulb-on";
-      } else if (this.buttonText.toLowerCase().indexOf(" mood") >= 0) {
-        iconName = "bulb-mood";
-      } else {
-        iconName = "bulb-on";
-      }
+      iconName = "bulb-on";
     }
-    this.buttonText = this.buttonText.replace(" Lights", "");
-    this.buttonText = this.buttonText.replace(" Light", "");
     this.setIcon(iconName);
-    this.setText(this.buttonText);
+    this.setText(this.tileDef.tileText);
   };
 
   return SceneButton;

@@ -6,8 +6,8 @@ var Clock,
 Clock = (function(_super) {
   __extends(Clock, _super);
 
-  function Clock(tileBasics) {
-    Clock.__super__.constructor.call(this, tileBasics);
+  function Clock(tileDef) {
+    Clock.__super__.constructor.call(this, tileDef);
     this.dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     this.shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     this.monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
