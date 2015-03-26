@@ -5,6 +5,8 @@ Tile = (function() {
   function Tile(tileBasics) {
     this.tileBasics = tileBasics;
     this.contentFontScaling = 1;
+    this.iconHeight = 50;
+    this.buttonTextX = 20;
     return;
   }
 
@@ -46,23 +48,36 @@ Tile = (function() {
   };
 
   Tile.prototype.reposition = function(posX, posY, sizeX, sizeY, fontScaling) {
+    var iconSel, textSel, txtHeight;
     this.posX = posX;
     this.posY = posY;
     this.sizeX = sizeX;
     this.sizeY = sizeY;
     this.fontScaling = fontScaling;
-    this.setPositionCss(this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
+    this.setPositionCss('#' + this.tileId, this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
+    iconSel = '#' + this.tileId + " .sqSceneButtonIcon img";
+    this.setPositionCss(iconSel, 10, (this.sizeY - this.iconHeight) / 2, null, this.iconHeight);
+    textSel = '#' + this.tileId + " .sqSceneButtonText";
+    txtHeight = $(textSel).height();
+    this.setPositionCss('#' + this.tileId + " .sqSceneButtonText", this.buttonTextX, (this.sizeY - txtHeight) / 2);
   };
 
-  Tile.prototype.setPositionCss = function(posX, posY, sizeX, sizeY, fontScaling) {
-    $('#' + this.tileId).css({
+  Tile.prototype.setPositionCss = function(selector, posX, posY, sizeX, sizeY, fontScaling) {
+    var css;
+    css = {
       "margin-left": posX + "px",
-      "margin-top": posY + "px",
-      "width": sizeX + "px",
-      "height": sizeY + "px",
-      "font-size": (fontScaling * this.contentFontScaling) + "%",
-      "display": "block"
-    });
+      "margin-top": posY + "px"
+    };
+    if (sizeX != null) {
+      css["width"] = sizeX + "px";
+    }
+    if (sizeY != null) {
+      css["height"] = sizeY + "px";
+    }
+    if (fontScaling != null) {
+      css["font-size"] = (fontScaling * this.contentFontScaling) + "%";
+    }
+    $(selector).css(css);
   };
 
   Tile.prototype.setContentFontScaling = function(contentFontScaling) {

@@ -1,6 +1,7 @@
 class SceneButton extends Tile
-	constructor: (tileBasics, @buttonText) ->
+	constructor: (tileBasics) ->
 		super tileBasics
+		@buttonText = tileBasics.tileText
 		return
 
 	addToDoc: (elemToAddTo) ->

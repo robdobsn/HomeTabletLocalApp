@@ -2,18 +2,20 @@
 var TileBasics, TilePosition;
 
 TileBasics = (function() {
-  function TileBasics(bkColour, colSpan, rowSpan, clickFn, clickParam, tileName, visibility, parentTag, tileType, iconName, isFavourite, mediaPlayHelper) {
+  function TileBasics(bkColour, colSpan, rowSpan, clickFn, clickParam, tileName, tileText, visibility, parentTag, tileType, iconName, isFavourite, positionCue, mediaPlayHelper) {
     this.bkColour = bkColour;
     this.colSpan = colSpan;
     this.rowSpan = rowSpan;
     this.clickFn = clickFn;
     this.clickParam = clickParam;
     this.tileName = tileName;
+    this.tileText = tileText;
     this.visibility = visibility;
     this.parentTag = parentTag;
     this.tileType = tileType;
     this.iconName = iconName;
     this.isFavourite = isFavourite;
+    this.positionCue = positionCue;
     this.mediaPlayHelper = mediaPlayHelper;
     return;
   }

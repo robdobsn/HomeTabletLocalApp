@@ -1,6 +1,8 @@
 class Tile
 	constructor: (@tileBasics) ->
 		@contentFontScaling = 1
+		@iconHeight = 50
+		@buttonTextX = 20
 		return
 
 	addToDoc: ->
@@ -40,18 +42,23 @@ class Tile
 	setTileIndex: (@tileIdx) ->
 
 	reposition: (@posX, @posY, @sizeX, @sizeY, @fontScaling) ->
-		@setPositionCss(@posX, @posY, @sizeX, @sizeY, @fontScaling)
+		@setPositionCss('#'+@tileId, @posX, @posY, @sizeX, @sizeY, @fontScaling)
+		iconSel = '#'+@tileId + " .sqSceneButtonIcon img"
+		@setPositionCss(iconSel, 10, (@sizeY-@iconHeight)/2, null, @iconHeight)
+		textSel = '#'+@tileId + " .sqSceneButtonText"
+		txtHeight = $(textSel).height()
+		@setPositionCss('#'+@tileId + " .sqSceneButtonText", @buttonTextX, (@sizeY-txtHeight)/2)
 		return
 
-	setPositionCss: (posX, posY, sizeX, sizeY, fontScaling) ->
-		$('#'+@tileId).css {
+	setPositionCss: (selector, posX, posY, sizeX, sizeY, fontScaling) ->
+		css = {
 			"margin-left": posX + "px", 
-			"margin-top": posY + "px",
-			"width": sizeX + "px", 
-			"height": sizeY + "px", 
-			"font-size": (fontScaling * @contentFontScaling) + "%",
-			"display": "block"
-			}
+			"margin-top": posY + "px"
+		}
+		if sizeX? then css["width"] = sizeX + "px"
+		if sizeY? then css["height"] = sizeY + "px"
+		if fontScaling? then css["font-size"] = (fontScaling * @contentFontScaling) + "%"
+		$(selector).css(css)
 		return
 
 	setContentFontScaling: (@contentFontScaling) ->

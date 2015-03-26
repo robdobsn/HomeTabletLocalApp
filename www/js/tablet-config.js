@@ -4,11 +4,12 @@ var TabletConfig;
 TabletConfig = (function() {
   function TabletConfig(configURL) {
     this.configURL = configURL;
+    this.configData = {};
     return;
   }
 
-  TabletConfig.prototype.setReadyCallback = function(readyCallback) {
-    this.readyCallback = readyCallback;
+  TabletConfig.prototype.getConfigData = function() {
+    return this.configData;
   };
 
   TabletConfig.prototype.requestConfig = function() {
@@ -35,9 +36,8 @@ TabletConfig = (function() {
             console.log("DeviceConfigName was " + curTabName + " now set to " + tabName);
             LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName);
           }
-          _this.readyCallback(jsonData);
+          _this.configData = jsonData;
           LocalStorage.set(reqURL, jsonData);
-          console.log("Storing data for " + reqURL + " = " + JSON.stringify(jsonData));
         };
       })(this),
       error: (function(_this) {
@@ -47,9 +47,8 @@ TabletConfig = (function() {
           storedData = LocalStorage.get(reqURL);
           console.log("Config Getting data stored for " + reqURL + " result = " + storedData);
           if (storedData != null) {
-            console.log("Using stored data" + JSON.stringify(storedData));
             console.log("Using stored data for " + reqURL);
-            _this.readyCallback(storedData);
+            _this.configData = storedData;
           }
         };
       })(this)

@@ -6,9 +6,9 @@ var SceneButton,
 SceneButton = (function(_super) {
   __extends(SceneButton, _super);
 
-  function SceneButton(tileBasics, buttonText) {
-    this.buttonText = buttonText;
+  function SceneButton(tileBasics) {
     SceneButton.__super__.constructor.call(this, tileBasics);
+    this.buttonText = tileBasics.tileText;
     return;
   }
 

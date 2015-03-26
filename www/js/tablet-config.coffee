@@ -1,10 +1,11 @@
 class TabletConfig
 	constructor: (@configURL) ->
+		@configData = {}
 		return
 
-	setReadyCallback: (@readyCallback) ->
-		return
-
+	getConfigData: ->
+		return @configData
+		
 	requestConfig: ->
 		reqURL = @configURL
 		# See if the tablet's name is in the local storage
@@ -28,9 +29,9 @@ class TabletConfig
 					LocalStorage.set("DeviceConfigName", tabName)
 					console.log("DeviceConfigName was " + curTabName + " now set to " + tabName)
 					LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
-				@readyCallback(jsonData)
+				@configData = jsonData
 				LocalStorage.set(reqURL, jsonData)
-				console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
+				# console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
 				# Use stored data if available
@@ -38,8 +39,8 @@ class TabletConfig
 				storedData = LocalStorage.get(reqURL)
 				console.log "Config Getting data stored for " + reqURL + " result = " + storedData
 				if storedData?
-					console.log "Using stored data" + JSON.stringify(storedData)
+					# console.log "Using stored data" + JSON.stringify(storedData)
 					console.log "Using stored data for " + reqURL
-					@readyCallback(storedData)
+					@configData = storedData
 				return
 		return

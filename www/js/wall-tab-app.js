@@ -4,12 +4,8 @@ var WallTabApp,
 
 WallTabApp = (function() {
   function WallTabApp() {
-    this.navigateTo = __bind(this.navigateTo, this);
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
     this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
-    this.configReadyCb = __bind(this.configReadyCb, this);
-    this.rebuildUI = __bind(this.rebuildUI, this);
-    this.tileColours = new TileColours;
     this.rdHomeServerUrl = "http://macallan:5000";
     this.calendarUrl = "http://macallan:5077/calendar/min/4";
     this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
@@ -21,14 +17,12 @@ WallTabApp = (function() {
     this.indigo2ServerUrl = "http://IndigoDown.local:8176";
     this.fibaroServerUrl = "http://macallan:5079";
     this.veraServerUrl = "http://192.168.0.206:3480";
-    this.jsonConfig = {};
+    this.tabletConfig = {};
     this.mediaPlayHelper = new MediaPlayHelper({
       "click": "assets/click.mp3",
       "ok": "assets/blip.mp3",
       "fail": "assets/fail.mp3"
     });
-    this.lastScrollEventTime = 0;
-    this.minTimeBetweenScrolls = 1000;
     this.hoursBetweenActionUpdates = 12;
     this.minsBetweenEventLogChecks = 1;
     this.maxEventsPerLogSend = 50;
@@ -38,28 +32,22 @@ WallTabApp = (function() {
   WallTabApp.prototype.go = function() {
     $("body").prepend("<div id=\"sqWrapper\">\n</div>");
     this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
-    this.setDefaultTabletConfig();
     this.automationActionGroups = [];
     this.automationServer = new AutomationServer(this.automationActionsUrl, this.automationExecUrl, this.veraServerUrl, this.indigoServerUrl, this.indigo2ServerUrl, this.fibaroServerUrl, this.sonosActionsUrl, this.mediaPlayHelper, this.navigateTo);
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfig = new TabletConfig(this.tabletConfigUrl);
-    this.tabletConfig.setReadyCallback(this.configReadyCb);
-    this.tileTiers = new TileTiers("#sqWrapper");
+    this.appPages = new AppPages("#sqWrapper", this.automationServer.executeCommand, this.mediaPlayHelper);
     $(window).on('orientationchange', (function(_this) {
       return function() {
-        return _this.tileTiers.reDoLayout();
+        return _this.buildAndDisplayUI();
       };
     })(this));
     $(window).on('resize', (function(_this) {
       return function() {
-        return _this.tileTiers.reDoLayout();
+        return _this.buildAndDisplayUI();
       };
     })(this));
-    this.rebuildUI();
-    $(document).scrollsnap({
-      snaps: '.snap',
-      proximity: 250
-    });
+    this.buildAndDisplayUI();
     this.checkEventLogs();
     setInterval((function(_this) {
       return function() {
@@ -79,400 +67,15 @@ WallTabApp = (function() {
     return this.tabletConfig.requestConfig();
   };
 
-  WallTabApp.prototype.setDefaultTabletConfig = function() {
-    var groupDefinitions, tileDefinitions;
-    groupDefinitions = [
-      {
-        tierName: "mainTier",
-        groupName: "Home"
-      }, {
-        tierName: "mainTier",
-        groupName: "Calendar"
-      }, {
-        tierName: "actionsTier",
-        groupName: "Lights"
-      }, {
-        tierName: "sonosTier",
-        groupName: "Sonos"
-      }, {
-        tierName: "sonosTier",
-        groupName: "Kids"
-      }, {
-        tierName: "doorBlindsTier",
-        groupName: "Front Door"
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today"
-      }
-    ];
-    this.jsonConfig["groupDefinitions"] = groupDefinitions;
-    tileDefinitions = [
-      {
-        tierName: "mainTier",
-        groupName: "Calendar",
-        colSpan: 2,
-        rowSpan: 2,
-        uri: "~~~calendarTier",
-        name: "calendar",
-        visibility: "landscape",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 0
-      }, {
-        tierName: "mainTier",
-        groupName: "Home",
-        colSpan: 3,
-        rowSpan: 1,
-        uri: "~~~calendarTier",
-        name: "calendar",
-        visibility: "portrait",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 0
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today",
-        colSpan: 2,
-        rowSpan: 3,
-        uri: "",
-        name: "calendar",
-        visibility: "landscape",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 0
-      }, {
-        tierName: "calendarTier",
-        groupName: "Tomorrow",
-        colSpan: 2,
-        rowSpan: 3,
-        uri: "",
-        name: "calendar",
-        visibility: "landscape",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 1
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today + 2",
-        colSpan: 2,
-        rowSpan: 3,
-        uri: "",
-        name: "calendar",
-        visibility: "landscape",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 2
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today + 3",
-        colSpan: 2,
-        rowSpan: 3,
-        uri: "",
-        name: "calendar",
-        visibility: "landscape",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 3
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today + 4",
-        colSpan: 2,
-        rowSpan: 3,
-        uri: "",
-        name: "calendar",
-        visibility: "landscape",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 4
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today",
-        colSpan: 3,
-        rowSpan: 5,
-        uri: "",
-        name: "calendar",
-        visibility: "portrait",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 0
-      }, {
-        tierName: "calendarTier",
-        groupName: "Tomorrow",
-        colSpan: 3,
-        rowSpan: 5,
-        uri: "",
-        name: "calendar",
-        visibility: "portrait",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 1
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today + 2",
-        colSpan: 3,
-        rowSpan: 5,
-        uri: "",
-        name: "calendar",
-        visibility: "portrait",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 2
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today + 3",
-        colSpan: 3,
-        rowSpan: 5,
-        uri: "",
-        name: "calendar",
-        visibility: "portrait",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 3
-      }, {
-        tierName: "calendarTier",
-        groupName: "Today + 4",
-        colSpan: 3,
-        rowSpan: 5,
-        uri: "",
-        name: "calendar",
-        visibility: "portrait",
-        tileType: "calendar",
-        iconName: "none",
-        calDayIndex: 4
-      }, {
-        tierName: "mainTier",
-        groupName: "Calendar",
-        colSpan: 2,
-        rowSpan: 1,
-        uri: "",
-        name: "clock",
-        visibility: "landscape",
-        tileType: "clock",
-        iconName: "none"
-      }, {
-        tierName: "mainTier",
-        groupName: "Home",
-        colSpan: 3,
-        rowSpan: 1,
-        uri: "",
-        name: "clock",
-        visibility: "portrait",
-        tileType: "clock",
-        iconName: "none"
-      }, {
-        tierName: "mainTier",
-        groupName: "Config",
-        colSpan: 1,
-        rowSpan: 1,
-        uri: "",
-        name: "TabName",
-        visibility: "all",
-        tileType: "config",
-        iconName: "config",
-        configType: "tabname",
-        clickFn: this.configTabNameClick,
-        groupPriority: 0
-      }
-    ];
-    this.jsonConfig["tileDefs_static"] = tileDefinitions;
-  };
-
-  WallTabApp.prototype.makeTileFromTileDef = function(tileDef) {
-    if (tileDef.tileType === "calendar") {
-      this.makeCalendarTile(tileDef);
-    } else if (tileDef.tileType === "clock") {
-      this.makeClockTile(tileDef);
-    } else if (tileDef.tileType === "config") {
-      this.makeConfigTile(tileDef);
-    } else {
-      this.makeSceneTile(tileDef);
-    }
-  };
-
-  WallTabApp.prototype.tileBasicsFromDef = function(tileDef) {
-    var clickFn, isFavourite, tierIdx, tileBasics, tileColour;
-    tileColour = this.tileColours.getNextColour();
-    tierIdx = this.tileTiers.findTierIdx(tileDef.tierName);
-    if (tierIdx < 0) {
-      return null;
-    }
-    if ((tileDef.isFavourite != null) && tileDef.isFavourite) {
-      isFavourite = true;
-    }
-    clickFn = this.automationServer.executeCommand;
-    if ("clickFn" in tileDef) {
-      clickFn = tileDef.clickFn;
-    }
-    tileBasics = new TileBasics(tileColour, tileDef.colSpan, tileDef.rowSpan, clickFn, tileDef.uri, tileDef.name, tileDef.visibility, this.tileTiers.getTileTierSelector(tileDef.tierName), tileDef.tileType, tileDef.iconName, isFavourite, this.mediaPlayHelper);
-    return tileBasics;
-  };
-
-  WallTabApp.prototype.makeCalendarTile = function(tileDef) {
-    var tile, tileBasics;
-    tileBasics = this.tileBasicsFromDef(tileDef);
-    if (tileBasics === null) {
-      return;
-    }
-    tile = new CalendarTile(tileBasics, this.calendarUrl, tileDef.calDayIndex);
-    this.addTileToTierGroup(tileDef, tile);
-  };
-
-  WallTabApp.prototype.makeClockTile = function(tileDef) {
-    var tile, tileBasics;
-    tileBasics = this.tileBasicsFromDef(tileDef);
-    if (tileBasics === null) {
-      return;
-    }
-    tile = new Clock(tileBasics);
-    this.addTileToTierGroup(tileDef, tile);
-  };
-
-  WallTabApp.prototype.makeConfigTile = function(tileDef) {
-    var tile, tileBasics;
-    tileBasics = this.tileBasicsFromDef(tileDef);
-    if (tileBasics === null) {
-      return;
-    }
-    tile = new ConfigTile(tileBasics, tileDef.configType);
-    this.addTileToTierGroup(tileDef, tile);
-  };
-
-  WallTabApp.prototype.makeSceneTile = function(tileDef) {
-    var tile, tileBasics;
-    tileBasics = this.tileBasicsFromDef(tileDef);
-    if (tileBasics === null) {
-      return;
-    }
-    tile = new SceneButton(tileBasics, tileDef.name);
-    this.addTileToTierGroup(tileDef, tile);
-  };
-
-  WallTabApp.prototype.addTileToTierGroup = function(tileDef, tile) {
-    var groupIdx, groupName, groupPriority, tierIdx, tierName;
-    tierName = tileDef.tierName;
-    groupName = tileDef.groupName;
-    groupPriority = "groupPriority" in tileDef ? tileDef.groupPriority : 5;
-    tierIdx = this.tileTiers.findTierIdx(tierName);
-    if (tierIdx < 0) {
-      tierIdx = this.tileTiers.findTierIdx("actionsTier");
-    }
-    if (tierIdx < 0) {
-      return;
-    }
-    if (groupName === "") {
-      groupName = "Lights";
-    }
-    groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupName, groupPriority);
-    this.tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile);
-  };
-
-  WallTabApp.prototype.rebuildUI = function() {
-    var action, actionList, iconName, servType, tierName, tileDef, _i, _len, _ref;
-    this.tileTiers.removeAll();
-    this.applyTierAndGroupConfig(this.jsonConfig);
-    _ref = this.automationActionGroups;
-    for (servType in _ref) {
-      actionList = _ref[servType];
-      for (_i = 0, _len = actionList.length; _i < _len; _i++) {
-        action = actionList[_i];
-        tierName = "tierName" in action ? action.tierName : "actionsTier";
-        iconName = "iconName" in action ? action.iconName : "";
-        tileDef = {
-          tierName: tierName,
-          groupName: action.groupName,
-          colSpan: 1,
-          rowSpan: 1,
-          uri: action.actionUrl,
-          name: action.actionName,
-          visibility: "all",
-          tileType: "action",
-          iconName: iconName
-        };
-        this.makeTileFromTileDef(tileDef);
-      }
-    }
-    this.applyTileConfig(this.jsonConfig);
-    this.tileTiers.reDoLayout();
-  };
-
-  WallTabApp.prototype.getUIGroupIdxAddGroupIfReqd = function(tierIdx, groupName, groupPriority) {
-    var groupIdx;
-    if (groupName === "") {
-      return -1;
-    }
-    groupIdx = this.tileTiers.findGroupIdx(tierIdx, groupName);
-    if (groupIdx < 0) {
-      groupIdx = this.tileTiers.addGroup(tierIdx, groupName, groupPriority);
-    }
-    return groupIdx;
-  };
-
-  WallTabApp.prototype.applyTierAndGroupConfig = function(jsonConfig) {
-    var groupDef, groupIdx, groupPriority, newTier, tierIdx, _i, _len, _ref;
-    _ref = jsonConfig.groupDefinitions;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      groupDef = _ref[_i];
-      tierIdx = this.tileTiers.findTierIdx(groupDef.tierName);
-      if (tierIdx < 0) {
-        newTier = new TileTier("#sqWrapper", groupDef.tierName);
-        newTier.addToDom();
-        tierIdx = this.tileTiers.addTier(newTier);
-      }
-      groupPriority = "groupPriority" in groupDef ? groupDef.groupPriority : 5;
-      groupIdx = this.getUIGroupIdxAddGroupIfReqd(tierIdx, groupDef.groupName, groupPriority);
-    }
-  };
-
-  WallTabApp.prototype.applyTileConfig = function(jsonConfig) {
-    var destGroupName, exTile, favouriteDefn, favourites, key, tb, tileDef, val, _i, _j, _len, _len1;
-    favourites = {};
-    for (key in jsonConfig) {
-      val = jsonConfig[key];
-      if (key === "favourites") {
-        favourites = val;
-      } else if (key.search(/tileDefs_/) === 0) {
-        for (_i = 0, _len = val.length; _i < _len; _i++) {
-          tileDef = val[_i];
-          this.makeTileFromTileDef(tileDef);
-        }
-      }
-    }
-    for (_j = 0, _len1 = favourites.length; _j < _len1; _j++) {
-      favouriteDefn = favourites[_j];
-      exTile = this.tileTiers.findExistingTile(favouriteDefn.tileName, favouriteDefn.groupName);
-      if (exTile !== null) {
-        tb = exTile.tileBasics;
-        destGroupName = "destGroup" in favouriteDefn ? favouriteDefn["destGroup"] : "Home";
-        tileDef = {
-          tierName: "mainTier",
-          groupName: destGroupName,
-          colSpan: tb.colSpan,
-          rowSpan: tb.rowSpan,
-          uri: tb.clickParam,
-          name: tb.tileName,
-          visibility: tb.visibility,
-          tileType: tb.tileType,
-          iconName: tb.iconName,
-          isFavourite: true
-        };
-        this.makeTileFromTileDef(tileDef);
-      }
-    }
-  };
-
-  WallTabApp.prototype.configReadyCb = function(inConfig) {
-    var k, v;
-    for (k in inConfig) {
-      v = inConfig[k];
-      this.jsonConfig[k] = v;
-    }
-    this.rebuildUI();
+  WallTabApp.prototype.buildAndDisplayUI = function() {
+    this.appPages.build(this.tabletConfig, this.automationActionGroups);
+    return this.appPages.display();
   };
 
   WallTabApp.prototype.automationServerReadyCb = function(actions, serverType) {
     if (this.checkActionGroupsChanged(this.automationActionGroups, actions)) {
       this.automationActionGroups = actions;
-      this.rebuildUI();
+      this.buildAndDisplayUI();
     }
   };
 
@@ -519,40 +122,8 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.actionOnUserIdle = function() {
-    if ($(window).scrollLeft() === 0 && $(window).scrollTop() < 20) {
-      return;
-    }
-    console.log("ScrollTop = " + $(window).scrollTop());
-    $("html, body").animate({
-      scrollTop: "0px"
-    }, 200).animate({
-      scrollLeft: "0px"
-    }, 200);
-  };
-
-  WallTabApp.prototype.navigateTo = function(tierName) {
-    var tierTop;
-    tierTop = this.tileTiers.getTierTop(tierName);
-    if (tierTop >= 0) {
-      $("html, body").stop().animate({
-        scrollTop: tierTop
-      }, 200);
-    }
-  };
-
-  WallTabApp.prototype.configTabNameClick = function() {
-    var tabName;
-    tabName = LocalStorage.get("DeviceConfigName");
-    if (tabName == null) {
-      tabName = "";
-    }
-    $("#tabnamefield").val(tabName);
-    $("#tabnameok").unbind("click");
-    $("#tabnameok").click(function() {
-      LocalStorage.set("DeviceConfigName", $("#tabnamefield").val());
-      return $("#tabnameform").hide();
-    });
-    $("#tabnameform").show();
+    this.appPages.setCurrentPage("");
+    this.appPages.display();
   };
 
   WallTabApp.prototype.checkEventLogs = function() {
