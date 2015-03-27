@@ -4,7 +4,7 @@ class TabPage
 		@tiles = []
 		@titlesTopMargin = 60
 		@titlesYPos = 10
-		@pageBorders = [ 12, 12, 12, 12 ]
+		@pageBorders = [ 12, 5, 12, 15 ]
 		@tileSepXPixels = 20
 		@tileSepYPixels = 10
 		@groupSepPixels = 10
@@ -18,7 +18,7 @@ class TabPage
 		@colTitleClass = "sqColTitle"
 		@tilesColumns = 2 # Overridden in redolayout
 		@nextTileIdx = 0
-		@columnTypes = {}
+		@columnTypes = { "": { frontTileCount: 0, endTileCount: 0, colStartIdx: 0 } }
 		return
 
 	updateDom: ->
@@ -37,21 +37,23 @@ class TabPage
 		# Titles
 		if @columnsDef?
 			for col, colIdx in @columnsDef
-				if col.title? and col.title isnt ""
+				title = col.title
+				if title? and title isnt ""
 					$(@pageTitleSelector).append """
-						<div class="#{@colTitleClass} #{@colTitleClass}_#{colIdx}">#{col.title}
+						<div class="#{@colTitleClass} #{@colTitleClass}_#{colIdx}">#{title}
 						</div>
 						"""
+				colInfo = @columnTypes[col.colType]
 				colXPos = @getColXPos(colIdx)
 				@setTitlePositionCss(colIdx, colXPos, @titlesYPos, 100)
 		# Tiles
-		@tileLayoutCount = 0
-		for tileDef in @pageDef.tiles
-			newTile = @makeTileFromTileDef(tileDef)
-			tile = @addTileToPage(tileDef, newTile)
-			[x,y,fontScale] = @getCellPos(tile)
-			[sizeX, sizeY] = @getTileSize(tile)
-			tile.reposition(x,y,sizeX,sizeY,fontScale)
+		if @pageDef.tiles?
+			for tileDef in @pageDef.tiles
+				newTile = @makeTileFromTileDef(tileDef)
+				tile = @addTileToPage(tileDef, newTile)
+				[x,y,fontScale] = @getCellPos(tile)
+				[sizeX, sizeY] = @getTileSize(tile)
+				tile.reposition(x,y,sizeX,sizeY,fontScale)
 		return
 			
 	removeAll: ->
@@ -96,8 +98,8 @@ class TabPage
 			tileDef.colSpan = 1
 		if "rowSpan" not of tileDef
 			tileDef.rowSpan = 1
-		if "uri" not of tileDef
-			tileDef.uri = ""
+		if "url" not of tileDef
+			tileDef.url = ""
 		if "visibility" not of tileDef
 			tileDef.visibility = "both"
 		if "tileName" not of tileDef
@@ -124,26 +126,27 @@ class TabPage
 		winHeight = $(window).height()
 		isPortrait = (winWidth < winHeight)
 		if isPortrait
-			@columnsDef = @pageDef.columnsPortrait
+			@columnsDef = if @pageDef.columns? then @pageDef.columns.portrait else {}
 			@tilesAcross = 3
 			@tilesDown = 8
 			@columnsAcross = 2
 		else
-			@columnsDef = @pageDef.columnsLandscape
+			@columnsDef = if @pageDef.columns? then @pageDef.columns.landscape else {}
 			@tilesAcross = 5
 			@tilesDown = 5
 			@columnsAcross = 3
 		@noTitles = true
 		if @columnsDef?
 			@tilesAcross = 0
-			for colDef in @columnsDef
-				@tilesAcross += colDef.colSpan
+			for colDef, colIdx in @columnsDef
 				if colDef.title? and colDef.title isnt ""
 					@noTitles = false
 				colType = if colDef.colType? then colDef.colType else ""
-				@columnTypes[colType] = { frontTileCount: 0, endTileCount: 0 }
+				if colType not of @columnTypes
+					@columnTypes[colType] = { frontTileCount: 0, endTileCount: 0, colStartIdx: colIdx }
+				@tilesAcross += colDef.colSpan
 			@columnsAcross = @columnsDef.length
-		@cellWidth = (winWidth - @pageBorders[1] - @pageBorders[3] - (@groupSepPixels * Math.floor((@tilesAcross - 1) / 3))) / @tilesAcross
+		@cellWidth = (winWidth - @pageBorders[1] - @pageBorders[3]) / @tilesAcross
 		@cellHeight = (winHeight - @pageBorders[0] - @pageBorders[2] - (if @noTitles then 0 else @titlesTopMargin)) / @tilesDown
 		@tileWidth = @cellWidth - @tileSepXPixels
 		@tileHeight = @cellHeight - @tileSepYPixels
@@ -174,18 +177,23 @@ class TabPage
 	getGroupTitleWidth: () ->
 		return 400
 
-	getCellPos: (tile) ->
-		# if tile.colType of @columnTypes
+	getColInfo: (tile) ->
 
-		# Normal flow
-		colIdx = Math.floor(@tileLayoutCount / @tilesDown)
-		rowIdx = Math.floor(@tileLayoutCount % @tilesDown)
+	getCellPos: (tile) ->
+		colType = if tile.tileDef.colType? then tile.tileDef.colType else ""
+		if colType of @columnTypes
+			colInfo = @columnTypes[colType]
+		else
+			colInfo = @columnTypes[""]
 		# Check for special positioning cues
 		if tile.tileDef.positionCue is "end"
+			colIdx = colInfo.colStartIdx + @columnsAcross - 2 - colInfo.endTileCount
 			rowIdx = @tilesDown - tile.tileDef.rowSpan
-			colIdx = @columnsAcross - 2
+			colInfo.endTileCount++
 		else
-			@tileLayoutCount++
+			colIdx = colInfo.colStartIdx + Math.floor(colInfo.frontTileCount / @tilesDown)
+			rowIdx = Math.floor(colInfo.frontTileCount % @tilesDown)
+			colInfo.frontTileCount++
 		# Column position
 		cellX = @getColXPos(colIdx)
 		cellY = @pageBorders[0] + (if @noTitles then 0 else @titlesTopMargin) + rowIdx * @cellHeight

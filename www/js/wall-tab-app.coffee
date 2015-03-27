@@ -37,10 +37,10 @@ class WallTabApp
         @automationActionGroups = []
 
         # Communication with Vera3 & Indigo through automation server
-        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @indigo2ServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper, @navigateTo)
+        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @indigo2ServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper)
         @automationServer.setReadyCallback(@automationServerReadyCb)
 
-        # Tablet config is based on the IP address of the tablet
+        # Tablet config is based on the name or IP address of the tablet
         @tabletConfig = new TabletConfig @tabletConfigUrl
 
         # App Pages

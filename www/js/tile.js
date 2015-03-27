@@ -6,7 +6,7 @@ Tile = (function() {
     this.tileDef = tileDef;
     this.contentFontScaling = 1;
     this.iconHeight = 50;
-    this.buttonTextX = 20;
+    this.buttonTextX = 10;
     return;
   }
 
@@ -117,9 +117,12 @@ Tile = (function() {
 
   Tile.prototype.setIcon = function(iconName) {
     var iconUrl;
+    if (iconName === "") {
+      return;
+    }
     iconUrl = 'img/' + iconName + '.png';
     if (iconUrl !== "") {
-      $('#' + this.tileId + " .sqSceneButtonIcon img").attr("src", iconUrl);
+      $('#' + this.tileId + " .sqSceneButtonIcon").html("<img src=" + iconUrl + "></img>");
     }
   };
 

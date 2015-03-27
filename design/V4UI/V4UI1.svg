@@ -25,8 +25,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="370.92536"
-     inkscape:cy="311.76861"
+     inkscape:cx="471.0596"
+     inkscape:cy="324.23522"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -55,7 +55,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -215,7 +215,10 @@
        id="path3888"
        d="m 923.54331,537.22625 5.44499,-0.66502 c 0.15388,1.39091 0.57022,2.45441 1.24872,3.19036 0.67866,0.73609 1.50009,1.10414 2.46431,1.10414 1.03305,0 1.90398,-0.39849 2.61308,-1.19562 0.70894,-0.797 1.06336,-1.87264 1.06336,-3.22696 0,-1.28097 -0.31797,-2.29572 -0.95403,-3.04396 -0.63605,-0.74826 -1.4119,-1.12245 -2.32752,-1.12245 -0.60351,0 -1.32477,0.13213 -2.16329,0.39654 l 0.49822,-4.69103 c 1.22759,0.0366 2.1645,-0.25723 2.8106,-0.88144 0.64627,-0.62436 0.96933,-1.4509 0.96933,-2.47975 0,-0.87843 -0.24717,-1.57898 -0.7415,-2.1015 -0.49419,-0.52267 -1.15244,-0.78395 -1.97492,-0.78395 -0.80614,0 -1.49589,0.29892 -2.06912,0.89673 -0.57337,0.59781 -0.92281,1.47025 -1.04835,2.61698 l -5.44484,-0.78693 c 0.3403,-1.71606 0.85279,-3.08658 1.53744,-4.11153 0.68465,-1.02481 1.63972,-1.83094 2.86519,-2.41872 1.22549,-0.58761 2.59795,-0.88142 4.11709,-0.88142 2.60498,0 4.69148,0.83778 6.25922,2.51335 1.29642,1.37456 1.94462,2.92594 1.94462,4.6543 0,2.4523 -1.35716,4.40848 -4.07147,5.86838 1.58813,0.34165 2.85814,1.10818 3.81021,2.29977 0.95206,1.19159 1.42809,2.63123 1.42809,4.31894 0,2.44827 -0.88217,4.53448 -2.64652,6.25879 -1.76436,1.72429 -3.95915,2.58653 -6.58437,2.58653 -2.49146,0 -4.55667,-0.7667 -6.19535,-2.29977 -1.63882,-1.53324 -2.58983,-3.53816 -2.85319,-6.01476 z m 32.88229,8.31453 -4.50011,0 0,-20.25017 c -2.00867,2.08636 -4.2702,3.41893 -6.99353,4.41674 l 0,-5.54157 c 1.43755,-0.4618 2.99854,-1.33602 4.6825,-2.62239 1.6841,-1.28651 2.84045,-2.78736 3.46887,-4.50267 l 3.34227,0 0,28.50006 z m -44.997,7.5003 0,-51.00021 7.5,0 0,-4.49996 c 1.5e-4,-1.65712 1.34322,-3.00004 3.00004,-3.00004 l 5.9999,0 c 1.65682,0 2.99989,1.34292 3.00004,2.99959 l 0,4.50041 21.00006,0 -1.5e-4,-4.50041 c 0,-1.65682 1.34321,-3.00004 3.00003,-3.00004 l 6.00006,0 c 1.65682,0 2.99987,1.34322 2.99987,3.00004 l 1.5e-4,4.50041 7.5,0 0,51.00021 -60,0 z m 4.49998,-4.49998 50.99991,0 0,-34.50026 -50.99991,0 0,34.50026 z m 41.24992,-51.00019 c -1.24273,0 -2.24998,1.0074 -2.24998,2.24998 l 0,4.50012 c 0,1.24258 1.00725,2.24998 2.24998,2.24998 l 1.49995,0 c 1.24271,0 2.24998,-1.0074 2.24998,-2.24998 l 0,-4.50012 c 0,-1.24258 -1.00727,-2.24998 -2.24998,-2.24998 l -1.49995,0 z m -32.99988,0 c -1.24272,0 -2.24998,1.0074 -2.24998,2.24998 l 0,4.49997 c 0,1.24273 1.00726,2.24998 2.24998,2.24998 l 1.49994,0 c 1.24273,0 2.24998,-1.00725 2.24998,-2.24998 l 0,-4.49997 c 0,-1.24258 -1.00725,-2.24998 -2.24998,-2.24998 l -1.49994,0 z"
        inkscape:connector-curvature="0"
-       style="fill:#ffffff;fill-opacity:1;stroke-width:0.2;stroke-linejoin:round" />
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.2;stroke-linejoin:round"
+       inkscape:export-filename="M:\RobDev\Projects\HomeAutomation\WallTablet\Software\HomeTabletLocalApp\www\img\calendar.png"
+       inkscape:export-xdpi="107.69107"
+       inkscape:export-ydpi="107.69107" />
     <rect
        style="fill:#214eff;fill-opacity:1;stroke:#005cff;stroke-width:1.17967296;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3890"
@@ -415,7 +418,10 @@
        id="path4052"
        d="m 909.29297,842.79077 4.73684,0 0,55.26316 61.57895,0 0,4.73684 -66.31579,0 0,-60 z m 7.89474,52.10526 0,-7.89473 15.26321,-16.71048 22.5,9.99995 11.47879,-20.08784 -8.19158,2.34884 -3.78127,-4.11726 19.22527,-5.51274 5.51273,19.22526 -5.49536,-1.02489 -2.52742,-8.81369 -13.72122,25.48232 -23.81573,-10.78942 -16.44742,17.89468 z"
        inkscape:connector-curvature="0"
-       style="fill:#ffffff;fill-opacity:1;stroke-width:0.2;stroke-linejoin:round" />
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.2;stroke-linejoin:round"
+       inkscape:export-filename="M:\RobDev\Projects\HomeAutomation\WallTablet\Software\HomeTabletLocalApp\www\img\energy.png"
+       inkscape:export-xdpi="105"
+       inkscape:export-ydpi="105" />
     <rect
        style="fill:#214eff;fill-opacity:1;stroke:#005cff;stroke-width:2.14802194;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect4054"
@@ -501,7 +507,10 @@
        id="path4124"
        d="m -23.232143,514.21934 0,-8 -24.75,0 10,-10 -10.5,0 -14,14 14,14 10.5,0 -10,-10 24.75,0 z"
        inkscape:connector-curvature="0"
-       style="fill:#000000;fill-opacity:1;stroke-width:0.2;stroke-linejoin:round" />
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.20000000000000001;stroke-linejoin:round"
+       inkscape:export-filename="M:\RobDev\Projects\HomeAutomation\WallTablet\Software\HomeTabletLocalApp\www\img\back.png"
+       inkscape:export-xdpi="160.71428"
+       inkscape:export-ydpi="160.71428" />
     <path
        id="path4135"
        d="m -69.625,550.50506 0,8 24.75,0 -10,10 10.5,0 14,-14 -14,-14 -10.5,0 10,10 -24.75,0 z"
@@ -527,5 +536,50 @@
        inkscape:connector-curvature="0"
        d="m 945.53814,963.75849 c 1.33229,0 2.6373,0.11653 3.90562,0.34005 l 3.22753,-7.98867 8.57457,3.46661 -3.22737,7.9882 c 2.39066,1.61192 4.45284,3.6741 6.06476,6.06476 l 7.9882,-3.22737 3.46661,8.57457 -7.98867,3.22769 c 0.22352,1.26816 0.34005,2.57317 0.34005,3.90546 0,1.33229 -0.11653,2.6373 -0.34005,3.90562 l 7.98867,3.22753 -3.46661,8.57456 -7.9882,-3.22735 c -1.4664,2.17485 -3.30538,4.07785 -5.42536,5.61725 l 3.50407,7.8703 -8.44772,3.7657 -3.50437,-7.8713 c -1.50663,0.3204 -3.06953,0.489 -4.67173,0.489 -1.33229,0 -2.6373,-0.1165 -3.90547,-0.34 l -3.22768,7.9888 -8.57458,-3.4668 3.22737,-7.988 c -2.39066,-1.6121 -4.45284,-3.6743 -6.06491,-6.06495 l -7.98805,3.22735 -3.46676,-8.57456 7.98882,-3.22768 c -0.22351,-1.26817 -0.34005,-2.57318 -0.34005,-3.90547 0,-1.33229 0.11654,-2.6373 0.34005,-3.90546 l -7.98882,-3.22769 3.46676,-8.57457 7.98805,3.22737 c 1.46656,-2.17486 3.30553,-4.0778 5.42567,-5.61742 l -3.50407,-7.87028 8.44756,-3.7655 3.50453,7.8712 c 1.50663,-0.32032 3.06937,-0.48895 4.67158,-0.48895 z m 0,6.93661 c -8.51338,0 -15.4147,6.90147 -15.4147,15.41469 0,8.51338 6.90132,15.41471 15.4147,15.41471 8.51322,0 15.41469,-6.90133 15.41469,-15.41471 0,-8.51322 -6.90147,-15.41469 -15.41469,-15.41469 z"
        id="path4172" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.2;stroke-linejoin:round"
+       d="m 48.578684,730.64791 4.73684,0 0,55.26316 61.578946,0 0,4.73684 -66.315786,0 0,-60 z"
+       id="path4178" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 141.5,732.14791 0,55.71429 64.28572,0 0,-29.28572 -37.14287,0 0,-26.42857 z"
+       id="path4180"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="M:\RobDev\Projects\HomeAutomation\WallTablet\Software\HomeTabletLocalApp\www\img\floorplan.png"
+       inkscape:export-xdpi="103.75708"
+       inkscape:export-ydpi="103.75708" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 168.36358,763.0704 8.53182,13.28672"
+       id="path4182"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="M:\RobDev\Projects\HomeAutomation\WallTablet\Software\HomeTabletLocalApp\www\img\floorplan.png"
+       inkscape:export-xdpi="103.75708"
+       inkscape:export-ydpi="103.75708" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 169.14286,785.19903 0,-4.40826"
+       id="path4184"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="M:\RobDev\Projects\HomeAutomation\WallTablet\Software\HomeTabletLocalApp\www\img\floorplan.png"
+       inkscape:export-xdpi="103.75708"
+       inkscape:export-ydpi="103.75708" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4190"
+       d="m 168.63779,761.46045 0,-3.27184"
+       style="fill:none;stroke:#ffffff;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="M:\RobDev\Projects\HomeAutomation\WallTablet\Software\HomeTabletLocalApp\www\img\floorplan.png"
+       inkscape:export-xdpi="103.75708"
+       inkscape:export-ydpi="103.75708" />
+    <path
+       id="path4194"
+       d="m -50.430731,746.07913 0,-18.00265 -2.000216,2.00032 -3.000424,-5.00074 19.00275,-15.00222 7.001055,5.52715 0,-3.77693 4.000531,-0.75011 0,7.68536 8.001263,6.31675 -3.000524,5.00074 -2.000215,-2.00032 0,18.00265 -28.00422,0 z m 14.00211,-29.08763 -11.001587,9.08467 0,17.00253 6.000847,0 0,-11.00148 10.001479,0 0,11.00148 6.000847,0 0,-17.00253 -11.001586,-9.08467 z"
+       inkscape:connector-curvature="0"
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.20000000000000001;stroke-linejoin:round" />
   </g>
 </svg>

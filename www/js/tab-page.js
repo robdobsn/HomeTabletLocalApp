@@ -10,7 +10,7 @@ TabPage = (function() {
     this.tiles = [];
     this.titlesTopMargin = 60;
     this.titlesYPos = 10;
-    this.pageBorders = [12, 12, 12, 12];
+    this.pageBorders = [12, 5, 12, 15];
     this.tileSepXPixels = 20;
     this.tileSepYPixels = 10;
     this.groupSepPixels = 10;
@@ -24,12 +24,18 @@ TabPage = (function() {
     this.colTitleClass = "sqColTitle";
     this.tilesColumns = 2;
     this.nextTileIdx = 0;
-    this.columnTypes = {};
+    this.columnTypes = {
+      "": {
+        frontTileCount: 0,
+        endTileCount: 0,
+        colStartIdx: 0
+      }
+    };
     return;
   }
 
   TabPage.prototype.updateDom = function() {
-    var col, colIdx, colXPos, fontScale, newTile, sizeX, sizeY, tile, tileDef, x, y, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
+    var col, colIdx, colInfo, colXPos, fontScale, newTile, sizeX, sizeY, tile, tileDef, title, x, y, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
     this.calcLayout();
     this.removeAll();
     $(this.parentTag).html("<div id=\"" + this.pageId + "\" class=\"sqPage\">\n	<div class=\"" + this.pageTitleClass + "\"/>\n	<div class=\"" + this.tilesClass + "\">\n		<div class=" + this.tileContainerClass + " style=\"width:3000px;display:block;zoom:1;\">\n		</div>\n	</div>\n</div>");
@@ -37,22 +43,25 @@ TabPage = (function() {
       _ref = this.columnsDef;
       for (colIdx = _i = 0, _len = _ref.length; _i < _len; colIdx = ++_i) {
         col = _ref[colIdx];
-        if ((col.title != null) && col.title !== "") {
-          $(this.pageTitleSelector).append("<div class=\"" + this.colTitleClass + " " + this.colTitleClass + "_" + colIdx + "\">" + col.title + "\n</div>");
+        title = col.title;
+        if ((title != null) && title !== "") {
+          $(this.pageTitleSelector).append("<div class=\"" + this.colTitleClass + " " + this.colTitleClass + "_" + colIdx + "\">" + title + "\n</div>");
         }
+        colInfo = this.columnTypes[col.colType];
         colXPos = this.getColXPos(colIdx);
         this.setTitlePositionCss(colIdx, colXPos, this.titlesYPos, 100);
       }
     }
-    this.tileLayoutCount = 0;
-    _ref1 = this.pageDef.tiles;
-    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-      tileDef = _ref1[_j];
-      newTile = this.makeTileFromTileDef(tileDef);
-      tile = this.addTileToPage(tileDef, newTile);
-      _ref2 = this.getCellPos(tile), x = _ref2[0], y = _ref2[1], fontScale = _ref2[2];
-      _ref3 = this.getTileSize(tile), sizeX = _ref3[0], sizeY = _ref3[1];
-      tile.reposition(x, y, sizeX, sizeY, fontScale);
+    if (this.pageDef.tiles != null) {
+      _ref1 = this.pageDef.tiles;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        tileDef = _ref1[_j];
+        newTile = this.makeTileFromTileDef(tileDef);
+        tile = this.addTileToPage(tileDef, newTile);
+        _ref2 = this.getCellPos(tile), x = _ref2[0], y = _ref2[1], fontScale = _ref2[2];
+        _ref3 = this.getTileSize(tile), sizeX = _ref3[0], sizeY = _ref3[1];
+        tile.reposition(x, y, sizeX, sizeY, fontScale);
+      }
     }
   };
 
@@ -108,8 +117,8 @@ TabPage = (function() {
     if (!("rowSpan" in tileDef)) {
       tileDef.rowSpan = 1;
     }
-    if (!("uri" in tileDef)) {
-      tileDef.uri = "";
+    if (!("url" in tileDef)) {
+      tileDef.url = "";
     }
     if (!("visibility" in tileDef)) {
       tileDef.visibility = "both";
@@ -142,17 +151,17 @@ TabPage = (function() {
   };
 
   TabPage.prototype.calcLayout = function() {
-    var colDef, colType, isPortrait, winHeight, winWidth, _i, _len, _ref;
+    var colDef, colIdx, colType, isPortrait, winHeight, winWidth, _i, _len, _ref;
     winWidth = $(window).width();
     winHeight = $(window).height();
     isPortrait = winWidth < winHeight;
     if (isPortrait) {
-      this.columnsDef = this.pageDef.columnsPortrait;
+      this.columnsDef = this.pageDef.columns != null ? this.pageDef.columns.portrait : {};
       this.tilesAcross = 3;
       this.tilesDown = 8;
       this.columnsAcross = 2;
     } else {
-      this.columnsDef = this.pageDef.columnsLandscape;
+      this.columnsDef = this.pageDef.columns != null ? this.pageDef.columns.landscape : {};
       this.tilesAcross = 5;
       this.tilesDown = 5;
       this.columnsAcross = 3;
@@ -161,21 +170,24 @@ TabPage = (function() {
     if (this.columnsDef != null) {
       this.tilesAcross = 0;
       _ref = this.columnsDef;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        colDef = _ref[_i];
-        this.tilesAcross += colDef.colSpan;
+      for (colIdx = _i = 0, _len = _ref.length; _i < _len; colIdx = ++_i) {
+        colDef = _ref[colIdx];
         if ((colDef.title != null) && colDef.title !== "") {
           this.noTitles = false;
         }
         colType = colDef.colType != null ? colDef.colType : "";
-        this.columnTypes[colType] = {
-          frontTileCount: 0,
-          endTileCount: 0
-        };
+        if (!(colType in this.columnTypes)) {
+          this.columnTypes[colType] = {
+            frontTileCount: 0,
+            endTileCount: 0,
+            colStartIdx: colIdx
+          };
+        }
+        this.tilesAcross += colDef.colSpan;
       }
       this.columnsAcross = this.columnsDef.length;
     }
-    this.cellWidth = (winWidth - this.pageBorders[1] - this.pageBorders[3] - (this.groupSepPixels * Math.floor((this.tilesAcross - 1) / 3))) / this.tilesAcross;
+    this.cellWidth = (winWidth - this.pageBorders[1] - this.pageBorders[3]) / this.tilesAcross;
     this.cellHeight = (winHeight - this.pageBorders[0] - this.pageBorders[2] - (this.noTitles ? 0 : this.titlesTopMargin)) / this.tilesDown;
     this.tileWidth = this.cellWidth - this.tileSepXPixels;
     this.tileHeight = this.cellHeight - this.tileSepYPixels;
@@ -212,15 +224,24 @@ TabPage = (function() {
     return 400;
   };
 
+  TabPage.prototype.getColInfo = function(tile) {};
+
   TabPage.prototype.getCellPos = function(tile) {
-    var cellX, cellY, colIdx, fontScaling, rowIdx;
-    colIdx = Math.floor(this.tileLayoutCount / this.tilesDown);
-    rowIdx = Math.floor(this.tileLayoutCount % this.tilesDown);
-    if (tile.tileDef.positionCue === "end") {
-      rowIdx = this.tilesDown - tile.tileDef.rowSpan;
-      colIdx = this.columnsAcross - 2;
+    var cellX, cellY, colIdx, colInfo, colType, fontScaling, rowIdx;
+    colType = tile.tileDef.colType != null ? tile.tileDef.colType : "";
+    if (colType in this.columnTypes) {
+      colInfo = this.columnTypes[colType];
     } else {
-      this.tileLayoutCount++;
+      colInfo = this.columnTypes[""];
+    }
+    if (tile.tileDef.positionCue === "end") {
+      colIdx = colInfo.colStartIdx + this.columnsAcross - 2 - colInfo.endTileCount;
+      rowIdx = this.tilesDown - tile.tileDef.rowSpan;
+      colInfo.endTileCount++;
+    } else {
+      colIdx = colInfo.colStartIdx + Math.floor(colInfo.frontTileCount / this.tilesDown);
+      rowIdx = Math.floor(colInfo.frontTileCount % this.tilesDown);
+      colInfo.frontTileCount++;
     }
     cellX = this.getColXPos(colIdx);
     cellY = this.pageBorders[0] + (this.noTitles ? 0 : this.titlesTopMargin) + rowIdx * this.cellHeight;

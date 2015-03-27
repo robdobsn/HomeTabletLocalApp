@@ -6,12 +6,12 @@ class SceneButton extends Tile
 	addToDoc: (elemToAddTo) ->
 		super()
 		@contents.append """
-			<div class="sqSceneButtonIcon"><img src="img/bulb-on.png"></img></div>
+			<div class="sqSceneButtonIcon"></div>
 			<div class="sqSceneButtonText"></div>
 			"""
 		iconName = @tileDef.iconName
-		if iconName is null or iconName is ""
-			iconName = "bulb-on"
+		if iconName is null
+			iconName = ""
 		 	# if @buttonText.toLowerCase().indexOf(" off") >= 0
 		# 		iconName = "bulb-off"
 		# 	else if @buttonText.toLowerCase().indexOf("nighttime") >= 0

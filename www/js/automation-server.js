@@ -3,7 +3,7 @@ var AutomationServer,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 AutomationServer = (function() {
-  function AutomationServer(automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, indigo2ServerUrl, fibaroServerUrl, sonosActionsUrl, mediaPlayHelper, navigationCallback) {
+  function AutomationServer(automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, indigo2ServerUrl, fibaroServerUrl, sonosActionsUrl, mediaPlayHelper) {
     this.automationActionsUrl = automationActionsUrl;
     this.automationExecUrl = automationExecUrl;
     this.veraServerUrl = veraServerUrl;
@@ -12,7 +12,6 @@ AutomationServer = (function() {
     this.fibaroServerUrl = fibaroServerUrl;
     this.sonosActionsUrl = sonosActionsUrl;
     this.mediaPlayHelper = mediaPlayHelper;
-    this.navigationCallback = navigationCallback;
     this.executeCommand = __bind(this.executeCommand, this);
     this.callBackWithSumActions = __bind(this.callBackWithSumActions, this);
     this.fibaroServerReadyCb = __bind(this.fibaroServerReadyCb, this);
@@ -200,8 +199,6 @@ AutomationServer = (function() {
           };
         })(this)
       });
-    } else if (cmdParams.slice(0, 3) === "~~~") {
-      return this.navigationCallback(cmdParams.slice(3));
     } else {
       cmdToExec = this.automationExecUrl + "/" + cmdParams;
       return $.ajax(cmdToExec, {

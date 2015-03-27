@@ -14,10 +14,10 @@ SceneButton = (function(_super) {
   SceneButton.prototype.addToDoc = function(elemToAddTo) {
     var iconName;
     SceneButton.__super__.addToDoc.call(this);
-    this.contents.append("<div class=\"sqSceneButtonIcon\"><img src=\"img/bulb-on.png\"></img></div>\n<div class=\"sqSceneButtonText\"></div>");
+    this.contents.append("<div class=\"sqSceneButtonIcon\"></div>\n<div class=\"sqSceneButtonText\"></div>");
     iconName = this.tileDef.iconName;
-    if (iconName === null || iconName === "") {
-      iconName = "bulb-on";
+    if (iconName === null) {
+      iconName = "";
     }
     this.setIcon(iconName);
     this.setText(this.tileDef.tileText);

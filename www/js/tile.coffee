@@ -2,7 +2,7 @@ class Tile
 	constructor: (@tileDef) ->
 		@contentFontScaling = 1
 		@iconHeight = 50
-		@buttonTextX = 20
+		@buttonTextX = 10
 		return
 
 	addToDoc: ->
@@ -84,9 +84,11 @@ class Tile
 		return
 
 	setIcon: (iconName) ->
+		if iconName is ""
+			return
 		iconUrl = 'img/' + iconName + '.png'
 		if iconUrl isnt ""
-			$('#'+@tileId+" .sqSceneButtonIcon img").attr("src", iconUrl)
+			$('#'+@tileId+" .sqSceneButtonIcon").html("<img src=#{iconUrl}></img>")
 		return
 
 	setText: (@textStr) ->
