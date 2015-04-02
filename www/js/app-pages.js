@@ -123,6 +123,10 @@ AppPages = (function() {
                     tileList.push(newTile);
                     uniqList.push(newTile[tileGen.tileSelect]);
                   }
+                } else if ("tileFilterValFrom" in tileGen) {
+                  if (newTile[tileGen.tileSelect] === pageDef[tileGen.tileFilterValFrom]) {
+                    tileList.push(newTile);
+                  }
                 } else if ("tabConfigFavListName" in tileGen) {
                   _ref3 = tabletSpecificConfig[tileGen.tabConfigFavListName];
                   for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {

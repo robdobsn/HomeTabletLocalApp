@@ -164,12 +164,15 @@ class AppPages
 								if "iconName" of tileGen
 									newTile.iconName = tileGen.iconName
 								# The tileMult "unique" is used to select a single tile from
-								# a tile group - this is for creating menus for rooms, etc
+								# a tile group - this is for creating menu listing rooms, etc
 								if tileGen.tileMult is "unique"
 									if newTile[tileGen.tileSelect] not in uniqList
 										tileList.push newTile
 										uniqList.push newTile[tileGen.tileSelect]
-								# Select a single specific tile but using data from the tabled config
+								# Handle generation of pages for a specific group - e.g. a specific room menu
+								else if "tileFilterValFrom" of tileGen
+									if newTile[tileGen.tileSelect] is pageDef[tileGen.tileFilterValFrom]
+										tileList.push newTile								# Select a single specific tile but using data from the tabled config
 								# such as the favourites list - e.g. using the groupname (room) and
 								# tilename (action) to get a favourite tile
 								else if "tabConfigFavListName" of tileGen
