@@ -17,35 +17,44 @@ class AutomationServer
 		# Init default door and blinds actions - in case rdhomeserver not running
 		@frontDoorUrl = "http://192.168.0.221/"
 		@doorActions = 
-	        [
-	            { tierName:"doorBlindsTier", actionNum: 0, actionName: "Main Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-unlock", iconName: "door-unlock" },
-	            { tierName:"doorBlindsTier", actionNum: 0, actionName: "Main Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-lock", iconName: "door-lock" },
-	            { tierName:"doorBlindsTier", actionNum: 0, actionName: "Inner Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-unlock", iconName: "door-unlock" },
-	            { tierName:"doorBlindsTier", actionNum: 0, actionName: "Inner Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-lock", iconName: "door-lock" }
-	        ]
-        @blindsActions = GetBlindsActions()
-        @sonosActions = {}
-        @soundPlayActions = {}
+			[
+				{ tierName:"doorBlindsTier", actionNum: 0, actionName: "Main Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-unlock", iconName: "door-unlock" },
+				{ tierName:"doorBlindsTier", actionNum: 0, actionName: "Main Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "main-lock", iconName: "door-lock" },
+				{ tierName:"doorBlindsTier", actionNum: 0, actionName: "Inner Unlock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-unlock", iconName: "door-unlock" },
+				{ tierName:"doorBlindsTier", actionNum: 0, actionName: "Inner Lock", groupName: "Front Door", actionUrl: @frontDoorUrl + "inner-lock", iconName: "door-lock" }
+			]
+		@blindsActions = GetBlindsActions()
+		@sonosActions = {}
+		@soundPlayActions = {}
+		@sumActionsCallbackTimerId = null
 
 	setReadyCallback: (@readyCallback) ->
 
 	indigoServerReadyCb: (actions) =>
 		@indigoActions = actions
-		@callBackWithSumActions()
+		@setSumActionsCallbackTimer()		
 
 	indigo2ServerReadyCb: (actions) =>
 		@indigo2Actions = actions
-		@callBackWithSumActions()
+		@setSumActionsCallbackTimer()
 
 	veraServerReadyCb: (actions) =>
 		@veraActions = actions
-		@callBackWithSumActions()
+		@setSumActionsCallbackTimer()
 
 	fibaroServerReadyCb: (actions) =>
 		@fibaroActions = actions
-		@callBackWithSumActions()
+		@setSumActionsCallbackTimer()
+
+	setSumActionsCallbackTimer: =>
+		if @sumActionsCallbackTimerId isnt null then return
+		@sumActionsCallbackTimerId = setInterval =>
+			@callBackWithSumActions()
+		, (2000)
+		return
 
 	callBackWithSumActions: =>
+		@sumActionsCallbackTimerId = null
 		sumActions = { "doors" : @doorActions, "blinds" : @blindsActions, "vera" : @veraActions, "indigo" : @indigoActions, "indigo2" : @indigo2Actions, "fibaro" : @fibaroActions }
 		for k,v of @baseAutomationActions
 			if k isnt "vera" and k isnt "indigo" and k isnt "indigo2" and k isnt "fibaro" and k isnt "blinds" and k isnt "doors"
@@ -61,6 +70,7 @@ class AutomationServer
 		# @fibaroServer.getActionGroups()
 		# @getActionGroupsFromIntermediateServer()
 		@getSonosActions()
+		@setSumActionsCallbackTimer()
 
 	getActionGroupsFromIntermediateServer: ->
 		# Get the action-groups/scenes

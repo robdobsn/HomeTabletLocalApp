@@ -1,17 +1,18 @@
 class WallTabApp
     constructor: ->
+        @defaultTabletName = "tabdefault"
         @rdHomeServerUrl = "http://macallan:5000"
         @calendarUrl = "http://macallan:5077/calendar/min/4"
         @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
         @automationExecUrl = @rdHomeServerUrl
         @sonosActionsUrl = ""
-        @tabletConfigUrl = "http://macallan:5076/tabletconfig"
+        @tabletConfigUrl = "http://localhost:5076/tabletconfig"
         @tabletLogUrl = "http://macallan:5076/log"
         @indigoServerUrl = "http://IndigoServer.local:8176"
         @indigo2ServerUrl = "http://IndigoDown.local:8176"
         @fibaroServerUrl = "http://macallan:5079"
         @veraServerUrl = "http://192.168.0.206:3480"
-        @tabletConfig = {}
+        @curTabletConfig = {}
         @mediaPlayHelper = new MediaPlayHelper(
             {
                 "click": "assets/click.mp3",
@@ -41,7 +42,8 @@ class WallTabApp
         @automationServer.setReadyCallback(@automationServerReadyCb)
 
         # Tablet config is based on the name or IP address of the tablet
-        @tabletConfig = new TabletConfig @tabletConfigUrl
+        @tabletConfigServer = new TabletConfig @tabletConfigUrl, @defaultTabletName
+        @tabletConfigServer.setReadyCallback(@tabletConfigReadyCb)
 
         # App Pages
         @appPages = new AppPages "#sqWrapper", @automationServer.executeCommand, @mediaPlayHelper
@@ -54,8 +56,8 @@ class WallTabApp
         $(window).on 'resize', =>
           @buildAndDisplayUI()
 
-        # Rebuild UI
-        @buildAndDisplayUI()
+        # # Rebuild UI
+        # @buildAndDisplayUI()
 
         # Check event logs frequently
         @checkEventLogs()
@@ -72,11 +74,15 @@ class WallTabApp
 
     requestActionAndConfigData: ->
         @automationServer.getActionGroups()
-        return @tabletConfig.requestConfig()
+        return @tabletConfigServer.requestConfig()
 
     buildAndDisplayUI: ->
-        @appPages.build(@tabletConfig, @automationActionGroups)
+        @appPages.build(@curTabletConfig, @automationActionGroups)
         @appPages.display()
+
+    tabletConfigReadyCb: (tabletConfig) =>
+        @curTabletConfig = tabletConfig
+        @buildAndDisplayUI()
 
     automationServerReadyCb: (actions, serverType) =>
         # Callback when data received from the automation server (scenes/actions)

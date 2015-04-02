@@ -1,7 +1,9 @@
 class TabletConfig
-	constructor: (@configURL) ->
+	constructor: (@configURL, @defaultTabletName) ->
 		@configData = {}
 		return
+
+	setReadyCallback: (@readyCallback) ->
 
 	getConfigData: ->
 		return @configData
@@ -10,6 +12,8 @@ class TabletConfig
 		reqURL = @configURL
 		# See if the tablet's name is in the local storage
 		tabName = LocalStorage.get("DeviceConfigName")
+		if not tabName?
+			tabName = @defaultTabletName
 		if tabName?
 			reqURL = reqURL + "/" + tabName
 		console.log("Requesting tablet config with URL " + reqURL)
@@ -31,6 +35,7 @@ class TabletConfig
 					LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
 				@configData = jsonData
 				LocalStorage.set(reqURL, jsonData)
+				@readyCallback(jsonData)
 				# console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
