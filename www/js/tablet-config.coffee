@@ -8,6 +8,12 @@ class TabletConfig
 	getConfigData: ->
 		return @configData
 		
+	addFavouriteButton: (buttonInfo) ->
+		console.log "Add " + buttonInfo.tileName
+
+	deleteFavouriteButton: (buttonInfo) ->
+		console.log "Delete " + buttonInfo.tileName
+
 	requestConfig: ->
 		reqURL = @configURL
 		# See if the tablet's name is in the local storage
@@ -35,7 +41,7 @@ class TabletConfig
 					LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
 				@configData = jsonData
 				LocalStorage.set(reqURL, jsonData)
-				@readyCallback(jsonData)
+				@readyCallback()
 				# console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
 				return
 			error: (jqXHR, textStatus, errorThrown) =>

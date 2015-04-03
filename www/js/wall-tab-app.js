@@ -19,7 +19,6 @@ WallTabApp = (function() {
     this.indigo2ServerUrl = "http://IndigoDown.local:8176";
     this.fibaroServerUrl = "http://macallan:5079";
     this.veraServerUrl = "http://192.168.0.206:3480";
-    this.curTabletConfig = {};
     this.mediaPlayHelper = new MediaPlayHelper({
       "click": "assets/click.mp3",
       "ok": "assets/blip.mp3",
@@ -39,7 +38,7 @@ WallTabApp = (function() {
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfigServer = new TabletConfig(this.tabletConfigUrl, this.defaultTabletName);
     this.tabletConfigServer.setReadyCallback(this.tabletConfigReadyCb);
-    this.appPages = new AppPages("#sqWrapper", this.automationServer.executeCommand, this.mediaPlayHelper);
+    this.appPages = new AppPages("#sqWrapper", this.automationServer.executeCommand, this.mediaPlayHelper, this.tabletConfigServer);
     $(window).on('orientationchange', (function(_this) {
       return function() {
         return _this.buildAndDisplayUI();
@@ -70,12 +69,11 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.buildAndDisplayUI = function() {
-    this.appPages.build(this.curTabletConfig, this.automationActionGroups);
+    this.appPages.build(this.automationActionGroups);
     return this.appPages.display();
   };
 
-  WallTabApp.prototype.tabletConfigReadyCb = function(tabletConfig) {
-    this.curTabletConfig = tabletConfig;
+  WallTabApp.prototype.tabletConfigReadyCb = function() {
     return this.buildAndDisplayUI();
   };
 

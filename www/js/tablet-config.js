@@ -17,6 +17,14 @@ TabletConfig = (function() {
     return this.configData;
   };
 
+  TabletConfig.prototype.addFavouriteButton = function(buttonInfo) {
+    return console.log("Add " + buttonInfo.tileName);
+  };
+
+  TabletConfig.prototype.deleteFavouriteButton = function(buttonInfo) {
+    return console.log("Delete " + buttonInfo.tileName);
+  };
+
   TabletConfig.prototype.requestConfig = function() {
     var reqURL, tabName;
     reqURL = this.configURL;
@@ -46,7 +54,7 @@ TabletConfig = (function() {
           }
           _this.configData = jsonData;
           LocalStorage.set(reqURL, jsonData);
-          _this.readyCallback(jsonData);
+          _this.readyCallback();
         };
       })(this),
       error: (function(_this) {

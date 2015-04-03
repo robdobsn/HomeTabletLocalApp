@@ -12,7 +12,6 @@ class WallTabApp
         @indigo2ServerUrl = "http://IndigoDown.local:8176"
         @fibaroServerUrl = "http://macallan:5079"
         @veraServerUrl = "http://192.168.0.206:3480"
-        @curTabletConfig = {}
         @mediaPlayHelper = new MediaPlayHelper(
             {
                 "click": "assets/click.mp3",
@@ -46,7 +45,7 @@ class WallTabApp
         @tabletConfigServer.setReadyCallback(@tabletConfigReadyCb)
 
         # App Pages
-        @appPages = new AppPages "#sqWrapper", @automationServer.executeCommand, @mediaPlayHelper
+        @appPages = new AppPages "#sqWrapper", @automationServer.executeCommand, @mediaPlayHelper, @tabletConfigServer
 
         # Handler for orientation change
         $(window).on 'orientationchange', =>
@@ -55,9 +54,6 @@ class WallTabApp
         # And resize event
         $(window).on 'resize', =>
           @buildAndDisplayUI()
-
-        # # Rebuild UI
-        # @buildAndDisplayUI()
 
         # Check event logs frequently
         @checkEventLogs()
@@ -77,11 +73,10 @@ class WallTabApp
         return @tabletConfigServer.requestConfig()
 
     buildAndDisplayUI: ->
-        @appPages.build(@curTabletConfig, @automationActionGroups)
+        @appPages.build(@automationActionGroups)
         @appPages.display()
 
-    tabletConfigReadyCb: (tabletConfig) =>
-        @curTabletConfig = tabletConfig
+    tabletConfigReadyCb: =>
         @buildAndDisplayUI()
 
     automationServerReadyCb: (actions, serverType) =>
