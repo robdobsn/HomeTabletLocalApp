@@ -9,6 +9,25 @@ TabletConfig = (function() {
     return;
   }
 
+  TabletConfig.prototype.getTabName = function() {
+    var tabName;
+    tabName = LocalStorage.get("DeviceConfigName");
+    if (tabName == null) {
+      tabName = this.defaultTabletName;
+    }
+    return tabName;
+  };
+
+  TabletConfig.prototype.getReqUrl = function() {
+    var reqURL, tabName;
+    reqURL = this.configURL;
+    tabName = this.getTabName();
+    if (tabName != null) {
+      reqURL = reqURL + "/" + tabName;
+    }
+    return reqURL;
+  };
+
   TabletConfig.prototype.setReadyCallback = function(readyCallback) {
     this.readyCallback = readyCallback;
   };
@@ -18,23 +37,55 @@ TabletConfig = (function() {
   };
 
   TabletConfig.prototype.addFavouriteButton = function(buttonInfo) {
-    return console.log("Add " + buttonInfo.tileName);
+    console.log("Add " + buttonInfo.tileName);
+    if (!("favourites" in this.configData)) {
+      this.configData.favourites = [];
+    }
+    this.configData.favourites.push({
+      tileName: buttonInfo.tileName,
+      groupName: buttonInfo.groupName
+    });
+    return this.saveDeviceConfig();
   };
 
   TabletConfig.prototype.deleteFavouriteButton = function(buttonInfo) {
-    return console.log("Delete " + buttonInfo.tileName);
+    var fav, favIdx, idx, _i, _len, _ref;
+    console.log("Delete " + buttonInfo.tileName);
+    if (!("favourites" in this.configData)) {
+      return;
+    }
+    favIdx = -1;
+    _ref = this.configData.favourites;
+    for (idx = _i = 0, _len = _ref.length; _i < _len; idx = ++_i) {
+      fav = _ref[idx];
+      if (fav.tileName === buttonInfo.tileName && fav.groupName === buttonInfo.groupName) {
+        favIdx = idx;
+        break;
+      }
+    }
+    if (favIdx >= 0) {
+      this.configData.favourites.splice(favIdx, 1);
+      return this.saveDeviceConfig();
+    }
+  };
+
+  TabletConfig.prototype.saveDeviceConfig = function() {
+    var reqURL, tabName;
+    reqURL = this.getReqUrl();
+    LocalStorage.set(reqURL, this.configData);
+    tabName = this.getTabName();
+    if ((tabName == null) || tabName === "") {
+      console.log("Unable to save device config as tablet name unknown");
+    } else {
+      console.log("Saving device config for " + tabName);
+    }
+    return console.log("NEED TO IMPLEMENT SAVING BACK TO SERVER");
   };
 
   TabletConfig.prototype.requestConfig = function() {
     var reqURL, tabName;
-    reqURL = this.configURL;
-    tabName = LocalStorage.get("DeviceConfigName");
-    if (tabName == null) {
-      tabName = this.defaultTabletName;
-    }
-    if (tabName != null) {
-      reqURL = reqURL + "/" + tabName;
-    }
+    reqURL = this.getReqUrl();
+    tabName = this.getTabName();
     console.log("Requesting tablet config with URL " + reqURL);
     $.ajax(reqURL, {
       type: "GET",
@@ -53,7 +104,7 @@ TabletConfig = (function() {
             LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName);
           }
           _this.configData = jsonData;
-          LocalStorage.set(reqURL, jsonData);
+          LocalStorage.set(reqURL, _this.configData);
           _this.readyCallback();
         };
       })(this),

@@ -2,6 +2,7 @@ class AppPages
 	constructor: (@parentTag, @defaultActionFn, @mediaPlayHelper, @tabletConfigServer) ->
 		@curPage = { "pageName": "" }
 		@generatedPage = {}
+		@defaultPageName = ""
 
 	setCurrentPage: (pageName, forceSet) ->
 		tabConfig = @tabletConfigServer.getConfigData()
@@ -16,7 +17,7 @@ class AppPages
 		return false
 
 	build: (@automationActionGroups) ->
-		@rebuild()
+		@rebuild(true)
 		# console.log JSON.stringify(tabletConfig.getConfigData())
 		# console.log JSON.stringify(automationActionGroups)
 
@@ -116,13 +117,15 @@ class AppPages
 
 		# console.log JSON.stringify(@tabletConfig)
 
-	rebuild: () ->
+	rebuild: (forceSetInitialPage) ->
 		# Generate pages from data
 		tabConfig = @tabletConfigServer.getConfigData()
 		if tabConfig.common? and tabConfig.common.pages?
 			for pageName, pageDef of tabConfig.common.pages
 				if pageDef.defaultPage? and pageDef.defaultPage
-					@setCurrentPage(pageName, true)
+					if forceSetInitialPage
+						@setCurrentPage(pageName, true)
+					@defaultPageName = pageName
 				pageDef.tiles = []
 				if pageDef.tilesFixed?
 					for tile in pageDef.tilesFixed
@@ -154,6 +157,8 @@ class AppPages
 								for key, val of tile
 									newTile[key] = val
 								newTile.tileType = tileGen.tileType
+								newTile.pageMode = if "pageMode" of tileGen then tileGen.pageMode else ""
+								newTile.tileMode = if "tileMode" of tileGen then tileGen.tileMode else ""
 								newTile.tileName = tile[tileGen.tileNameFrom]
 								newTile.colType = if tileGen.colType? then tileGen.colType else ""
 								newTile.url = if "urlFrom" of tileGen then tile[tileGen.urlFrom] else (if "url" of tileGen then newTile.url = tileGen.url)
@@ -175,7 +180,8 @@ class AppPages
 								# Handle generation of pages for a specific group - e.g. a specific room menu
 								else if "tileFilterValFrom" of tileGen
 									if newTile[tileGen.tileSelect] is pageDef[tileGen.tileFilterValFrom]
-										tileList.push newTile								# Select a single specific tile but using data from the tabled config
+										tileList.push newTile
+								# Select a single specific tile but using data from the tabled config
 								# such as the favourites list - e.g. using the groupname (room) and
 								# tilename (action) to get a favourite tile
 								else if "tabConfigFavListName" of tileGen
@@ -217,6 +223,9 @@ class AppPages
 					"columns": pageGen.columns
 					"tiles": (tile for tile in pageGen.tilesFixed)
 					"tileGen": (tileGen for tileGen in pageGen.tileGen)
+				if "tileModeFrom" of pageGen
+					for tileGen in @generatedPage.tileGen
+						tileGen.tileMode = context[pageGen.tileModeFrom]
 				for col in @generatedPage.columns.landscape
 					if col.titleGen?
 						col.title = @generatedPage[col.titleGen]
@@ -234,29 +243,33 @@ class AppPages
 	buttonCallback: (context) =>
 		console.log "Pressed " + JSON.stringify(context)
 		# Check for navigation button
-		if "/" in context.url
+		if "tileMode" of context and context.tileMode is "SelFavs"
+			@addFavouriteButton(context)
+			@setCurrentPage(@defaultPageName, false)
+			@display()
+		else if "/" in context.url
 			(@defaultActionFn) context.url
-		else
-			if @setCurrentPage(context.url, false)
-				@display()
-			else if context.url is "AddFav"
-				@addFavouriteButton(context)
-			else if context.url is "DelFav"
-				@deleteFavouriteButton(context)
-			else
-				console.log "Attempting page generation " + context.url
-				newPageName = @generateNewPage(context)
-				@setCurrentPage(newPageName, false)
-				@display()
+		else if @setCurrentPage(context.url, false)
+			@display()
+		else if context.url is "DelFav"
+			@deleteFavouriteButton(context)
+			@setCurrentPage(@defaultPageName, false)
+			@display()
+		else 
+			console.log "Attempting page generation " + context.url
+			newPageName = @generateNewPage(context)
+			@setCurrentPage(newPageName, false)
+			@display()
 		return
 
 	addFavouriteButton: (context) ->
+		console.log "NEED TO ADD CODE TO SELECT BUTTON TO ADD HERE"
 		@tabletConfigServer.addFavouriteButton(context)
-		@rebuild()
+		@rebuild(false)
 
 	deleteFavouriteButton: (context) ->
 		@tabletConfigServer.deleteFavouriteButton(context)
-		@rebuild()
+		@rebuild(false)
 
 	playClickSound: ->
 		@mediaPlayHelper.play("click")

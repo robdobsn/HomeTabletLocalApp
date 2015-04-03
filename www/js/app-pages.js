@@ -14,6 +14,7 @@ AppPages = (function() {
       "pageName": ""
     };
     this.generatedPage = {};
+    this.defaultPageName = "";
   }
 
   AppPages.prototype.setCurrentPage = function(pageName, forceSet) {
@@ -35,10 +36,10 @@ AppPages = (function() {
 
   AppPages.prototype.build = function(automationActionGroups) {
     this.automationActionGroups = automationActionGroups;
-    return this.rebuild();
+    return this.rebuild(true);
   };
 
-  AppPages.prototype.rebuild = function() {
+  AppPages.prototype.rebuild = function(forceSetInitialPage) {
     var pageDef, pageName, tabConfig, tile, _i, _len, _ref, _ref1, _results;
     tabConfig = this.tabletConfigServer.getConfigData();
     if ((tabConfig.common != null) && (tabConfig.common.pages != null)) {
@@ -47,7 +48,10 @@ AppPages = (function() {
       for (pageName in _ref) {
         pageDef = _ref[pageName];
         if ((pageDef.defaultPage != null) && pageDef.defaultPage) {
-          this.setCurrentPage(pageName, true);
+          if (forceSetInitialPage) {
+            this.setCurrentPage(pageName, true);
+          }
+          this.defaultPageName = pageName;
         }
         pageDef.tiles = [];
         if (pageDef.tilesFixed != null) {
@@ -108,6 +112,8 @@ AppPages = (function() {
                   newTile[key] = val;
                 }
                 newTile.tileType = tileGen.tileType;
+                newTile.pageMode = "pageMode" in tileGen ? tileGen.pageMode : "";
+                newTile.tileMode = "tileMode" in tileGen ? tileGen.tileMode : "";
                 newTile.tileName = tile[tileGen.tileNameFrom];
                 newTile.colType = tileGen.colType != null ? tileGen.colType : "";
                 newTile.url = "urlFrom" in tileGen ? tile[tileGen.urlFrom] : ("url" in tileGen ? newTile.url = tileGen.url : void 0);
@@ -186,7 +192,7 @@ AppPages = (function() {
   };
 
   AppPages.prototype.generateNewPage = function(context) {
-    var col, pageGen, tabConfig, tile, tileGen, _i, _j, _len, _len1, _ref, _ref1;
+    var col, pageGen, tabConfig, tile, tileGen, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     tabConfig = this.tabletConfigServer.getConfigData();
     if ((context.pageGenRule != null) && context.pageGenRule !== "") {
       if (context.pageGenRule in tabConfig.common.pageGen) {
@@ -216,16 +222,23 @@ AppPages = (function() {
             return _results;
           })()
         };
-        _ref = this.generatedPage.columns.landscape;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          col = _ref[_i];
+        if ("tileModeFrom" in pageGen) {
+          _ref = this.generatedPage.tileGen;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            tileGen = _ref[_i];
+            tileGen.tileMode = context[pageGen.tileModeFrom];
+          }
+        }
+        _ref1 = this.generatedPage.columns.landscape;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          col = _ref1[_j];
           if (col.titleGen != null) {
             col.title = this.generatedPage[col.titleGen];
           }
         }
-        _ref1 = this.generatedPage.columns.portrait;
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          col = _ref1[_j];
+        _ref2 = this.generatedPage.columns.portrait;
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          col = _ref2[_k];
           if (col.titleGen != null) {
             col.title = this.generatedPage[col.titleGen];
           }
@@ -246,32 +259,35 @@ AppPages = (function() {
   AppPages.prototype.buttonCallback = function(context) {
     var newPageName;
     console.log("Pressed " + JSON.stringify(context));
-    if (__indexOf.call(context.url, "/") >= 0) {
+    if ("tileMode" in context && context.tileMode === "SelFavs") {
+      this.addFavouriteButton(context);
+      this.setCurrentPage(this.defaultPageName, false);
+      this.display();
+    } else if (__indexOf.call(context.url, "/") >= 0) {
       this.defaultActionFn(context.url);
+    } else if (this.setCurrentPage(context.url, false)) {
+      this.display();
+    } else if (context.url === "DelFav") {
+      this.deleteFavouriteButton(context);
+      this.setCurrentPage(this.defaultPageName, false);
+      this.display();
     } else {
-      if (this.setCurrentPage(context.url, false)) {
-        this.display();
-      } else if (context.url === "AddFav") {
-        this.addFavouriteButton(context);
-      } else if (context.url === "DelFav") {
-        this.deleteFavouriteButton(context);
-      } else {
-        console.log("Attempting page generation " + context.url);
-        newPageName = this.generateNewPage(context);
-        this.setCurrentPage(newPageName, false);
-        this.display();
-      }
+      console.log("Attempting page generation " + context.url);
+      newPageName = this.generateNewPage(context);
+      this.setCurrentPage(newPageName, false);
+      this.display();
     }
   };
 
   AppPages.prototype.addFavouriteButton = function(context) {
+    console.log("NEED TO ADD CODE TO SELECT BUTTON TO ADD HERE");
     this.tabletConfigServer.addFavouriteButton(context);
-    return this.rebuild();
+    return this.rebuild(false);
   };
 
   AppPages.prototype.deleteFavouriteButton = function(context) {
     this.tabletConfigServer.deleteFavouriteButton(context);
-    return this.rebuild();
+    return this.rebuild(false);
   };
 
   AppPages.prototype.playClickSound = function() {

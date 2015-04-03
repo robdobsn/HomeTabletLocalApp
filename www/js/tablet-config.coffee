@@ -3,6 +3,20 @@ class TabletConfig
 		@configData = {}
 		return
 
+	getTabName: ->
+		# See if the tablet's name is in the local storage
+		tabName = LocalStorage.get("DeviceConfigName")
+		if not tabName?
+			tabName = @defaultTabletName
+		return tabName
+
+	getReqUrl: ->
+		reqURL = @configURL
+		tabName = @getTabName()
+		if tabName?
+			reqURL = reqURL + "/" + tabName
+		return reqURL
+
 	setReadyCallback: (@readyCallback) ->
 
 	getConfigData: ->
@@ -10,22 +24,42 @@ class TabletConfig
 		
 	addFavouriteButton: (buttonInfo) ->
 		console.log "Add " + buttonInfo.tileName
+		if "favourites" not of @configData
+			@configData.favourites = []
+		@configData.favourites.push
+			tileName: buttonInfo.tileName
+			groupName: buttonInfo.groupName
+		@saveDeviceConfig()
 
 	deleteFavouriteButton: (buttonInfo) ->
 		console.log "Delete " + buttonInfo.tileName
+		if "favourites" not of @configData
+			return
+		favIdx = -1
+		for fav, idx in @configData.favourites
+			if fav.tileName is buttonInfo.tileName and fav.groupName is buttonInfo.groupName
+				favIdx = idx
+				break
+		if favIdx >= 0
+			@configData.favourites.splice(favIdx, 1)
+			@saveDeviceConfig()
+
+	saveDeviceConfig: ->
+		reqURL = @getReqUrl()
+		LocalStorage.set(reqURL, @configData)
+		tabName = @getTabName()
+		if not tabName? or tabName is ""
+			console.log "Unable to save device config as tablet name unknown"
+		else
+			console.log "Saving device config for " + tabName
+		console.log "NEED TO IMPLEMENT SAVING BACK TO SERVER"
 
 	requestConfig: ->
-		reqURL = @configURL
-		# See if the tablet's name is in the local storage
-		tabName = LocalStorage.get("DeviceConfigName")
-		if not tabName?
-			tabName = @defaultTabletName
-		if tabName?
-			reqURL = reqURL + "/" + tabName
+		reqURL = @getReqUrl()
+		tabName = @getTabName()
 		console.log("Requesting tablet config with URL " + reqURL)
 
-		# To avoid giving each tablet a name or other ID
-		# the tablet's IP address is used to retrieve the config
+		# get the tablet config from a server
 		$.ajax reqURL,
 			type: "GET"
 			dataType: "text"
@@ -40,7 +74,7 @@ class TabletConfig
 					console.log("DeviceConfigName was " + curTabName + " now set to " + tabName)
 					LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
 				@configData = jsonData
-				LocalStorage.set(reqURL, jsonData)
+				LocalStorage.set(reqURL, @configData)
 				@readyCallback()
 				# console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
 				return

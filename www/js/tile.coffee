@@ -1,7 +1,6 @@
 class Tile
 	constructor: (@tileDef) ->
 		@contentFontScaling = 1
-		@iconHeight = 50
 		@buttonTextX = 10
 		return
 
@@ -39,7 +38,8 @@ class Tile
 	reposition: (@posX, @posY, @sizeX, @sizeY, @fontScaling) ->
 		@setPositionCss('#'+@tileId, @posX, @posY, @sizeX, @sizeY, @fontScaling)
 		iconSel = '#'+@tileId + " .sqSceneButtonIcon img"
-		@setPositionCss(iconSel, 10, (@sizeY-@iconHeight)/2, null, @iconHeight)
+		iconHeight = @sizeY / 2
+		@setPositionCss(iconSel, 10, (@sizeY-iconHeight)/2, null, iconHeight)
 		textSel = '#'+@tileId + " .sqSceneButtonText"
 		txtHeight = $(textSel).height()
 		@setPositionCss('#'+@tileId + " .sqSceneButtonText", @buttonTextX, (@sizeY-txtHeight)/2)
