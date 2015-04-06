@@ -18,7 +18,7 @@ class TabPage
 		@colTitleClass = "sqColTitle"
 		@tilesColumns = 2 # Overridden in redolayout
 		@nextTileIdx = 0
-		@columnTypes = { "": { frontTileCount: 0, endTileCount: 0, colStartIdx: 0 } }
+		@columnTypes = {}
 		return
 
 	updateDom: ->
@@ -43,7 +43,6 @@ class TabPage
 						<div class="#{@colTitleClass} #{@colTitleClass}_#{colIdx}">#{title}
 						</div>
 						"""
-				colInfo = @columnTypes[col.colType]
 				colXPos = @getColXPos(colIdx)
 				@setTitlePositionCss(colIdx, colXPos, @titlesYPos, 100)
 		# Tiles
@@ -51,8 +50,7 @@ class TabPage
 			for tileDef in @pageDef.tiles
 				newTile = @makeTileFromTileDef(tileDef)
 				tile = @addTileToPage(tileDef, newTile)
-				[x,y,fontScale] = @getCellPos(tile)
-				[sizeX, sizeY] = @getTileSize(tile)
+				[x,y,fontScale, sizeX, sizeY] = @getCellPos(tile)
 				tile.reposition(x,y,sizeX,sizeY,fontScale)
 		return
 			
@@ -143,9 +141,24 @@ class TabPage
 					@noTitles = false
 				colType = if colDef.colType? then colDef.colType else ""
 				if colType not of @columnTypes
-					@columnTypes[colType] = { frontTileCount: 0, endTileCount: 0, colStartIdx: colIdx }
+					@columnTypes[colType] = 
+						frontTileCount: 0
+						endTileCount: 0
+						colStartIdx: colIdx
+						colCount: 1
+						colSpan: if colDef.colSpan? then colDef.colSpan else 1
+				else
+					@columnTypes[colType].colCount++
+					@columnTypes[colType].colSpan+=if colDef.colSpan? then colDef.colSpan else 1
 				@tilesAcross += colDef.colSpan
 			@columnsAcross = @columnsDef.length
+		else
+			@columnTypes =
+				"": 
+					frontTileCount: 0
+					endTileCount: 0
+					colStartIdx: 0
+					colCount: 1
 		@cellWidth = (winWidth - @pageBorders[1] - @pageBorders[3]) / @tilesAcross
 		@cellHeight = (winHeight - @pageBorders[0] - @pageBorders[2] - (if @noTitles then 0 else @titlesTopMargin)) / @tilesDown
 		@tileWidth = @cellWidth - @tileSepXPixels
@@ -165,9 +178,6 @@ class TabPage
 			cellXIdx += if @columnsDef? then @columnsDef[i].colSpan
 		return xStart + cellXIdx * @cellWidth
 
-	getTileSize: (tile) ->
-		[@tileWidth * tile.tileDef.colSpan + (@tileSepXPixels * (tile.tileDef.colSpan-1)), @tileHeight * tile.tileDef.rowSpan + (@tileSepYPixels * (tile.tileDef.rowSpan-1))]
-
 	calcFontSizePercent: ->
 		100 * Math.max(@cellWidth, @cellHeight) / 300
 
@@ -185,20 +195,33 @@ class TabPage
 			colInfo = @columnTypes[colType]
 		else
 			colInfo = @columnTypes[""]
+		# Check for colSpan not specified
+		if "colSpan" not of tile.tileDef or tile.tileDef.colSpan is 0
+			colSpan = colInfo.colSpan
+		else
+			colSpan = tile.tileDef.colSpan
+		# Check for rowSpan not specified
+		if "rowSpan" not of tile.tileDef or tile.tileDef.rowSpan is 0
+			rowSpan = @tilesDown
+		else
+			rowSpan = tile.tileDef.rowSpan
 		# Check for special positioning cues
 		if tile.tileDef.positionCue is "end"
-			colIdx = colInfo.colStartIdx + @columnsAcross - 2 - colInfo.endTileCount
-			rowIdx = @tilesDown - tile.tileDef.rowSpan
-			colInfo.endTileCount++
+			colIdx = colInfo.colStartIdx + colInfo.colCount - 1 - Math.floor(colInfo.endTileCount/@tilesDown)
+			rowIdx = @tilesDown - Math.floor(colInfo.endTileCount % @tilesDown) - rowSpan
+			colInfo.endTileCount+=rowSpan
 		else
 			colIdx = colInfo.colStartIdx + Math.floor(colInfo.frontTileCount / @tilesDown)
 			rowIdx = Math.floor(colInfo.frontTileCount % @tilesDown)
-			colInfo.frontTileCount++
+			colInfo.frontTileCount+=rowSpan
 		# Column position
 		cellX = @getColXPos(colIdx)
 		cellY = @pageBorders[0] + (if @noTitles then 0 else @titlesTopMargin) + rowIdx * @cellHeight
 		fontScaling = @calcFontSizePercent()
-		return [cellX, cellY, fontScaling]
+		# Size of tile in pixels		
+		sizeX = @tileWidth * colSpan + (@tileSepXPixels * (colSpan-1))
+		sizeY = @tileHeight * rowSpan + (@tileSepYPixels * (rowSpan-1))
+		return [cellX, cellY, fontScaling, sizeX, sizeY]
 
 	reDoLayout: ->
 		return @calcLayout()
