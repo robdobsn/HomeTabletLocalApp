@@ -28,8 +28,8 @@ class TabPage
 		$(@parentTag).html """
 			<div id="#{@pageId}" class="sqPage">
 				<div class="#{@pageTitleClass}"/>
-				<div class="#{@tilesClass}">
-					<div class=#{@tileContainerClass} style="width:3000px;display:block;zoom:1;">
+				<div class="#{@tilesClass}" style="height:100%;width:100%">
+					<div class=#{@tileContainerClass} style="width:100%;display:block;zoom:1;">
 					</div>
 				</div>
 			</div>
@@ -81,6 +81,8 @@ class TabPage
 			tile = new Clock tileDef
 		else if tileDef.tileType is "config"
 			tile = new ConfigTile tileDef, tileDef.configType
+		else if tileDef.tileType is "iframe"
+			tile = new IframeTile tileDef
 		else
 			tile = new SceneButton tileDef
 		tile.setTileIndex(@nextTileIdx++)

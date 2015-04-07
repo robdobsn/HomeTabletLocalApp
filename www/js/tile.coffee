@@ -11,7 +11,7 @@ class Tile
 					href="javascript:void(0);" 
 					style="background-color:#{@tileDef.tileColour};
 							display:block; opacity:1;">
-			  <div class="sqInner">
+			  <div class="sqInner" style="height:100%">
 			  </div>
 			</a>
 			"""

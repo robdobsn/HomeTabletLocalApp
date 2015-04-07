@@ -4,6 +4,11 @@ class AppPages
 		@generatedPage = {}
 		@defaultPageName = ""
 
+	userIsIdle: ->
+		if @curPage.pageName isnt @defaultPageName
+			@setCurrentPage(@defaultPageName)
+			@display()
+
 	setCurrentPage: (pageName, forceSet) ->
 		tabConfig = @tabletConfigServer.getConfigData()
 		if tabConfig.common? and tabConfig.common.pages?

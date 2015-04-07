@@ -32,7 +32,7 @@ TabPage = (function() {
     var col, colIdx, colXPos, fontScale, newTile, sizeX, sizeY, tile, tileDef, title, x, y, _i, _j, _len, _len1, _ref, _ref1, _ref2;
     this.calcLayout();
     this.removeAll();
-    $(this.parentTag).html("<div id=\"" + this.pageId + "\" class=\"sqPage\">\n	<div class=\"" + this.pageTitleClass + "\"/>\n	<div class=\"" + this.tilesClass + "\">\n		<div class=" + this.tileContainerClass + " style=\"width:3000px;display:block;zoom:1;\">\n		</div>\n	</div>\n</div>");
+    $(this.parentTag).html("<div id=\"" + this.pageId + "\" class=\"sqPage\">\n	<div class=\"" + this.pageTitleClass + "\"/>\n	<div class=\"" + this.tilesClass + "\" style=\"height:100%;width:100%\">\n		<div class=" + this.tileContainerClass + " style=\"width:100%;display:block;zoom:1;\">\n		</div>\n	</div>\n</div>");
     if (this.columnsDef != null) {
       _ref = this.columnsDef;
       for (colIdx = _i = 0, _len = _ref.length; _i < _len; colIdx = ++_i) {
@@ -88,6 +88,8 @@ TabPage = (function() {
       tile = new Clock(tileDef);
     } else if (tileDef.tileType === "config") {
       tile = new ConfigTile(tileDef, tileDef.configType);
+    } else if (tileDef.tileType === "iframe") {
+      tile = new IframeTile(tileDef);
     } else {
       tile = new SceneButton(tileDef);
     }

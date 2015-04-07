@@ -31,7 +31,7 @@ class WallTabApp
             """
 
         # Goes back to home display after user idle timeout
-        @userIdleCatcher = new UserIdleCatcher(30, @actionOnUserIdle)
+        @userIdleCatcher = new UserIdleCatcher(90, @actionOnUserIdle)
 
         # Manage ui grouping (rooms, action-groups, etc)
         @automationActionGroups = []
@@ -106,8 +106,7 @@ class WallTabApp
         return false
         
     actionOnUserIdle: =>
-        @appPages.setCurrentPage("")
-        @appPages.display()
+        @appPages.userIsIdle()
         return
 
     # configTabNameClick: ->

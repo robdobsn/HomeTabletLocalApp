@@ -17,6 +17,13 @@ AppPages = (function() {
     this.defaultPageName = "";
   }
 
+  AppPages.prototype.userIsIdle = function() {
+    if (this.curPage.pageName !== this.defaultPageName) {
+      this.setCurrentPage(this.defaultPageName);
+      return this.display();
+    }
+  };
+
   AppPages.prototype.setCurrentPage = function(pageName, forceSet) {
     var tabConfig;
     tabConfig = this.tabletConfigServer.getConfigData();

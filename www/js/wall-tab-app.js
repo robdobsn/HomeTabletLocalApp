@@ -32,7 +32,7 @@ WallTabApp = (function() {
 
   WallTabApp.prototype.go = function() {
     $("body").prepend("<div id=\"sqWrapper\">\n</div>");
-    this.userIdleCatcher = new UserIdleCatcher(30, this.actionOnUserIdle);
+    this.userIdleCatcher = new UserIdleCatcher(90, this.actionOnUserIdle);
     this.automationActionGroups = [];
     this.automationServer = new AutomationServer(this.automationActionsUrl, this.automationExecUrl, this.veraServerUrl, this.indigoServerUrl, this.indigo2ServerUrl, this.fibaroServerUrl, this.sonosActionsUrl, this.mediaPlayHelper);
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
@@ -127,8 +127,7 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.actionOnUserIdle = function() {
-    this.appPages.setCurrentPage("");
-    this.appPages.display();
+    this.appPages.userIsIdle();
   };
 
   WallTabApp.prototype.checkEventLogs = function() {
