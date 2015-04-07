@@ -14,16 +14,17 @@ class LocalStorage
 		return false
 
 	@logEvent: (logKey, eventText, timestamp) ->
-		console.log "Key " + logKey + " text " + eventText + " time " + timestamp
+		now = new Date()
+		timestamp = if timestamp? then timestamp else now
+		console.log "LogEvent: " + logKey + " text " + eventText + " time " + timestamp
 		logData = @get(logKey)
 		if logData?
 			while logData.length > 100
 				logData.shift()
 		else
 			logData = []
-		now = new Date()
 		logData.push
-			timestamp: if timestamp? then timestamp else now
+			timestamp: timestamp
 			eventText: eventText
 		@set(logKey, logData)
 		return

@@ -14,7 +14,7 @@ WallTabApp = (function() {
     this.automationExecUrl = this.rdHomeServerUrl;
     this.sonosActionsUrl = "";
     this.tabletConfigUrl = "http://localhost:5076/tabletconfig";
-    this.tabletLogUrl = "http://macallan:5076/log";
+    this.tabletLogUrl = "http://localhost:5076/log";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
     this.indigo2ServerUrl = "http://IndigoDown.local:8176";
     this.fibaroServerUrl = "http://macallan:5079";
@@ -153,26 +153,24 @@ WallTabApp = (function() {
     }
     if (evList.length > 0) {
       evListJson = JSON.stringify(evList);
-      return $.ajax({
+      $.ajax({
         url: this.tabletLogUrl,
         type: 'POST',
         data: evListJson,
         contentType: "application/json",
         success: (function(_this) {
           return function(data, status, response) {
-            return console.log("logged events success");
+            console.log("logged events success");
           };
         })(this),
         error: (function(_this) {
           return function(jqXHR, textStatus, errorThrown) {
-            var _k, _len1, _results;
-            console.error("Error log failed: " + textStatus + " " + errorThrown);
-            _results = [];
+            var _k, _len1;
+            console.log("Error log failed: " + textStatus + " " + errorThrown);
             for (_k = 0, _len1 = evList.length; _k < _len1; _k++) {
               ev = evList[_k];
-              _results.push(LocalStorage.log(ev.logCat, ev.eventText, ev.timestamp));
+              LocalStorage.logEvent(ev.logCat, ev.eventText, ev.timestamp);
             }
-            return _results;
           };
         })(this)
       });

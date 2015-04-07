@@ -7,7 +7,7 @@ class WallTabApp
         @automationExecUrl = @rdHomeServerUrl
         @sonosActionsUrl = ""
         @tabletConfigUrl = "http://localhost:5076/tabletconfig"
-        @tabletLogUrl = "http://macallan:5076/log"
+        @tabletLogUrl = "http://localhost:5076/log"
         @indigoServerUrl = "http://IndigoServer.local:8176"
         @indigo2ServerUrl = "http://IndigoDown.local:8176"
         @fibaroServerUrl = "http://macallan:5079"
@@ -145,8 +145,12 @@ class WallTabApp
                 contentType: "application/json"
                 success: (data, status, response) =>
                     console.log "logged events success"
+                    return
                 error: (jqXHR, textStatus, errorThrown) =>
-                    console.error ("Error log failed: " + textStatus + " " + errorThrown)
+                    console.log ("Error log failed: " + textStatus + " " + errorThrown)
                     # If logging failed then re-log the events
                     for ev in evList
-                        LocalStorage.log(ev.logCat, ev.eventText, ev.timestamp)
+                        LocalStorage.logEvent(ev.logCat, ev.eventText, ev.timestamp)
+                    return
+        return
+

@@ -79,7 +79,25 @@ TabletConfig = (function() {
     } else {
       console.log("Saving device config for " + tabName);
     }
-    return console.log("NEED TO IMPLEMENT SAVING BACK TO SERVER");
+    console.log("NEED TO IMPLEMENT SAVING BACK TO SERVER " + reqURL);
+    return $.ajax({
+      url: reqURL,
+      type: 'POST',
+      data: JSON.stringify({
+        "favourites": this.configData.favourites
+      }),
+      contentType: "application/json",
+      success: (function(_this) {
+        return function(data, status, response) {
+          return console.log("Sent new config data ok");
+        };
+      })(this),
+      error: (function(_this) {
+        return function(jqXHR, textStatus, errorThrown) {
+          return console.error("Failed to send new config data: " + textStatus + " " + errorThrown);
+        };
+      })(this)
+    });
   };
 
   TabletConfig.prototype.requestConfig = function() {

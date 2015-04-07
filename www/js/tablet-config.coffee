@@ -52,7 +52,16 @@ class TabletConfig
 			console.log "Unable to save device config as tablet name unknown"
 		else
 			console.log "Saving device config for " + tabName
-		console.log "NEED TO IMPLEMENT SAVING BACK TO SERVER"
+		console.log "NEED TO IMPLEMENT SAVING BACK TO SERVER " + reqURL
+		$.ajax 
+			url: reqURL
+			type: 'POST'
+			data: JSON.stringify({"favourites":@configData.favourites})
+			contentType: "application/json"
+			success: (data, status, response) =>
+				console.log "Sent new config data ok"
+			error: (jqXHR, textStatus, errorThrown) =>
+				console.error ("Failed to send new config data: " + textStatus + " " + errorThrown)
 
 	requestConfig: ->
 		reqURL = @getReqUrl()
