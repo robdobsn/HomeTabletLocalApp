@@ -4,11 +4,10 @@ var AppPages,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 AppPages = (function() {
-  function AppPages(parentTag, defaultActionFn, mediaPlayHelper, tabletConfigServer) {
+  function AppPages(app, parentTag, defaultActionFn) {
+    this.app = app;
     this.parentTag = parentTag;
     this.defaultActionFn = defaultActionFn;
-    this.mediaPlayHelper = mediaPlayHelper;
-    this.tabletConfigServer = tabletConfigServer;
     this.buttonCallback = __bind(this.buttonCallback, this);
     this.curPage = {
       "pageName": ""
@@ -26,7 +25,7 @@ AppPages = (function() {
 
   AppPages.prototype.setCurrentPage = function(pageName, forceSet) {
     var tabConfig;
-    tabConfig = this.tabletConfigServer.getConfigData();
+    tabConfig = this.app.tabletConfigServer.getConfigData();
     if ((tabConfig.common != null) && (tabConfig.common.pages != null)) {
       if (pageName in tabConfig.common.pages) {
         if (forceSet || (this.curPage.pageName !== pageName)) {
@@ -48,7 +47,7 @@ AppPages = (function() {
 
   AppPages.prototype.rebuild = function(forceSetInitialPage) {
     var pageDef, pageName, tabConfig, tile, _i, _len, _ref, _ref1, _results;
-    tabConfig = this.tabletConfigServer.getConfigData();
+    tabConfig = this.app.tabletConfigServer.getConfigData();
     if ((tabConfig.common != null) && (tabConfig.common.pages != null)) {
       _ref = tabConfig.common.pages;
       _results = [];
@@ -200,7 +199,7 @@ AppPages = (function() {
 
   AppPages.prototype.generateNewPage = function(context) {
     var col, pageGen, tabConfig, tile, tileGen, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
-    tabConfig = this.tabletConfigServer.getConfigData();
+    tabConfig = this.app.tabletConfigServer.getConfigData();
     if ((context.pageGenRule != null) && context.pageGenRule !== "") {
       if (context.pageGenRule in tabConfig.common.pageGen) {
         pageGen = tabConfig.common.pageGen[context.pageGenRule];
@@ -259,7 +258,7 @@ AppPages = (function() {
 
   AppPages.prototype.display = function() {
     var newPage;
-    newPage = new TabPage(this.parentTag, this.curPage, this.buttonCallback);
+    newPage = new TabPage(this.app, this.parentTag, this.curPage, this.buttonCallback);
     return newPage.updateDom();
   };
 
@@ -288,17 +287,13 @@ AppPages = (function() {
 
   AppPages.prototype.addFavouriteButton = function(context) {
     console.log("NEED TO ADD CODE TO SELECT BUTTON TO ADD HERE");
-    this.tabletConfigServer.addFavouriteButton(context);
+    this.app.tabletConfigServer.addFavouriteButton(context);
     return this.rebuild(false);
   };
 
   AppPages.prototype.deleteFavouriteButton = function(context) {
-    this.tabletConfigServer.deleteFavouriteButton(context);
+    this.app.tabletConfigServer.deleteFavouriteButton(context);
     return this.rebuild(false);
-  };
-
-  AppPages.prototype.playClickSound = function() {
-    this.mediaPlayHelper.play("click");
   };
 
   return AppPages;

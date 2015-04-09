@@ -1,5 +1,5 @@
 class TabPage
-	constructor: (@parentTag, @pageDef, @defaultActionFn) ->
+	constructor: (@app, @parentTag, @pageDef, @defaultActionFn) ->
 		@tileColours = new TileColours
 		@tiles = []
 		@titlesTopMargin = 60
@@ -76,7 +76,8 @@ class TabPage
 		tileDef = @tileDefCleanCheck(tileDef)
 		#Make the tile
 		if tileDef.tileType is "calendar"
-			tile = new CalendarTile tileDef, @calendarUrl, tileDef.calDayIndex
+			dayIdx = if tileDef.calDayIndex? then tileDef.calDayIndex else 0
+			tile = new CalendarTile(@app, tileDef, dayIdx)
 		else if tileDef.tileType is "clock"
 			tile = new Clock tileDef
 		else if tileDef.tileType is "config"

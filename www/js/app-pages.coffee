@@ -1,5 +1,5 @@
 class AppPages
-	constructor: (@parentTag, @defaultActionFn, @mediaPlayHelper, @tabletConfigServer) ->
+	constructor: (@app, @parentTag, @defaultActionFn) ->
 		@curPage = { "pageName": "" }
 		@generatedPage = {}
 		@defaultPageName = ""
@@ -10,7 +10,7 @@ class AppPages
 			@display()
 
 	setCurrentPage: (pageName, forceSet) ->
-		tabConfig = @tabletConfigServer.getConfigData()
+		tabConfig = @app.tabletConfigServer.getConfigData()
 		if tabConfig.common? and tabConfig.common.pages?
 			if pageName of tabConfig.common.pages
 				if forceSet or (@curPage.pageName isnt pageName)
@@ -124,7 +124,7 @@ class AppPages
 
 	rebuild: (forceSetInitialPage) ->
 		# Generate pages from data
-		tabConfig = @tabletConfigServer.getConfigData()
+		tabConfig = @app.tabletConfigServer.getConfigData()
 		if tabConfig.common? and tabConfig.common.pages?
 			for pageName, pageDef of tabConfig.common.pages
 				if pageDef.defaultPage? and pageDef.defaultPage
@@ -218,7 +218,7 @@ class AppPages
 		return pageDef
 
 	generateNewPage: (context) ->
-		tabConfig = @tabletConfigServer.getConfigData()
+		tabConfig = @app.tabletConfigServer.getConfigData()
 		if context.pageGenRule? and context.pageGenRule isnt ""
 			if context.pageGenRule of tabConfig.common.pageGen
 				pageGen = tabConfig.common.pageGen[context.pageGenRule]
@@ -242,7 +242,7 @@ class AppPages
 		return ""
 
 	display: ->
-		newPage = new TabPage(@parentTag, @curPage, @buttonCallback)
+		newPage = new TabPage(@app, @parentTag, @curPage, @buttonCallback)
 		newPage.updateDom()
 
 	buttonCallback: (context) =>
@@ -269,16 +269,12 @@ class AppPages
 
 	addFavouriteButton: (context) ->
 		console.log "NEED TO ADD CODE TO SELECT BUTTON TO ADD HERE"
-		@tabletConfigServer.addFavouriteButton(context)
+		@app.tabletConfigServer.addFavouriteButton(context)
 		@rebuild(false)
 
 	deleteFavouriteButton: (context) ->
-		@tabletConfigServer.deleteFavouriteButton(context)
+		@app.tabletConfigServer.deleteFavouriteButton(context)
 		@rebuild(false)
-
-	playClickSound: ->
-		@mediaPlayHelper.play("click")
-		return
 
     # addTileToTierGroup: (tileDef, tile) ->
     #     tierName = tileDef.tierName

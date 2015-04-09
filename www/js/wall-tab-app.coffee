@@ -1,13 +1,14 @@
 class WallTabApp
     constructor: ->
+        @mainServer = "localhost"
         @defaultTabletName = "tabdefault"
-        @rdHomeServerUrl = "http://macallan:5000"
-        @calendarUrl = "http://macallan:5077/calendar/min/4"
+        @rdHomeServerUrl = "http://" + @mainServer + ":5000"
+        @calendarUrl = "http://" + @mainServer + ":5077/calendar/min/4"
         @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
         @automationExecUrl = @rdHomeServerUrl
         @sonosActionsUrl = ""
-        @tabletConfigUrl = "http://localhost:5076/tabletconfig"
-        @tabletLogUrl = "http://localhost:5076/log"
+        @tabletConfigUrl = "http://" + @mainServer + ":5076/tabletconfig"
+        @tabletLogUrl = "http://" + @mainServer + ":5076/log"
         @indigoServerUrl = "http://IndigoServer.local:8176"
         @indigo2ServerUrl = "http://IndigoDown.local:8176"
         @fibaroServerUrl = "http://macallan:5079"
@@ -44,8 +45,11 @@ class WallTabApp
         @tabletConfigServer = new TabletConfig @tabletConfigUrl, @defaultTabletName
         @tabletConfigServer.setReadyCallback(@tabletConfigReadyCb)
 
+        # Calendar server communications
+        @calendarServer = new CalendarServer(this)
+
         # App Pages
-        @appPages = new AppPages "#sqWrapper", @automationServer.executeCommand, @mediaPlayHelper, @tabletConfigServer
+        @appPages = new AppPages(this, "#sqWrapper", @automationServer.executeCommand)
 
         # Handler for orientation change
         $(window).on 'orientationchange', =>

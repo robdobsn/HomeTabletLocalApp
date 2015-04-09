@@ -1,42 +1,18 @@
 class CalendarTile extends Tile
-	constructor: (tileDef, @calendarURL, @calDayIndex) ->
+	constructor: (@app, tileDef, @calDayIndex) ->
 		super tileDef
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 		@calLineCount = 0; @calCharCount = 0; @calMaxLineLen = 0
-		@minutesBetweenCalendarRefreshes = 15
-		@firstRefreshAfterFailSecs = 10
-		@nextRefreshesAfterFailSecs = 60
-		@numRefreshFailuresSinceSuccess = 0
 		return
 
 	addToDoc: () ->
 		super()
-		@setRefreshInterval(@minutesBetweenCalendarRefreshes * 60, @requestCalUpdate, true)
+		@setRefreshInterval(@secsBetweenCalendarRefreshes, @updateCalendar, true)
 		return
 
-	requestCalUpdate: ->
-		dateTimeNow = new Date()
-		console.log("ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + @calendarURL) 
-		$.ajax @calendarURL,
-			type: "GET"
-			dataType: "text"
-			crossDomain: true
-			success: (data, textStatus, jqXHR) =>
-				jsonText = jqXHR.responseText
-				jsonData = $.parseJSON(jsonText)
-				@showCalendar(jsonData)
-				@numRefreshFailuresSinceSuccess = 0
-				# console.log "CalShown for today+" + @calDayIndex
-				return
-			error: (jqXHR, textStatus, errorThrown) =>
-				LocalStorage.logEvent("CalLog", "AjaxFail Status = " + textStatus + " URL=" + @calendarURL + " Error= " + errorThrown)
-				# console.log "GetCalError " + "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown
-				@numRefreshFailuresSinceSuccess++
-				setTimeout =>
-					@requestCalUpdate
-				, (if @numRefreshFailuresSinceSuccess is 1 then @firstRefreshAfterFailSecs * 1000 else @nextRefreshesAfterFailSecs * 1000)
-				return
-		return
+	updateCalendar: () ->
+		calData = @app.calendarServer.getCalData()
+		@showCalendar(calData)
 
 	showCalendar: (jsonData) ->
 		if not ("calEvents" of jsonData)

@@ -7,14 +7,15 @@ WallTabApp = (function() {
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
     this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
     this.tabletConfigReadyCb = __bind(this.tabletConfigReadyCb, this);
+    this.mainServer = "localhost";
     this.defaultTabletName = "tabdefault";
-    this.rdHomeServerUrl = "http://macallan:5000";
-    this.calendarUrl = "http://macallan:5077/calendar/min/4";
+    this.rdHomeServerUrl = "http://" + this.mainServer + ":5000";
+    this.calendarUrl = "http://" + this.mainServer + ":5077/calendar/min/4";
     this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
     this.automationExecUrl = this.rdHomeServerUrl;
     this.sonosActionsUrl = "";
-    this.tabletConfigUrl = "http://localhost:5076/tabletconfig";
-    this.tabletLogUrl = "http://localhost:5076/log";
+    this.tabletConfigUrl = "http://" + this.mainServer + ":5076/tabletconfig";
+    this.tabletLogUrl = "http://" + this.mainServer + ":5076/log";
     this.indigoServerUrl = "http://IndigoServer.local:8176";
     this.indigo2ServerUrl = "http://IndigoDown.local:8176";
     this.fibaroServerUrl = "http://macallan:5079";
@@ -38,7 +39,8 @@ WallTabApp = (function() {
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfigServer = new TabletConfig(this.tabletConfigUrl, this.defaultTabletName);
     this.tabletConfigServer.setReadyCallback(this.tabletConfigReadyCb);
-    this.appPages = new AppPages("#sqWrapper", this.automationServer.executeCommand, this.mediaPlayHelper, this.tabletConfigServer);
+    this.calendarServer = new CalendarServer(this);
+    this.appPages = new AppPages(this, "#sqWrapper", this.automationServer.executeCommand);
     $(window).on('orientationchange', (function(_this) {
       return function() {
         return _this.buildAndDisplayUI();

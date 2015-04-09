@@ -2,7 +2,8 @@
 var TabPage;
 
 TabPage = (function() {
-  function TabPage(parentTag, pageDef, defaultActionFn) {
+  function TabPage(app, parentTag, pageDef, defaultActionFn) {
+    this.app = app;
     this.parentTag = parentTag;
     this.pageDef = pageDef;
     this.defaultActionFn = defaultActionFn;
@@ -80,10 +81,11 @@ TabPage = (function() {
   };
 
   TabPage.prototype.makeTileFromTileDef = function(tileDef) {
-    var tile;
+    var dayIdx, tile;
     tileDef = this.tileDefCleanCheck(tileDef);
     if (tileDef.tileType === "calendar") {
-      tile = new CalendarTile(tileDef, this.calendarUrl, tileDef.calDayIndex);
+      dayIdx = tileDef.calDayIndex != null ? tileDef.calDayIndex : 0;
+      tile = new CalendarTile(this.app, tileDef, dayIdx);
     } else if (tileDef.tileType === "clock") {
       tile = new Clock(tileDef);
     } else if (tileDef.tileType === "config") {

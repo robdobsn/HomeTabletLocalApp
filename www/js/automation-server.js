@@ -3,7 +3,8 @@ var AutomationServer,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 AutomationServer = (function() {
-  function AutomationServer(automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, indigo2ServerUrl, fibaroServerUrl, sonosActionsUrl, mediaPlayHelper) {
+  function AutomationServer(app, automationActionsUrl, automationExecUrl, veraServerUrl, indigoServerUrl, indigo2ServerUrl, fibaroServerUrl, sonosActionsUrl) {
+    this.app = app;
     this.automationActionsUrl = automationActionsUrl;
     this.automationExecUrl = automationExecUrl;
     this.veraServerUrl = veraServerUrl;
@@ -11,7 +12,6 @@ AutomationServer = (function() {
     this.indigo2ServerUrl = indigo2ServerUrl;
     this.fibaroServerUrl = fibaroServerUrl;
     this.sonosActionsUrl = sonosActionsUrl;
-    this.mediaPlayHelper = mediaPlayHelper;
     this.executeCommand = __bind(this.executeCommand, this);
     this.callBackWithSumActions = __bind(this.callBackWithSumActions, this);
     this.setSumActionsCallbackTimer = __bind(this.setSumActionsCallbackTimer, this);
@@ -204,13 +204,13 @@ AutomationServer = (function() {
         dataType: "text",
         success: (function(_this) {
           return function(data, textStatus, jqXHR) {
-            return _this.mediaPlayHelper.play("ok");
+            return _this.app.mediaPlayHelper.play("ok");
           };
         })(this),
         error: (function(_this) {
           return function(jqXHR, textStatus, errorThrown) {
             console.error("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams);
-            return _this.mediaPlayHelper.play("fail");
+            return _this.app.mediaPlayHelper.play("fail");
           };
         })(this)
       });
@@ -221,13 +221,13 @@ AutomationServer = (function() {
         dataType: "text",
         success: (function(_this) {
           return function(data, textStatus, jqXHR) {
-            return _this.mediaPlayHelper.play("ok");
+            return _this.app.mediaPlayHelper.play("ok");
           };
         })(this),
         error: (function(_this) {
           return function(jqXHR, textStatus, errorThrown) {
             console.error("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec);
-            return _this.mediaPlayHelper.play("fail");
+            return _this.app.mediaPlayHelper.play("fail");
           };
         })(this)
       });
