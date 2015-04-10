@@ -9,6 +9,10 @@ Tile = (function() {
     return;
   }
 
+  Tile.prototype.handleAction = function(action) {
+    return console.log("Action = " + action);
+  };
+
   Tile.prototype.addToDoc = function() {
     this.tileId = "sqTile_" + this.tileDef.tierIdx + "_" + this.tileDef.groupIdx + "_" + this.tileIdx;
     $(this.tileDef.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileDef.tileColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\" style=\"height:100%\">\n  </div>\n</a>");
@@ -42,7 +46,7 @@ Tile = (function() {
   };
 
   Tile.prototype.reposition = function(posX, posY, sizeX, sizeY, fontScaling) {
-    var iconHeight, iconSel, textSel, txtHeight;
+    var iconHeight, iconSel, textSel, txtHeight, txtHeight2;
     this.posX = posX;
     this.posY = posY;
     this.sizeX = sizeX;
@@ -54,7 +58,9 @@ Tile = (function() {
     this.setPositionCss(iconSel, 10, (this.sizeY - iconHeight) / 2, null, iconHeight);
     textSel = '#' + this.tileId + " .sqSceneButtonText";
     txtHeight = $(textSel).height();
-    this.setPositionCss('#' + this.tileId + " .sqSceneButtonText", this.buttonTextX, (this.sizeY - txtHeight) / 2);
+    this.setPositionCss(textSel, this.buttonTextX, (this.sizeY - txtHeight) / 2, this.sizeX - iconHeight - 10);
+    txtHeight2 = $(textSel).height();
+    this.setPositionCss(textSel, this.buttonTextX, (this.sizeY - txtHeight2) / 2);
   };
 
   Tile.prototype.setPositionCss = function(selector, posX, posY, sizeX, sizeY, fontScaling) {

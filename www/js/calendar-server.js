@@ -2,8 +2,9 @@
 var CalendarServer;
 
 CalendarServer = (function() {
-  function CalendarServer(app) {
+  function CalendarServer(app, calendarNumDays) {
     this.app = app;
+    this.calendarNumDays = calendarNumDays;
     this.calendarData = [];
     this.secsBetweenCalendarRefreshes = 60;
     this.firstRefreshAfterFailSecs = 10;
@@ -46,6 +47,10 @@ CalendarServer = (function() {
 
   CalendarServer.prototype.getCalData = function() {
     return this.calendarData;
+  };
+
+  CalendarServer.prototype.getCalNumDays = function() {
+    return this.calendarNumDays;
   };
 
   return CalendarServer;

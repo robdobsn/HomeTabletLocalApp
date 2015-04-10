@@ -1,11 +1,12 @@
 class AppPages
 	constructor: (@app, @parentTag, @defaultActionFn) ->
-		@curPage = { "pageName": "" }
+		@curPageDef = { "pageName": "" }
 		@generatedPage = {}
 		@defaultPageName = ""
+		@curTabPage = null
 
 	userIsIdle: ->
-		if @curPage.pageName isnt @defaultPageName
+		if @curPageDef.pageName isnt @defaultPageName
 			@setCurrentPage(@defaultPageName)
 			@display()
 
@@ -13,11 +14,11 @@ class AppPages
 		tabConfig = @app.tabletConfigServer.getConfigData()
 		if tabConfig.common? and tabConfig.common.pages?
 			if pageName of tabConfig.common.pages
-				if forceSet or (@curPage.pageName isnt pageName)
-					@curPage = tabConfig.common.pages[pageName]
+				if forceSet or (@curPageDef.pageName isnt pageName)
+					@curPageDef = tabConfig.common.pages[pageName]
 					return true
 			else if forceSet or (@generatedPage.pageName? and @generatedPage.pageName is pageName)
-				@curPage = @generatedPage
+				@curPageDef = @generatedPage
 				return true
 		return false
 
@@ -242,8 +243,8 @@ class AppPages
 		return ""
 
 	display: ->
-		newPage = new TabPage(@app, @parentTag, @curPage, @buttonCallback)
-		newPage.updateDom()
+		@curTabPage = new TabPage(@app, @parentTag, @curPageDef, @buttonCallback)
+		@curTabPage.updateDom()
 
 	buttonCallback: (context) =>
 		console.log "Pressed " + JSON.stringify(context)
@@ -254,6 +255,9 @@ class AppPages
 			@display()
 		else if "/" in context.url
 			(@defaultActionFn) context.url
+		else if "~" in context.url
+			if @curTabPage?
+				@curTabPage.handlePageNav(context.url)
 		else if @setCurrentPage(context.url, false)
 			@display()
 		else if context.url is "DelFav"

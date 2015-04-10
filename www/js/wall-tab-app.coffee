@@ -3,7 +3,8 @@ class WallTabApp
         @mainServer = "localhost"
         @defaultTabletName = "tabdefault"
         @rdHomeServerUrl = "http://" + @mainServer + ":5000"
-        @calendarUrl = "http://" + @mainServer + ":5077/calendar/min/4"
+        @calendarNumDays = 31
+        @calendarUrl = "http://" + @mainServer + ":5077/calendar/min/" + @calendarNumDays
         @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
         @automationExecUrl = @rdHomeServerUrl
         @sonosActionsUrl = ""
@@ -46,7 +47,7 @@ class WallTabApp
         @tabletConfigServer.setReadyCallback(@tabletConfigReadyCb)
 
         # Calendar server communications
-        @calendarServer = new CalendarServer(this)
+        @calendarServer = new CalendarServer(this, @calendarNumDays)
 
         # App Pages
         @appPages = new AppPages(this, "#sqWrapper", @automationServer.executeCommand)

@@ -27,24 +27,30 @@ class AutomationServer
 		@sonosActions = {}
 		@soundPlayActions = {}
 		@sumActionsCallbackTimerId = null
+		return
 
 	setReadyCallback: (@readyCallback) ->
+		return
 
 	indigoServerReadyCb: (actions) =>
 		@indigoActions = actions
-		@setSumActionsCallbackTimer()		
+		@setSumActionsCallbackTimer()
+		return	
 
 	indigo2ServerReadyCb: (actions) =>
 		@indigo2Actions = actions
 		@setSumActionsCallbackTimer()
+		return
 
 	veraServerReadyCb: (actions) =>
 		@veraActions = actions
 		@setSumActionsCallbackTimer()
+		return
 
 	fibaroServerReadyCb: (actions) =>
 		@fibaroActions = actions
 		@setSumActionsCallbackTimer()
+		return
 
 	setSumActionsCallbackTimer: =>
 		if @sumActionsCallbackTimerId isnt null then return
@@ -62,6 +68,7 @@ class AutomationServer
 		sumActions["sonos"] = @sonosActions
 		sumActions["soundPlayActions"] = @soundPlayActions
 		@readyCallback(sumActions)
+		return
 
 	getActionGroups: ->
 		@indigoServer.getActionGroups()
@@ -71,6 +78,7 @@ class AutomationServer
 		# @getActionGroupsFromIntermediateServer()
 		@getSonosActions()
 		@setSumActionsCallbackTimer()
+		return
 
 	getActionGroupsFromIntermediateServer: ->
 		# Get the action-groups/scenes
@@ -85,8 +93,11 @@ class AutomationServer
 				if "doorController" of data then @doorActions = data.doorController
 				if "blinds" of data then @blindsActions = data.blinds
 				@callBackWithSumActions()
+				return
 			error: (jqXHR, textStatus, errorThrown) =>
 				console.error ("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + @automationActionsUrl)
+				return
+		return
 
 	getSonosActions: ->
 		# Get the sonos actions
@@ -98,8 +109,11 @@ class AutomationServer
 				@sonosActions = data.sonos
 				@soundPlayActions = data.soundsToPlay
 				@callBackWithSumActions
+				return
 			error: (jqXHR, textStatus, errorThrown) =>
 				console.error ("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + @sonosActionsUrl)
+				return
+		return
 
 	executeCommand: (cmdParams) =>
 		if not cmdParams? or cmdParams is "" then return
@@ -109,9 +123,11 @@ class AutomationServer
 				dataType: "text"
 				success: (data, textStatus, jqXHR) =>
 					@app.mediaPlayHelper.play("ok")
+					return
 				error: (jqXHR, textStatus, errorThrown) =>
 					console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams)
 					@app.mediaPlayHelper.play("fail")
+					return
 		else
 			# Execute command on the intermediate server
 			cmdToExec = @automationExecUrl + "/" + cmdParams
@@ -120,6 +136,9 @@ class AutomationServer
 				dataType: "text"
 				success: (data, textStatus, jqXHR) =>
 					@app.mediaPlayHelper.play("ok")
+					return
 				error: (jqXHR, textStatus, errorThrown) =>
 					console.error ("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec)
 					@app.mediaPlayHelper.play("fail")
+					return
+		return

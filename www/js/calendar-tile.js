@@ -17,6 +17,19 @@ CalendarTile = (function(_super) {
     return;
   }
 
+  CalendarTile.prototype.handleAction = function(action) {
+    if (action === "next") {
+      if (this.calDayIndex < this.app.calendarServer.getCalNumDays()) {
+        this.calDayIndex++;
+      }
+    } else if (action === "prev") {
+      if (this.calDayIndex > 0) {
+        this.calDayIndex--;
+      }
+    }
+    this.updateCalendar();
+  };
+
   CalendarTile.prototype.addToDoc = function() {
     CalendarTile.__super__.addToDoc.call(this);
     this.setRefreshInterval(this.secsBetweenCalendarRefreshes, this.updateCalendar, true);
@@ -37,10 +50,12 @@ CalendarTile = (function(_super) {
     reqDate = new Date();
     reqDate.setDate(reqDate.getDate() + this.calDayIndex);
     reqDateStr = this.toZeroPadStr(reqDate.getFullYear(), 4) + this.toZeroPadStr(reqDate.getMonth() + 1, 2) + this.toZeroPadStr(reqDate.getDate(), 2);
-    calTitle = "Today";
-    if (this.calDayIndex !== 0) {
-      calTitle = this.shortDayNames[reqDate.getDay()];
+    calTitle = "";
+    if (this.calDayIndex === 0) {
+      calTitle = "Today ";
     }
+    calTitle += this.shortDayNames[reqDate.getDay()];
+    calTitle += " " + this.toZeroPadStr(reqDate.getDate(), 2) + "/" + this.toZeroPadStr(reqDate.getMonth() + 1, 2) + "/" + this.toZeroPadStr(reqDate.getFullYear(), 4);
     this.calLineCount = 0;
     this.calCharCount = 0;
     this.calMaxLineLen = 0;

@@ -5,6 +5,16 @@ class CalendarTile extends Tile
 		@calLineCount = 0; @calCharCount = 0; @calMaxLineLen = 0
 		return
 
+	handleAction: (action) ->
+		if action is "next"
+			if @calDayIndex < @app.calendarServer.getCalNumDays()
+				@calDayIndex++
+		else if action is "prev"
+			if @calDayIndex > 0
+				@calDayIndex--
+		@updateCalendar()
+		return
+
 	addToDoc: () ->
 		super()
 		@setRefreshInterval(@secsBetweenCalendarRefreshes, @updateCalendar, true)
@@ -25,9 +35,13 @@ class CalendarTile extends Tile
 		reqDateStr = @toZeroPadStr(reqDate.getFullYear(), 4) + 
 				@toZeroPadStr(reqDate.getMonth()+1, 2) +
 				@toZeroPadStr(reqDate.getDate(), 2)
-		calTitle = "Today"
-		if @calDayIndex isnt 0
-			calTitle = @shortDayNames[reqDate.getDay()]
+		calTitle = ""
+		if @calDayIndex is 0
+			calTitle = "Today "
+		calTitle += @shortDayNames[reqDate.getDay()]
+		calTitle += " " + @toZeroPadStr(reqDate.getDate(), 2) + "/" +
+			@toZeroPadStr(reqDate.getMonth()+1, 2) + "/" +
+			@toZeroPadStr(reqDate.getFullYear(), 4)
 
 		# Format the text to go into the calendar and keep stats on it for font sizing
 		@calLineCount = 0; @calCharCount = 0; @calMaxLineLen = 0

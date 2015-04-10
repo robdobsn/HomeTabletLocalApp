@@ -4,6 +4,9 @@ class Tile
 		@buttonTextX = 10
 		return
 
+	handleAction: (action) ->
+		console.log "Action = " + action
+		
 	addToDoc: ->
 		@tileId = "sqTile_" + @tileDef.tierIdx + "_" + @tileDef.groupIdx + "_" + @tileIdx
 		$(@tileDef.parentTag).append """
@@ -42,7 +45,9 @@ class Tile
 		@setPositionCss(iconSel, 10, (@sizeY-iconHeight)/2, null, iconHeight)
 		textSel = '#'+@tileId + " .sqSceneButtonText"
 		txtHeight = $(textSel).height()
-		@setPositionCss('#'+@tileId + " .sqSceneButtonText", @buttonTextX, (@sizeY-txtHeight)/2)
+		@setPositionCss(textSel, @buttonTextX, (@sizeY-txtHeight)/2, @sizeX-iconHeight-10)
+		txtHeight2 = $(textSel).height()
+		@setPositionCss(textSel, @buttonTextX, (@sizeY-txtHeight2)/2)
 		return
 
 	setPositionCss: (selector, posX, posY, sizeX, sizeY, fontScaling) ->

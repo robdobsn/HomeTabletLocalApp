@@ -10,7 +10,8 @@ WallTabApp = (function() {
     this.mainServer = "localhost";
     this.defaultTabletName = "tabdefault";
     this.rdHomeServerUrl = "http://" + this.mainServer + ":5000";
-    this.calendarUrl = "http://" + this.mainServer + ":5077/calendar/min/4";
+    this.calendarNumDays = 31;
+    this.calendarUrl = "http://" + this.mainServer + ":5077/calendar/min/" + this.calendarNumDays;
     this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
     this.automationExecUrl = this.rdHomeServerUrl;
     this.sonosActionsUrl = "";
@@ -39,7 +40,7 @@ WallTabApp = (function() {
     this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfigServer = new TabletConfig(this.tabletConfigUrl, this.defaultTabletName);
     this.tabletConfigServer.setReadyCallback(this.tabletConfigReadyCb);
-    this.calendarServer = new CalendarServer(this);
+    this.calendarServer = new CalendarServer(this, this.calendarNumDays);
     this.appPages = new AppPages(this, "#sqWrapper", this.automationServer.executeCommand);
     $(window).on('orientationchange', (function(_this) {
       return function() {

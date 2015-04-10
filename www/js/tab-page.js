@@ -29,6 +29,19 @@ TabPage = (function() {
     return;
   }
 
+  TabPage.prototype.handlePageNav = function(pageNav) {
+    var navAction, tile, tileName, _, _i, _len, _ref, _ref1;
+    _ref = pageNav.match(/\~(.*)\?(.*)/), _ = _ref[0], tileName = _ref[1], navAction = _ref[2];
+    _ref1 = this.tiles;
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      tile = _ref1[_i];
+      if (tile.tileDef.tileName === tileName) {
+        tile.handleAction(navAction);
+        break;
+      }
+    }
+  };
+
   TabPage.prototype.updateDom = function() {
     var col, colIdx, colXPos, fontScale, newTile, sizeX, sizeY, tile, tileDef, title, x, y, _i, _j, _len, _len1, _ref, _ref1, _ref2;
     this.calcLayout();

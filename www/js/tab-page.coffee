@@ -21,6 +21,14 @@ class TabPage
 		@columnTypes = {}
 		return
 
+	handlePageNav: (pageNav) ->
+		[_,tileName,navAction] = pageNav.match /\~(.*)\?(.*)/
+		for tile in @tiles
+			if tile.tileDef.tileName is tileName
+				tile.handleAction(navAction)
+				break
+		return
+
 	updateDom: ->
 		@calcLayout()
 		@removeAll()

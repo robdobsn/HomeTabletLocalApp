@@ -1,5 +1,5 @@
 class CalendarServer
-	constructor: (@app) ->
+	constructor: (@app, @calendarNumDays) ->
 		@calendarData = []
 		@secsBetweenCalendarRefreshes = 60
 		@firstRefreshAfterFailSecs = 10
@@ -34,3 +34,6 @@ class CalendarServer
 
 	getCalData: ->
 		return @calendarData
+
+	getCalNumDays: ->
+		return @calendarNumDays

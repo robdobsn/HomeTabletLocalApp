@@ -9,15 +9,16 @@ AppPages = (function() {
     this.parentTag = parentTag;
     this.defaultActionFn = defaultActionFn;
     this.buttonCallback = __bind(this.buttonCallback, this);
-    this.curPage = {
+    this.curPageDef = {
       "pageName": ""
     };
     this.generatedPage = {};
     this.defaultPageName = "";
+    this.curTabPage = null;
   }
 
   AppPages.prototype.userIsIdle = function() {
-    if (this.curPage.pageName !== this.defaultPageName) {
+    if (this.curPageDef.pageName !== this.defaultPageName) {
       this.setCurrentPage(this.defaultPageName);
       return this.display();
     }
@@ -28,12 +29,12 @@ AppPages = (function() {
     tabConfig = this.app.tabletConfigServer.getConfigData();
     if ((tabConfig.common != null) && (tabConfig.common.pages != null)) {
       if (pageName in tabConfig.common.pages) {
-        if (forceSet || (this.curPage.pageName !== pageName)) {
-          this.curPage = tabConfig.common.pages[pageName];
+        if (forceSet || (this.curPageDef.pageName !== pageName)) {
+          this.curPageDef = tabConfig.common.pages[pageName];
           return true;
         }
       } else if (forceSet || ((this.generatedPage.pageName != null) && this.generatedPage.pageName === pageName)) {
-        this.curPage = this.generatedPage;
+        this.curPageDef = this.generatedPage;
         return true;
       }
     }
@@ -257,9 +258,8 @@ AppPages = (function() {
   };
 
   AppPages.prototype.display = function() {
-    var newPage;
-    newPage = new TabPage(this.app, this.parentTag, this.curPage, this.buttonCallback);
-    return newPage.updateDom();
+    this.curTabPage = new TabPage(this.app, this.parentTag, this.curPageDef, this.buttonCallback);
+    return this.curTabPage.updateDom();
   };
 
   AppPages.prototype.buttonCallback = function(context) {
@@ -271,6 +271,10 @@ AppPages = (function() {
       this.display();
     } else if (__indexOf.call(context.url, "/") >= 0) {
       this.defaultActionFn(context.url);
+    } else if (__indexOf.call(context.url, "~") >= 0) {
+      if (this.curTabPage != null) {
+        this.curTabPage.handlePageNav(context.url);
+      }
     } else if (this.setCurrentPage(context.url, false)) {
       this.display();
     } else if (context.url === "DelFav") {

@@ -69,6 +69,7 @@ AutomationServer = (function() {
     this.sonosActions = {};
     this.soundPlayActions = {};
     this.sumActionsCallbackTimerId = null;
+    return;
   }
 
   AutomationServer.prototype.setReadyCallback = function(readyCallback) {
@@ -77,22 +78,22 @@ AutomationServer = (function() {
 
   AutomationServer.prototype.indigoServerReadyCb = function(actions) {
     this.indigoActions = actions;
-    return this.setSumActionsCallbackTimer();
+    this.setSumActionsCallbackTimer();
   };
 
   AutomationServer.prototype.indigo2ServerReadyCb = function(actions) {
     this.indigo2Actions = actions;
-    return this.setSumActionsCallbackTimer();
+    this.setSumActionsCallbackTimer();
   };
 
   AutomationServer.prototype.veraServerReadyCb = function(actions) {
     this.veraActions = actions;
-    return this.setSumActionsCallbackTimer();
+    this.setSumActionsCallbackTimer();
   };
 
   AutomationServer.prototype.fibaroServerReadyCb = function(actions) {
     this.fibaroActions = actions;
-    return this.setSumActionsCallbackTimer();
+    this.setSumActionsCallbackTimer();
   };
 
   AutomationServer.prototype.setSumActionsCallbackTimer = function() {
@@ -126,18 +127,18 @@ AutomationServer = (function() {
     }
     sumActions["sonos"] = this.sonosActions;
     sumActions["soundPlayActions"] = this.soundPlayActions;
-    return this.readyCallback(sumActions);
+    this.readyCallback(sumActions);
   };
 
   AutomationServer.prototype.getActionGroups = function() {
     this.indigoServer.getActionGroups();
     this.indigo2Server.getActionGroups();
     this.getSonosActions();
-    return this.setSumActionsCallbackTimer();
+    this.setSumActionsCallbackTimer();
   };
 
   AutomationServer.prototype.getActionGroupsFromIntermediateServer = function() {
-    return $.ajax(this.automationActionsUrl, {
+    $.ajax(this.automationActionsUrl, {
       type: "GET",
       dataType: "json",
       success: (function(_this) {
@@ -160,12 +161,12 @@ AutomationServer = (function() {
           if ("blinds" in data) {
             _this.blindsActions = data.blinds;
           }
-          return _this.callBackWithSumActions();
+          _this.callBackWithSumActions();
         };
       })(this),
       error: (function(_this) {
         return function(jqXHR, textStatus, errorThrown) {
-          return console.error("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.automationActionsUrl);
+          console.error("Get Actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.automationActionsUrl);
         };
       })(this)
     });
@@ -175,19 +176,19 @@ AutomationServer = (function() {
     if (this.sonosActionsUrl === "") {
       return;
     }
-    return $.ajax(this.sonosActionsUrl, {
+    $.ajax(this.sonosActionsUrl, {
       type: "GET",
       dataType: "json",
       success: (function(_this) {
         return function(data, textStatus, jqXHR) {
           _this.sonosActions = data.sonos;
           _this.soundPlayActions = data.soundsToPlay;
-          return _this.callBackWithSumActions;
+          _this.callBackWithSumActions;
         };
       })(this),
       error: (function(_this) {
         return function(jqXHR, textStatus, errorThrown) {
-          return console.error("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.sonosActionsUrl);
+          console.error("Get Sonos actions failed: " + textStatus + " " + errorThrown + " URL=" + _this.sonosActionsUrl);
         };
       })(this)
     });
@@ -199,35 +200,35 @@ AutomationServer = (function() {
       return;
     }
     if (cmdParams.slice(0, 4) === "http") {
-      return $.ajax(cmdParams, {
+      $.ajax(cmdParams, {
         type: "GET",
         dataType: "text",
         success: (function(_this) {
           return function(data, textStatus, jqXHR) {
-            return _this.app.mediaPlayHelper.play("ok");
+            _this.app.mediaPlayHelper.play("ok");
           };
         })(this),
         error: (function(_this) {
           return function(jqXHR, textStatus, errorThrown) {
             console.error("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams);
-            return _this.app.mediaPlayHelper.play("fail");
+            _this.app.mediaPlayHelper.play("fail");
           };
         })(this)
       });
     } else {
       cmdToExec = this.automationExecUrl + "/" + cmdParams;
-      return $.ajax(cmdToExec, {
+      $.ajax(cmdToExec, {
         type: "GET",
         dataType: "text",
         success: (function(_this) {
           return function(data, textStatus, jqXHR) {
-            return _this.app.mediaPlayHelper.play("ok");
+            _this.app.mediaPlayHelper.play("ok");
           };
         })(this),
         error: (function(_this) {
           return function(jqXHR, textStatus, errorThrown) {
             console.error("Intermediate exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdToExec);
-            return _this.app.mediaPlayHelper.play("fail");
+            _this.app.mediaPlayHelper.play("fail");
           };
         })(this)
       });
