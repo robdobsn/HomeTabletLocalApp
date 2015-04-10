@@ -15,6 +15,7 @@ AppPages = (function() {
     this.generatedPage = {};
     this.defaultPageName = "";
     this.curTabPage = null;
+    $("body").prepend("<div id=\"sqWrapper\">\n</div>");
   }
 
   AppPages.prototype.userIsIdle = function() {

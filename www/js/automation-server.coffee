@@ -1,13 +1,9 @@
 class AutomationServer
 	constructor: (@app, @automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @indigo2ServerUrl, @fibaroServerUrl, @sonosActionsUrl) ->
-		@indigoServer = new IndigoServer(@indigoServerUrl)
-		@indigoServer.setReadyCallback(@indigoServerReadyCb)
-		@indigo2Server = new IndigoServer(@indigo2ServerUrl)
-		@indigo2Server.setReadyCallback(@indigo2ServerReadyCb)
-		@veraServer = new VeraServer(@veraServerUrl)
-		@veraServer.setReadyCallback(@veraServerReadyCb)
-		@fibaroServer = new FibaroServer(@fibaroServerUrl)
-		@fibaroServer.setReadyCallback(@fibaroServerReadyCb)
+		@indigoServer = new IndigoServer("", @indigoServerUrl, @indigoServerReadyCb)
+		@indigo2Server = new IndigoServer("", @indigo2ServerUrl, @indigo2ServerReadyCb)
+		@veraServer = new VeraServer("", @veraServerUrl, @veraServerReadyCb)
+		@fibaroServer = new FibaroServer("", @fibaroServerUrl, @fibaroServerReadyCb)
 		@useDirectAccessForExec = true # /android_asset/.test(window.location.pathname)
 		@veraActions = []
 		@indigoActions = []
@@ -32,22 +28,22 @@ class AutomationServer
 	setReadyCallback: (@readyCallback) ->
 		return
 
-	indigoServerReadyCb: (actions) =>
+	indigoServerReadyCb: (serverName, actions) =>
 		@indigoActions = actions
 		@setSumActionsCallbackTimer()
 		return	
 
-	indigo2ServerReadyCb: (actions) =>
+	indigo2ServerReadyCb: (serverName, actions) =>
 		@indigo2Actions = actions
 		@setSumActionsCallbackTimer()
 		return
 
-	veraServerReadyCb: (actions) =>
+	veraServerReadyCb: (serverName, actions) =>
 		@veraActions = actions
 		@setSumActionsCallbackTimer()
 		return
 
-	fibaroServerReadyCb: (actions) =>
+	fibaroServerReadyCb: (serverName, actions) =>
 		@fibaroActions = actions
 		@setSumActionsCallbackTimer()
 		return

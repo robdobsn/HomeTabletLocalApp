@@ -19,14 +19,10 @@ AutomationServer = (function() {
     this.veraServerReadyCb = __bind(this.veraServerReadyCb, this);
     this.indigo2ServerReadyCb = __bind(this.indigo2ServerReadyCb, this);
     this.indigoServerReadyCb = __bind(this.indigoServerReadyCb, this);
-    this.indigoServer = new IndigoServer(this.indigoServerUrl);
-    this.indigoServer.setReadyCallback(this.indigoServerReadyCb);
-    this.indigo2Server = new IndigoServer(this.indigo2ServerUrl);
-    this.indigo2Server.setReadyCallback(this.indigo2ServerReadyCb);
-    this.veraServer = new VeraServer(this.veraServerUrl);
-    this.veraServer.setReadyCallback(this.veraServerReadyCb);
-    this.fibaroServer = new FibaroServer(this.fibaroServerUrl);
-    this.fibaroServer.setReadyCallback(this.fibaroServerReadyCb);
+    this.indigoServer = new IndigoServer("", this.indigoServerUrl, this.indigoServerReadyCb);
+    this.indigo2Server = new IndigoServer("", this.indigo2ServerUrl, this.indigo2ServerReadyCb);
+    this.veraServer = new VeraServer("", this.veraServerUrl, this.veraServerReadyCb);
+    this.fibaroServer = new FibaroServer("", this.fibaroServerUrl, this.fibaroServerReadyCb);
     this.useDirectAccessForExec = true;
     this.veraActions = [];
     this.indigoActions = [];
@@ -76,22 +72,22 @@ AutomationServer = (function() {
     this.readyCallback = readyCallback;
   };
 
-  AutomationServer.prototype.indigoServerReadyCb = function(actions) {
+  AutomationServer.prototype.indigoServerReadyCb = function(serverName, actions) {
     this.indigoActions = actions;
     this.setSumActionsCallbackTimer();
   };
 
-  AutomationServer.prototype.indigo2ServerReadyCb = function(actions) {
+  AutomationServer.prototype.indigo2ServerReadyCb = function(serverName, actions) {
     this.indigo2Actions = actions;
     this.setSumActionsCallbackTimer();
   };
 
-  AutomationServer.prototype.veraServerReadyCb = function(actions) {
+  AutomationServer.prototype.veraServerReadyCb = function(serverName, actions) {
     this.veraActions = actions;
     this.setSumActionsCallbackTimer();
   };
 
-  AutomationServer.prototype.fibaroServerReadyCb = function(actions) {
+  AutomationServer.prototype.fibaroServerReadyCb = function(serverName, actions) {
     this.fibaroActions = actions;
     this.setSumActionsCallbackTimer();
   };

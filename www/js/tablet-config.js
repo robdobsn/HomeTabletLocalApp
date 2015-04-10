@@ -123,6 +123,7 @@ TabletConfig = (function() {
           }
           _this.configData = jsonData;
           LocalStorage.set(reqURL, _this.configData);
+          console.log("Got tablet config data");
           _this.readyCallback();
         };
       })(this),

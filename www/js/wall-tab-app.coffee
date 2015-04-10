@@ -2,18 +2,11 @@ class WallTabApp
     constructor: ->
         @mainServer = "localhost"
         @defaultTabletName = "tabdefault"
-        @rdHomeServerUrl = "http://" + @mainServer + ":5000"
         @calendarNumDays = 31
         @calendarUrl = "http://" + @mainServer + ":5077/calendar/min/" + @calendarNumDays
-        @automationActionsUrl = @rdHomeServerUrl + "/automation/api/v1.0/actions"
-        @automationExecUrl = @rdHomeServerUrl
         @sonosActionsUrl = ""
         @tabletConfigUrl = "http://" + @mainServer + ":5076/tabletconfig"
         @tabletLogUrl = "http://" + @mainServer + ":5076/log"
-        @indigoServerUrl = "http://IndigoServer.local:8176"
-        @indigo2ServerUrl = "http://IndigoDown.local:8176"
-        @fibaroServerUrl = "http://macallan:5079"
-        @veraServerUrl = "http://192.168.0.206:3480"
         @mediaPlayHelper = new MediaPlayHelper(
             {
                 "click": "assets/click.mp3",
@@ -26,31 +19,22 @@ class WallTabApp
         return
 
     go: ->
-        # Basic body for DOM
-        $("body").prepend """
-            <div id="sqWrapper">
-            </div>
-            """
-
         # Goes back to home display after user idle timeout
         @userIdleCatcher = new UserIdleCatcher(90, @actionOnUserIdle)
-
-        # Manage ui grouping (rooms, action-groups, etc)
-        @automationActionGroups = []
-
-        # Communication with Vera3 & Indigo through automation server
-        @automationServer = new AutomationServer(@automationActionsUrl, @automationExecUrl, @veraServerUrl, @indigoServerUrl, @indigo2ServerUrl, @fibaroServerUrl, @sonosActionsUrl, @mediaPlayHelper)
-        @automationServer.setReadyCallback(@automationServerReadyCb)
 
         # Tablet config is based on the name or IP address of the tablet
         @tabletConfigServer = new TabletConfig @tabletConfigUrl, @defaultTabletName
         @tabletConfigServer.setReadyCallback(@tabletConfigReadyCb)
 
+        # Automation manager handles communicaton with automaion devices like
+        # Indigo/vera/fibaro
+        @automationManager = new AutomationManager(this, @automationManagerReadyCb)
+
         # Calendar server communications
         @calendarServer = new CalendarServer(this, @calendarNumDays)
 
         # App Pages
-        @appPages = new AppPages(this, "#sqWrapper", @automationServer.executeCommand)
+        @appPages = new AppPages(this, "#sqWrapper", @automationManager.executeCommand)
 
         # Handler for orientation change
         $(window).on 'orientationchange', =>
@@ -67,64 +51,29 @@ class WallTabApp
         , (@minsBetweenEventLogChecks * 60 * 1000)
 
         # Make initial requests for action (scene) data and config data and repeat requests at intervals
-        @requestActionAndConfigData()
+        @requestConfigData()
         setInterval =>
-            @requestActionAndConfigData()
+            @requestConfigData()
         , (@hoursBetweenActionUpdates * 60 * 60 * 1000)
         return
 
-    requestActionAndConfigData: ->
-        @automationServer.getActionGroups()
+    requestConfigData: ->
         return @tabletConfigServer.requestConfig()
 
+    tabletConfigReadyCb: =>
+        @automationManager.requestUpdate(@tabletConfigServer.getConfigData())
+
+    automationManagerReadyCb: (hasChanged) =>
+        if hasChanged
+            @buildAndDisplayUI()
+
     buildAndDisplayUI: ->
-        @appPages.build(@automationActionGroups)
+        @appPages.build(@automationManager.getActionGroups())
         @appPages.display()
 
-    tabletConfigReadyCb: =>
-        @buildAndDisplayUI()
-
-    automationServerReadyCb: (actions, serverType) =>
-        # Callback when data received from the automation server (scenes/actions)
-        if @checkActionGroupsChanged(@automationActionGroups, actions)
-            @automationActionGroups = actions
-            @buildAndDisplayUI()
-        return
-
-    checkActionGroupsChanged: (oldActionMap, newActionMap) ->
-        # Deep object comparison to see if configuration has changed
-        if Object.keys(oldActionMap).length isnt Object.keys(newActionMap).length then return true
-        for servType, oldActions of oldActionMap
-            if not (servType of newActionMap) then return true
-            newActions = newActionMap[servType]
-            if @checkActionsForServer(oldActions, newActions) then return true
-        return false
-
-    checkActionsForServer: (oldActions, newActions) ->
-        if oldActions.length isnt newActions.length then return true
-        for oldAction, j in oldActions
-            newAction = newActions[j]
-            if Object.keys(oldAction).length isnt Object.keys(newAction).length then return true
-            for k, v of oldAction
-                if not k of newAction then return true
-                if v isnt newAction[k] then return true
-        return false
-        
     actionOnUserIdle: =>
         @appPages.userIsIdle()
         return
-
-    # configTabNameClick: ->
-    #     tabName = LocalStorage.get("DeviceConfigName")
-    #     if not tabName?
-    #         tabName = ""
-    #     $("#tabnamefield").val(tabName)
-    #     $("#tabnameok").unbind("click")
-    #     $("#tabnameok").click ->
-    #         LocalStorage.set("DeviceConfigName", $("#tabnamefield").val())
-    #         $("#tabnameform").hide()
-    #     $("#tabnameform").show()
-    #     return
 
     checkEventLogs: ->
         evList = []

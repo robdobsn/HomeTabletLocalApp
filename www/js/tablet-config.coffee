@@ -84,6 +84,7 @@ class TabletConfig
 					LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
 				@configData = jsonData
 				LocalStorage.set(reqURL, @configData)
+				console.log "Got tablet config data"
 				@readyCallback()
 				# console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
 				return

@@ -5,22 +5,15 @@ var WallTabApp,
 WallTabApp = (function() {
   function WallTabApp() {
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
-    this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
+    this.automationManagerReadyCb = __bind(this.automationManagerReadyCb, this);
     this.tabletConfigReadyCb = __bind(this.tabletConfigReadyCb, this);
     this.mainServer = "localhost";
     this.defaultTabletName = "tabdefault";
-    this.rdHomeServerUrl = "http://" + this.mainServer + ":5000";
     this.calendarNumDays = 31;
     this.calendarUrl = "http://" + this.mainServer + ":5077/calendar/min/" + this.calendarNumDays;
-    this.automationActionsUrl = this.rdHomeServerUrl + "/automation/api/v1.0/actions";
-    this.automationExecUrl = this.rdHomeServerUrl;
     this.sonosActionsUrl = "";
     this.tabletConfigUrl = "http://" + this.mainServer + ":5076/tabletconfig";
     this.tabletLogUrl = "http://" + this.mainServer + ":5076/log";
-    this.indigoServerUrl = "http://IndigoServer.local:8176";
-    this.indigo2ServerUrl = "http://IndigoDown.local:8176";
-    this.fibaroServerUrl = "http://macallan:5079";
-    this.veraServerUrl = "http://192.168.0.206:3480";
     this.mediaPlayHelper = new MediaPlayHelper({
       "click": "assets/click.mp3",
       "ok": "assets/blip.mp3",
@@ -33,15 +26,12 @@ WallTabApp = (function() {
   }
 
   WallTabApp.prototype.go = function() {
-    $("body").prepend("<div id=\"sqWrapper\">\n</div>");
     this.userIdleCatcher = new UserIdleCatcher(90, this.actionOnUserIdle);
-    this.automationActionGroups = [];
-    this.automationServer = new AutomationServer(this.automationActionsUrl, this.automationExecUrl, this.veraServerUrl, this.indigoServerUrl, this.indigo2ServerUrl, this.fibaroServerUrl, this.sonosActionsUrl, this.mediaPlayHelper);
-    this.automationServer.setReadyCallback(this.automationServerReadyCb);
     this.tabletConfigServer = new TabletConfig(this.tabletConfigUrl, this.defaultTabletName);
     this.tabletConfigServer.setReadyCallback(this.tabletConfigReadyCb);
+    this.automationManager = new AutomationManager(this, this.automationManagerReadyCb);
     this.calendarServer = new CalendarServer(this, this.calendarNumDays);
-    this.appPages = new AppPages(this, "#sqWrapper", this.automationServer.executeCommand);
+    this.appPages = new AppPages(this, "#sqWrapper", this.automationManager.executeCommand);
     $(window).on('orientationchange', (function(_this) {
       return function() {
         return _this.buildAndDisplayUI();
@@ -58,75 +48,31 @@ WallTabApp = (function() {
         return _this.checkEventLogs();
       };
     })(this), this.minsBetweenEventLogChecks * 60 * 1000);
-    this.requestActionAndConfigData();
+    this.requestConfigData();
     setInterval((function(_this) {
       return function() {
-        return _this.requestActionAndConfigData();
+        return _this.requestConfigData();
       };
     })(this), this.hoursBetweenActionUpdates * 60 * 60 * 1000);
   };
 
-  WallTabApp.prototype.requestActionAndConfigData = function() {
-    this.automationServer.getActionGroups();
+  WallTabApp.prototype.requestConfigData = function() {
     return this.tabletConfigServer.requestConfig();
   };
 
-  WallTabApp.prototype.buildAndDisplayUI = function() {
-    this.appPages.build(this.automationActionGroups);
-    return this.appPages.display();
-  };
-
   WallTabApp.prototype.tabletConfigReadyCb = function() {
-    return this.buildAndDisplayUI();
+    return this.automationManager.requestUpdate(this.tabletConfigServer.getConfigData());
   };
 
-  WallTabApp.prototype.automationServerReadyCb = function(actions, serverType) {
-    if (this.checkActionGroupsChanged(this.automationActionGroups, actions)) {
-      this.automationActionGroups = actions;
-      this.buildAndDisplayUI();
+  WallTabApp.prototype.automationManagerReadyCb = function(hasChanged) {
+    if (hasChanged) {
+      return this.buildAndDisplayUI();
     }
   };
 
-  WallTabApp.prototype.checkActionGroupsChanged = function(oldActionMap, newActionMap) {
-    var newActions, oldActions, servType;
-    if (Object.keys(oldActionMap).length !== Object.keys(newActionMap).length) {
-      return true;
-    }
-    for (servType in oldActionMap) {
-      oldActions = oldActionMap[servType];
-      if (!(servType in newActionMap)) {
-        return true;
-      }
-      newActions = newActionMap[servType];
-      if (this.checkActionsForServer(oldActions, newActions)) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  WallTabApp.prototype.checkActionsForServer = function(oldActions, newActions) {
-    var j, k, newAction, oldAction, v, _i, _len;
-    if (oldActions.length !== newActions.length) {
-      return true;
-    }
-    for (j = _i = 0, _len = oldActions.length; _i < _len; j = ++_i) {
-      oldAction = oldActions[j];
-      newAction = newActions[j];
-      if (Object.keys(oldAction).length !== Object.keys(newAction).length) {
-        return true;
-      }
-      for (k in oldAction) {
-        v = oldAction[k];
-        if (!k in newAction) {
-          return true;
-        }
-        if (v !== newAction[k]) {
-          return true;
-        }
-      }
-    }
-    return false;
+  WallTabApp.prototype.buildAndDisplayUI = function() {
+    this.appPages.build(this.automationManager.getActionGroups());
+    return this.appPages.display();
   };
 
   WallTabApp.prototype.actionOnUserIdle = function() {

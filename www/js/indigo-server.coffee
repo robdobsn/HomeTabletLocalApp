@@ -1,6 +1,6 @@
 class IndigoServer
-	constructor: (@serverURL) ->
-		@ACTIONS_URI = @serverURL + "/actions.json"
+	constructor: (@manager, @serverDef, @dataReadyCallback) ->
+		@ACTIONS_URI = @serverDef.url + "/actions.json"
 		@numRefreshFailuresSinceSuccess = 0
 		@firstRefreshAfterFailSecs = 10
 		@nextRefreshesAfterFailSecs = 60
@@ -9,7 +9,7 @@ class IndigoServer
 	setReadyCallback: (@dataReadyCallback) ->
 		return
 
-	getActionGroups: ->
+	reqActions: ->
 		console.log "Requesting Indigo data from " + @ACTIONS_URI
 		$.ajax @ACTIONS_URI,
 			type: "GET"
@@ -41,7 +41,7 @@ class IndigoServer
 	processRecvdActions: (data) ->
 		@scenes = @getScenes(data)
 		@scenes.sort @sortByRoomName
-		@dataReadyCallback(@scenes)
+		@dataReadyCallback(@serverDef.name, @scenes)
 
 	sortByRoomName: (a, b) ->
 		if a.groupName < b.groupName then return -1
@@ -61,7 +61,7 @@ class IndigoServer
 				actionNum: ""
 				actionName: roomName + " " + actionName
 				groupName: roomName
-				actionUrl: @serverURL + "/actions/" + indigoScene.nameURLEncoded + "?_method=execute"
+				actionUrl: @serverDef.url + "/actions/" + indigoScene.nameURLEncoded + "?_method=execute"
 			scenes.push(scene)
 		return scenes
 
@@ -85,9 +85,9 @@ class IndigoServer
 					pos = respText.search matchRe
 					if pos is -1 then break
 					respText = respText.substring(pos+action[0].length)
-					actionDict = { actionNum: "", actionName: action[2], groupName: "", actionUrl: @serverURL + action[1] + "?_method=execute" }
+					actionDict = { actionNum: "", actionName: action[2], groupName: "", actionUrl: @serverDef.url + action[1] + "?_method=execute" }
 					actions[actions.length] = actionDict
 					console.log "Adding action " + JSON.stringify(actionDict)
-				@dataReadyCallback(actions)
+				@dataReadyCallback(@serverDef.name, actions)
 		return
 

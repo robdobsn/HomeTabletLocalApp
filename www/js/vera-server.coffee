@@ -1,10 +1,10 @@
 class VeraServer
-	constructor: (@serverURL) ->
-		@ACTIONS_URI = @serverURL + "/data_request?id=user_data2&output_format=xml"
+	constructor: (@manager, @serverDef, @veraReadyCallback) ->
+		@ACTIONS_URI = @serverDef.url + "/data_request?id=user_data2&output_format=xml"
 
 	setReadyCallback: (@veraReadyCallback) ->
 
-	getActionGroups: ->
+	reqActions: ->
 		$.ajax @ACTIONS_URI,
 			type: "GET"
 			dataType: "xml"
@@ -13,7 +13,7 @@ class VeraServer
 				@rooms = @getRooms(jqXHR.responseText)
 				@scenes = @getScenes(jqXHR.responseText, @rooms)
 				@scenes.sort @sortByRoomName
-				@veraReadyCallback(@scenes)
+				@veraReadyCallback(@serverDef.name, @scenes)
 
 	sortByRoomName: (a, b) ->
 		if a.groupName < b.groupName then return -1
@@ -55,7 +55,7 @@ class VeraServer
 		room = ""
 		if grp3[1] of rooms
 			room = rooms[grp3[1]]
-		sceneCmd = @serverURL + "/data_request?id=lu_action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1&action=RunScene&SceneNum=" + grp2[1]
+		sceneCmd = @serverDef.url + "/data_request?id=lu_action&serviceId=urn:micasaverde-com:serviceId:HomeAutomationGateway1&action=RunScene&SceneNum=" + grp2[1]
 		scenes[scenes.length] = { actionNum: grp2[1], actionName: grp1[1], groupName: room, actionUrl: sceneCmd }
 		# console.log(grp2[1] + " " + grp1[1] + " " + room + " " + sceneCmd)
 

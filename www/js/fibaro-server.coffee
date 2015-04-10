@@ -1,13 +1,13 @@
 class FibaroServer
-	constructor: (@serverURL) ->
-		@ROOMS_URL = @serverURL + "/api/rooms"
-		@SCENES_URL = @serverURL + "/api/scenes"
+	constructor: (@manager, @serverDef, @dataReadyCallback) ->
+		@ROOMS_URL = @serverDef.url + "/api/rooms"
+		@SCENES_URL = @serverDef.url + "/api/scenes"
 		return
 
 	setReadyCallback: (@dataReadyCallback) ->
 		return
 		
-	getActionGroups: ->
+	reqActions: ->
 		# xmlhttp = new XMLHttpRequest()
 		# xmlhttp.onreadystatechange = () =>
 		# 	if xmlhttp.readyState == 4
@@ -47,7 +47,7 @@ class FibaroServer
 					success: (data, textStatus, jqXHR) =>
 						@scenes = @getScenes(data, @rooms)
 						@scenes.sort @sortByRoomName
-						@dataReadyCallback(@scenes)
+						@dataReadyCallback(@serverDef.name, @scenes)
 						console.log "Fibaro data = " + JSON.stringify(@scenes)
 						return
 				return
@@ -73,7 +73,7 @@ class FibaroServer
 				if not (("id" of room) and ("name" of room))
 					continue
 				if room.id is fibaroScene.roomID
-					sceneCmd = @serverURL + "/api/sceneControl?id=" + fibaroScene.id + "&action=start"
+					sceneCmd = @serverDef.url + "/api/sceneControl?id=" + fibaroScene.id + "&action=start"
 					scene = { actionNum: fibaroScene.id, actionName: fibaroScene.name, groupName: room.name, actionUrl: sceneCmd }
 					scenes.push(scene)
 					break

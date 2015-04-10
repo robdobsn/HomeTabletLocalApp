@@ -4,6 +4,11 @@ class AppPages
 		@generatedPage = {}
 		@defaultPageName = ""
 		@curTabPage = null
+		# Basic body for DOM
+		$("body").prepend """
+			<div id="sqWrapper">
+			</div>
+			"""
 
 	userIsIdle: ->
 		if @curPageDef.pageName isnt @defaultPageName
@@ -280,16 +285,16 @@ class AppPages
 		@app.tabletConfigServer.deleteFavouriteButton(context)
 		@rebuild(false)
 
-    # addTileToTierGroup: (tileDef, tile) ->
-    #     tierName = tileDef.tierName
-    #     groupName = tileDef.groupName
-    #     groupPriority = if "groupPriority" of tileDef then tileDef.groupPriority else 5
-    #     tierIdx = @tileTiers.findTierIdx(tierName)
-    #     if tierIdx < 0 then tierIdx = @tileTiers.findTierIdx("actionsTier")
-    #     if tierIdx < 0 then return
-    #     if groupName is "" then groupName = "Lights"
-    #     groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupName, groupPriority)
-    #     #groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
-    #     #if groupIdx < 0 then return
-    #     @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
-    #     return
+	# addTileToTierGroup: (tileDef, tile) ->
+	#     tierName = tileDef.tierName
+	#     groupName = tileDef.groupName
+	#     groupPriority = if "groupPriority" of tileDef then tileDef.groupPriority else 5
+	#     tierIdx = @tileTiers.findTierIdx(tierName)
+	#     if tierIdx < 0 then tierIdx = @tileTiers.findTierIdx("actionsTier")
+	#     if tierIdx < 0 then return
+	#     if groupName is "" then groupName = "Lights"
+	#     groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupName, groupPriority)
+	#     #groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
+	#     #if groupIdx < 0 then return
+	#     @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
+	#     return
