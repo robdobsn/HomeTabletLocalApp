@@ -83,8 +83,8 @@ CalendarTile = (function(_super) {
     return s.substr(s.length - digits);
   };
 
-  CalendarTile.prototype.reposition = function(posX, posY, sizeX, sizeY, fontScaling) {
-    CalendarTile.__super__.reposition.call(this, posX, posY, sizeX, sizeY, fontScaling);
+  CalendarTile.prototype.reposition = function(posX, posY, sizeX, sizeY) {
+    CalendarTile.__super__.reposition.call(this, posX, posY, sizeX, sizeY);
     this.recalculateFontScaling();
   };
 

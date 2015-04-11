@@ -8,13 +8,17 @@ SceneButton = (function(_super) {
 
   function SceneButton(tileDef) {
     SceneButton.__super__.constructor.call(this, tileDef);
+    this.buttonMarginX = 10;
+    this.iconSize = [0, 0];
+    this.fontPixels = 40;
+    this.iconCellWidth = 80;
     return;
   }
 
   SceneButton.prototype.addToDoc = function(elemToAddTo) {
     var iconName;
     SceneButton.__super__.addToDoc.call(this);
-    this.contents.append("<div class=\"sqSceneButtonIcon\" style=\"position:absolute\"></div>\n<div class=\"sqSceneButtonText\" style=\"position:absolute\"></div>");
+    this.contents.append("<div class=\"sqSceneButtonIcon\" style=\"position:absolute\"></div>\n<div class=\"sqSceneButtonText\" style=\"position:absolute; font-size: " + this.fontPixels + "px;\"></div>");
     iconName = this.tileDef.iconName;
     if (iconName === null) {
       iconName = "";
@@ -23,22 +27,73 @@ SceneButton = (function(_super) {
     this.setText(this.tileDef.tileText);
   };
 
-  SceneButton.prototype.reposition = function(posX, posY, sizeX, sizeY, fontScaling) {
-    var iconHeight, iconSel, iconWidth, iconX, textSel, txtHeight;
+  SceneButton.prototype.reposition = function(posX, posY, sizeX, sizeY) {
+    var fontScaling, iconHeight, iconSel, iconWidth, iconX, textLeftX, textSel, txtCellWidth, txtHeight, txtWidth;
     this.posX = posX;
     this.posY = posY;
     this.sizeX = sizeX;
     this.sizeY = sizeY;
-    this.fontScaling = fontScaling;
-    SceneButton.__super__.reposition.call(this, posX, posY, sizeX, sizeY, fontScaling);
+    SceneButton.__super__.reposition.call(this, posX, posY, sizeX, sizeY);
     iconSel = '#' + this.tileId + " .sqSceneButtonIcon";
-    iconHeight = this.sizeY / 2;
-    iconWidth = iconHeight * this.iconSize[0] / this.iconSize[1];
-    iconX = this.tileDef.iconX === "centre" ? (this.sizeX - iconWidth) / 2 : this.buttonMarginX;
-    this.setPositionCss(iconSel, iconX, (this.sizeY - iconHeight) / 2, iconWidth, iconHeight);
     textSel = '#' + this.tileId + " .sqSceneButtonText";
-    txtHeight = $(textSel).height();
-    this.setPositionCss(textSel, iconX + this.buttonMarginX + iconWidth, (this.sizeY - txtHeight) / 2, this.sizeX - iconWidth - 2 * this.buttonMarginX);
+    if (this.iconSize[0] !== 0) {
+      iconHeight = this.sizeY / 2;
+      iconWidth = iconHeight * this.iconSize[0] / this.iconSize[1];
+      if (this.tileDef.iconX === "centre") {
+        iconX = (this.sizeX - iconWidth) / 2;
+        this.setPositionCss(iconSel, iconX, (this.sizeY - iconHeight) / 2, iconWidth, iconHeight);
+      } else {
+        iconX = (this.iconCellWidth - iconWidth) / 2;
+        this.setPositionCss(iconSel, iconX, (this.sizeY - iconHeight) / 2, iconWidth, iconHeight);
+        txtHeight = $(textSel).height();
+        textLeftX = this.iconCellWidth;
+        this.setPositionCss(textSel, textLeftX, (this.sizeY - txtHeight) / 2);
+        txtWidth = $(textSel).width();
+        txtCellWidth = sizeX - textLeftX - this.buttonMarginX;
+        if (txtWidth > txtCellWidth) {
+          fontScaling = txtCellWidth / txtWidth;
+          $(textSel).css({
+            fontSize: (fontScaling * this.fontPixels) + "px"
+          });
+        }
+        txtHeight = $(textSel).height();
+        this.setPositionCss(textSel, textLeftX, (this.sizeY - txtHeight) / 2);
+      }
+    } else {
+      txtHeight = $(textSel).height();
+      $(textSel).css({
+        textAlign: "center"
+      });
+      this.setPositionCss(textSel, 0, (this.sizeY - txtHeight) / 2);
+      txtWidth = $(textSel).width();
+      txtCellWidth = sizeX - this.buttonMarginX * 2;
+      if (txtWidth > txtCellWidth) {
+        fontScaling = txtCellWidth / txtWidth;
+        $(textSel).css({
+          fontSize: (fontScaling * this.fontPixels) + "px"
+        });
+      }
+      txtWidth = $(textSel).width();
+      txtHeight = $(textSel).height();
+      this.setPositionCss(textSel, (this.sizeX - txtWidth) / 2, (this.sizeY - txtHeight) / 2);
+    }
+  };
+
+  SceneButton.prototype.setIcon = function(iconName) {
+    var iconUrl, testImage;
+    if (iconName === "") {
+      return;
+    }
+    iconUrl = 'img/' + iconName + '.png';
+    $('#' + this.tileId + " .sqSceneButtonIcon").html("<img src=" + iconUrl + " style='height:100%'></img>");
+    testImage = new Image();
+    testImage.src = iconUrl;
+    this.iconSize = [testImage.width, testImage.height];
+  };
+
+  SceneButton.prototype.setText = function(textStr) {
+    this.textStr = textStr;
+    $('#' + this.tileId + " .sqSceneButtonText").html(textStr);
   };
 
   return SceneButton;

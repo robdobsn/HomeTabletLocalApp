@@ -10,17 +10,42 @@ class Clock extends Tile
 	addToDoc: () ->
 		super()
 		@contents.append """
-			<div class="sqClockDow"></div>
-			<div class="sqClockDayMonthYear"></div>
-			<ul class="sqClockTime">
-				<li class="sqClockHours">4</li> 
-				<li class="sqClockPoint1">:</li> 
-				<li class="sqClockMins"></li> 
-				<li class="sqClockPoint2">:</li> 
-				<li class="sqClockSecs"></li>
-			</ul>
+			<div class="sqClockDow" style="text-align:center"></div>
+			<div class="sqClockDayMonthYear" style="text-align:center"></div>
+			<div class="sqClockTime" style="display:block;text-align:center">
+				<span class="sqClockHours" style="padding:5px"></span>
+				<span class="sqClockMins"></span>
+				<span class="sqClockSecs" style="display:inline;font-size:20%;position:absolute;"></span>
+			</div>
+			<span class="sqClockPoint1" 
+					style="position:absolute;
+					       -moz-animation: mymove 1s ease infinite;
+					       -webkit-animation: mymove 1s ease infinite;">:
+			</span> 
 			"""
 		@setRefreshInterval(1, @updateClock, false)
+		return
+
+	reposition: (@posX, @posY, @sizeX, @sizeY) ->
+		super(posX, posY, sizeX, sizeY)
+		timePos = (@sizeY / 3)
+		$('#'+@tileId+" .sqClockDayMonthYear").css
+			position: "absolute"
+			fontSize: (@sizeY/5.5) + "px"
+			top: (@sizeY / 10) + "px"
+			width: "100%"
+		$('#'+@tileId+" .sqClockTime").css
+			position: "absolute"
+			fontSize: (@sizeY/1.8) + "px"	
+			top: timePos + "px"
+			left: "-7px"
+			width: "100%"
+		timeTextHeight = $('#'+@tileId+" .sqClockTime").height()
+		$('#'+@tileId+" .sqClockPoint1").css
+			position: "absolute"
+			left: (@sizeX/2-5) + "px"
+			top: (timePos + (timeTextHeight/5)) + "px"
+			fontSize: (@sizeY/3) + "px"				
 		return
 
 	updateClock: () ->
@@ -30,4 +55,3 @@ class Clock extends Tile
 		$('#'+@tileId+" .sqClockMins").html (if dt.getMinutes() < 10 then "0" else "") + dt.getMinutes()
 		$('#'+@tileId+" .sqClockSecs").html (if dt.getSeconds() < 10 then "0" else "") + dt.getSeconds()
 		return
-

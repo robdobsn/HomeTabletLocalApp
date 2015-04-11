@@ -4,9 +4,6 @@ var Tile;
 Tile = (function() {
   function Tile(tileDef) {
     this.tileDef = tileDef;
-    this.contentFontScaling = 1;
-    this.buttonMarginX = 10;
-    this.iconSize = [0, 0];
     return;
   }
 
@@ -46,16 +43,15 @@ Tile = (function() {
     this.tileIdx = tileIdx;
   };
 
-  Tile.prototype.reposition = function(posX, posY, sizeX, sizeY, fontScaling) {
+  Tile.prototype.reposition = function(posX, posY, sizeX, sizeY) {
     this.posX = posX;
     this.posY = posY;
     this.sizeX = sizeX;
     this.sizeY = sizeY;
-    this.fontScaling = fontScaling;
     this.setPositionCss('#' + this.tileId, this.posX, this.posY, this.sizeX, this.sizeY);
   };
 
-  Tile.prototype.setPositionCss = function(selector, posX, posY, sizeX, sizeY, fontScaling) {
+  Tile.prototype.setPositionCss = function(selector, posX, posY, sizeX, sizeY) {
     var css;
     css = {
       "margin-left": posX + "px",
@@ -67,17 +63,7 @@ Tile = (function() {
     if (sizeY != null) {
       css["height"] = sizeY + "px";
     }
-    if (fontScaling != null) {
-      css["font-size"] = (fontScaling * this.contentFontScaling) + "%";
-    }
     $(selector).css(css);
-  };
-
-  Tile.prototype.setContentFontScaling = function(contentFontScaling) {
-    var textSel;
-    this.contentFontScaling = contentFontScaling;
-    textSel = '#' + this.tileId + " .sqSceneButtonText";
-    this.setPositionCss(textSel, this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
   };
 
   Tile.prototype.getElement = function(element) {
@@ -113,23 +99,6 @@ Tile = (function() {
         return _this.callbackFn();
       };
     })(this), intervalInSecs * 1000);
-  };
-
-  Tile.prototype.setIcon = function(iconName) {
-    var iconUrl, testImage;
-    if (iconName === "") {
-      return;
-    }
-    iconUrl = 'img/' + iconName + '.png';
-    $('#' + this.tileId + " .sqSceneButtonIcon").html("<img src=" + iconUrl + " style='height:100%'></img>");
-    testImage = new Image();
-    testImage.src = iconUrl;
-    this.iconSize = [testImage.width, testImage.height];
-  };
-
-  Tile.prototype.setText = function(textStr) {
-    this.textStr = textStr;
-    $('#' + this.tileId + " .sqSceneButtonText").html(textStr);
   };
 
   return Tile;

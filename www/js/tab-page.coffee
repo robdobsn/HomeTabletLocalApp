@@ -58,8 +58,8 @@ class TabPage
 			for tileDef in @pageDef.tiles
 				newTile = @makeTileFromTileDef(tileDef)
 				tile = @addTileToPage(tileDef, newTile)
-				[x,y,fontScale, sizeX, sizeY] = @getCellPos(tile)
-				tile.reposition(x,y,sizeX,sizeY,fontScale)
+				[x,y,sizeX, sizeY] = @getCellPos(tile)
+				tile.reposition(x,y,sizeX,sizeY)
 		return
 			
 	removeAll: ->
@@ -189,9 +189,6 @@ class TabPage
 			cellXIdx += if @columnsDef? then @columnsDef[i].colSpan
 		return xStart + cellXIdx * @cellWidth
 
-	calcFontSizePercent: ->
-		100 * Math.max(@cellWidth, @cellHeight) / 300
-
 	getTitlePos: () ->
 		return [0, 10, "200%"]
 
@@ -228,11 +225,10 @@ class TabPage
 		# Column position
 		cellX = @getColXPos(colIdx)
 		cellY = @pageBorders[0] + (if @noTitles then 0 else @titlesTopMargin) + rowIdx * @cellHeight
-		fontScaling = @calcFontSizePercent()
 		# Size of tile in pixels		
 		sizeX = @tileWidth * colSpan + (@tileSepXPixels * (colSpan-1))
 		sizeY = @tileHeight * rowSpan + (@tileSepYPixels * (rowSpan-1))
-		return [cellX, cellY, fontScaling, sizeX, sizeY]
+		return [cellX, cellY, sizeX, sizeY]
 
 	reDoLayout: ->
 		return @calcLayout()
@@ -240,12 +236,12 @@ class TabPage
 	getTilesAcrossScreen: ->
 		return @tilesAcross
 
-	setTitlePositionCss: (colIdx, posX, posY, fontScaling) ->
+	setTitlePositionCss: (colIdx, posX, posY) ->
 		$('.' + @colTitleClass + "_" + colIdx).css {
 			"margin-left": posX + "px", 
 			"margin-top": posY + "px",
-			"font-size": fontScaling + "%",
 			"display": "block",
 			"position": "absolute"
 			}
+			# "font-size": fontScaling + "%",
 		return

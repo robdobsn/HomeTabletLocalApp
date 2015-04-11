@@ -1,8 +1,5 @@
 class Tile
 	constructor: (@tileDef) ->
-		@contentFontScaling = 1
-		@buttonMarginX = 10
-		@iconSize = [0,0]
 		return
 
 	handleAction: (action) ->
@@ -39,24 +36,18 @@ class Tile
 
 	setTileIndex: (@tileIdx) ->
 
-	reposition: (@posX, @posY, @sizeX, @sizeY, @fontScaling) ->
+	reposition: (@posX, @posY, @sizeX, @sizeY) ->
 		@setPositionCss('#'+@tileId, @posX, @posY, @sizeX, @sizeY)
 		return
 
-	setPositionCss: (selector, posX, posY, sizeX, sizeY, fontScaling) ->
+	setPositionCss: (selector, posX, posY, sizeX, sizeY) ->
 		css = {
 			"margin-left": posX + "px", 
 			"margin-top": posY + "px"
 		}
 		if sizeX? then css["width"] = sizeX + "px"
 		if sizeY? then css["height"] = sizeY + "px"
-		if fontScaling? then css["font-size"] = (fontScaling * @contentFontScaling) + "%"
 		$(selector).css(css)
-		return
-
-	setContentFontScaling: (@contentFontScaling) ->
-		textSel = '#'+@tileId + " .sqSceneButtonText"
-		@setPositionCss(textSel, @posX, @posY, @sizeX, @sizeY, @fontScaling)
 		return
 
 	getElement: (element) ->
@@ -80,20 +71,4 @@ class Tile
 		@refreshId = setInterval =>
 			@callbackFn()
 		, intervalInSecs * 1000
-		return
-
-	setIcon: (iconName) ->
-		if iconName is ""
-			return
-		iconUrl = 'img/' + iconName + '.png'
-		$('#'+@tileId+" .sqSceneButtonIcon").html("<img src=#{iconUrl} style='height:100%'></img>")
-
-		# Create new offscreen image get size from
-		testImage = new Image()
-		testImage.src = iconUrl
-		@iconSize = [testImage.width, testImage.height]
-		return
-
-	setText: (@textStr) ->
-		$('#'+@tileId+" .sqSceneButtonText").html textStr
 		return

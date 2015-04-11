@@ -81,8 +81,8 @@ class CalendarTile extends Tile
 		return s.substr(s.length-digits)
 
 	# Override reposition to handle font scaling
-	reposition: (posX, posY, sizeX, sizeY, fontScaling) ->
-		super(posX, posY, sizeX, sizeY, fontScaling)
+	reposition: (posX, posY, sizeX, sizeY) ->
+		super(posX, posY, sizeX, sizeY)
 		@recalculateFontScaling()
 		return
 

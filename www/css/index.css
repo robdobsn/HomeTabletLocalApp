@@ -25,10 +25,10 @@ html {
   background-color: #000000;
   width: auto;
 }
-html {
+/*html {
   background: #45484d;
 }
-body {
+*/body {
   /*    position:static;
 */
   margin: 0;
@@ -93,13 +93,7 @@ body {
   -ms-user-select: none;
   user-select: none;
 }
-.sqClockDow {}
-.sqClockDayMonthYear {
-  text-align: center;
-  font-size: 300%;
-  margin-top: 25px; 
-}
-ul.sqClockTime {
+/*ul.sqClockTime {
   margin: 0 auto;
   padding: 0px;
   list-style: none;
@@ -107,11 +101,10 @@ ul.sqClockTime {
 }
 ul.sqClockTime li {
   display: inline;
-  font-size: 1000%;
 }
 ul.sqClockTime li.sqClockSecs {
   display: inline;
-  font-size: 250%;
+  font-size: 20%;
   position: absolute;
 }
 ul.sqClockTime li.sqClockPoint1,
@@ -121,10 +114,9 @@ ul.sqClockTime li.sqClockPoint2 {
   -webkit-animation: mymove 1s ease infinite;
 }
 ul.sqClockTime li.sqClockPoint2 {
-  font-size: 200%;
   display: none;
 }
-ul.sqCalEvents {
+*/ul.sqCalEvents {
   font-family: Verdana, Tahoma, Helvetica, sans-serif;
   margin: 0 auto 10px 10px;
   padding: 0px;
@@ -179,7 +171,6 @@ ul.sqCalEvents {
 */
 }
 .sqSceneButtonText {
-  font-size: 250%;
   display: inline;
   position: absolute;
 /*  margin-top: 0.2em;

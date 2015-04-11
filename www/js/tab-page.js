@@ -43,7 +43,7 @@ TabPage = (function() {
   };
 
   TabPage.prototype.updateDom = function() {
-    var col, colIdx, colXPos, fontScale, newTile, sizeX, sizeY, tile, tileDef, title, x, y, _i, _j, _len, _len1, _ref, _ref1, _ref2;
+    var col, colIdx, colXPos, newTile, sizeX, sizeY, tile, tileDef, title, x, y, _i, _j, _len, _len1, _ref, _ref1, _ref2;
     this.calcLayout();
     this.removeAll();
     $(this.parentTag).html("<div id=\"" + this.pageId + "\" class=\"sqPage\">\n	<div class=\"" + this.pageTitleClass + "\"/>\n	<div class=\"" + this.tilesClass + "\" style=\"height:100%;width:100%\">\n		<div class=" + this.tileContainerClass + " style=\"width:100%;display:block;zoom:1;\">\n		</div>\n	</div>\n</div>");
@@ -65,8 +65,8 @@ TabPage = (function() {
         tileDef = _ref1[_j];
         newTile = this.makeTileFromTileDef(tileDef);
         tile = this.addTileToPage(tileDef, newTile);
-        _ref2 = this.getCellPos(tile), x = _ref2[0], y = _ref2[1], fontScale = _ref2[2], sizeX = _ref2[3], sizeY = _ref2[4];
-        tile.reposition(x, y, sizeX, sizeY, fontScale);
+        _ref2 = this.getCellPos(tile), x = _ref2[0], y = _ref2[1], sizeX = _ref2[2], sizeY = _ref2[3];
+        tile.reposition(x, y, sizeX, sizeY);
       }
     }
   };
@@ -231,10 +231,6 @@ TabPage = (function() {
     return xStart + cellXIdx * this.cellWidth;
   };
 
-  TabPage.prototype.calcFontSizePercent = function() {
-    return 100 * Math.max(this.cellWidth, this.cellHeight) / 300;
-  };
-
   TabPage.prototype.getTitlePos = function() {
     return [0, 10, "200%"];
   };
@@ -246,7 +242,7 @@ TabPage = (function() {
   TabPage.prototype.getColInfo = function(tile) {};
 
   TabPage.prototype.getCellPos = function(tile) {
-    var cellX, cellY, colIdx, colInfo, colSpan, colType, fontScaling, rowIdx, rowSpan, sizeX, sizeY;
+    var cellX, cellY, colIdx, colInfo, colSpan, colType, rowIdx, rowSpan, sizeX, sizeY;
     colType = tile.tileDef.colType != null ? tile.tileDef.colType : "";
     if (colType in this.columnTypes) {
       colInfo = this.columnTypes[colType];
@@ -274,10 +270,9 @@ TabPage = (function() {
     }
     cellX = this.getColXPos(colIdx);
     cellY = this.pageBorders[0] + (this.noTitles ? 0 : this.titlesTopMargin) + rowIdx * this.cellHeight;
-    fontScaling = this.calcFontSizePercent();
     sizeX = this.tileWidth * colSpan + (this.tileSepXPixels * (colSpan - 1));
     sizeY = this.tileHeight * rowSpan + (this.tileSepYPixels * (rowSpan - 1));
-    return [cellX, cellY, fontScaling, sizeX, sizeY];
+    return [cellX, cellY, sizeX, sizeY];
   };
 
   TabPage.prototype.reDoLayout = function() {
@@ -288,11 +283,10 @@ TabPage = (function() {
     return this.tilesAcross;
   };
 
-  TabPage.prototype.setTitlePositionCss = function(colIdx, posX, posY, fontScaling) {
+  TabPage.prototype.setTitlePositionCss = function(colIdx, posX, posY) {
     $('.' + this.colTitleClass + "_" + colIdx).css({
       "margin-left": posX + "px",
       "margin-top": posY + "px",
-      "font-size": fontScaling + "%",
       "display": "block",
       "position": "absolute"
     });
