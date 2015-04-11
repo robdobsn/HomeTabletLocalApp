@@ -6,24 +6,24 @@ class SceneButton extends Tile
 	addToDoc: (elemToAddTo) ->
 		super()
 		@contents.append """
-			<div class="sqSceneButtonIcon"></div>
-			<div class="sqSceneButtonText"></div>
+			<div class="sqSceneButtonIcon" style="position:absolute"></div>
+			<div class="sqSceneButtonText" style="position:absolute"></div>
 			"""
 		iconName = @tileDef.iconName
 		if iconName is null
 			iconName = ""
-		 	# if @buttonText.toLowerCase().indexOf(" off") >= 0
-		# 		iconName = "bulb-off"
-		# 	else if @buttonText.toLowerCase().indexOf("nighttime") >= 0
-		# 		iconName = "bulb-off"
-		# 	else if @buttonText.toLowerCase().indexOf(" on") >= 0
-		# 		iconName = "bulb-on"
-		# 	else if @buttonText.toLowerCase().indexOf(" mood") >= 0
-		# 		iconName = "bulb-mood"
-		# 	else
-		# 		iconName = "bulb-on"
-		# @buttonText = @buttonText.replace(" Lights", "")
-		# @buttonText = @buttonText.replace(" Light", "")
 		@setIcon(iconName)
 		@setText(@tileDef.tileText)
+		return
+
+	reposition: (@posX, @posY, @sizeX, @sizeY, @fontScaling) ->
+		super(posX, posY, sizeX, sizeY, fontScaling)
+		iconSel = '#'+@tileId + " .sqSceneButtonIcon"
+		iconHeight = @sizeY / 2
+		iconWidth = iconHeight * @iconSize[0] / @iconSize[1]
+		iconX = if @tileDef.iconX is "centre" then (@sizeX-iconWidth)/2 else @buttonMarginX
+		@setPositionCss(iconSel, iconX, (@sizeY-iconHeight)/2, iconWidth, iconHeight)
+		textSel = '#'+@tileId + " .sqSceneButtonText"
+		txtHeight = $(textSel).height()
+		@setPositionCss(textSel, iconX + @buttonMarginX + iconWidth, (@sizeY-txtHeight)/2, @sizeX-iconWidth-2*@buttonMarginX)
 		return

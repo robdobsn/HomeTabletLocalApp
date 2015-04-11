@@ -1,12 +1,13 @@
 class Tile
 	constructor: (@tileDef) ->
 		@contentFontScaling = 1
-		@buttonTextX = 10
+		@buttonMarginX = 10
+		@iconSize = [0,0]
 		return
 
 	handleAction: (action) ->
 		console.log "Action = " + action
-		
+
 	addToDoc: ->
 		@tileId = "sqTile_" + @tileDef.tierIdx + "_" + @tileDef.groupIdx + "_" + @tileIdx
 		$(@tileDef.parentTag).append """
@@ -39,15 +40,7 @@ class Tile
 	setTileIndex: (@tileIdx) ->
 
 	reposition: (@posX, @posY, @sizeX, @sizeY, @fontScaling) ->
-		@setPositionCss('#'+@tileId, @posX, @posY, @sizeX, @sizeY, @fontScaling)
-		iconSel = '#'+@tileId + " .sqSceneButtonIcon img"
-		iconHeight = @sizeY / 2
-		@setPositionCss(iconSel, 10, (@sizeY-iconHeight)/2, null, iconHeight)
-		textSel = '#'+@tileId + " .sqSceneButtonText"
-		txtHeight = $(textSel).height()
-		@setPositionCss(textSel, @buttonTextX, (@sizeY-txtHeight)/2, @sizeX-iconHeight-10)
-		txtHeight2 = $(textSel).height()
-		@setPositionCss(textSel, @buttonTextX, (@sizeY-txtHeight2)/2)
+		@setPositionCss('#'+@tileId, @posX, @posY, @sizeX, @sizeY)
 		return
 
 	setPositionCss: (selector, posX, posY, sizeX, sizeY, fontScaling) ->
@@ -62,7 +55,8 @@ class Tile
 		return
 
 	setContentFontScaling: (@contentFontScaling) ->
-		@setPositionCss(@posX, @posY, @sizeX, @sizeY, @fontScaling)
+		textSel = '#'+@tileId + " .sqSceneButtonText"
+		@setPositionCss(textSel, @posX, @posY, @sizeX, @sizeY, @fontScaling)
 		return
 
 	getElement: (element) ->
@@ -92,8 +86,12 @@ class Tile
 		if iconName is ""
 			return
 		iconUrl = 'img/' + iconName + '.png'
-		if iconUrl isnt ""
-			$('#'+@tileId+" .sqSceneButtonIcon").html("<img src=#{iconUrl}></img>")
+		$('#'+@tileId+" .sqSceneButtonIcon").html("<img src=#{iconUrl} style='height:100%'></img>")
+
+		# Create new offscreen image get size from
+		testImage = new Image()
+		testImage.src = iconUrl
+		@iconSize = [testImage.width, testImage.height]
 		return
 
 	setText: (@textStr) ->

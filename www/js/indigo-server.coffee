@@ -62,6 +62,7 @@ class IndigoServer
 				actionName: roomName + " " + actionName
 				groupName: roomName
 				actionUrl: @serverDef.url + "/actions/" + indigoScene.nameURLEncoded + "?_method=execute"
+				iconName: @manager.getIconFromActionName(actionName, @serverDef.iconAliasing)
 			scenes.push(scene)
 		return scenes
 

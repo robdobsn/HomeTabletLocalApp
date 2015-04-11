@@ -81,7 +81,8 @@ IndigoServer = (function() {
         actionNum: "",
         actionName: roomName + " " + actionName,
         groupName: roomName,
-        actionUrl: this.serverDef.url + "/actions/" + indigoScene.nameURLEncoded + "?_method=execute"
+        actionUrl: this.serverDef.url + "/actions/" + indigoScene.nameURLEncoded + "?_method=execute",
+        iconName: this.manager.getIconFromActionName(actionName, this.serverDef.iconAliasing)
       };
       scenes.push(scene);
     }

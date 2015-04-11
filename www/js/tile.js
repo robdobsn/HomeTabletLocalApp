@@ -5,7 +5,8 @@ Tile = (function() {
   function Tile(tileDef) {
     this.tileDef = tileDef;
     this.contentFontScaling = 1;
-    this.buttonTextX = 10;
+    this.buttonMarginX = 10;
+    this.iconSize = [0, 0];
     return;
   }
 
@@ -46,21 +47,12 @@ Tile = (function() {
   };
 
   Tile.prototype.reposition = function(posX, posY, sizeX, sizeY, fontScaling) {
-    var iconHeight, iconSel, textSel, txtHeight, txtHeight2;
     this.posX = posX;
     this.posY = posY;
     this.sizeX = sizeX;
     this.sizeY = sizeY;
     this.fontScaling = fontScaling;
-    this.setPositionCss('#' + this.tileId, this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
-    iconSel = '#' + this.tileId + " .sqSceneButtonIcon img";
-    iconHeight = this.sizeY / 2;
-    this.setPositionCss(iconSel, 10, (this.sizeY - iconHeight) / 2, null, iconHeight);
-    textSel = '#' + this.tileId + " .sqSceneButtonText";
-    txtHeight = $(textSel).height();
-    this.setPositionCss(textSel, this.buttonTextX, (this.sizeY - txtHeight) / 2, this.sizeX - iconHeight - 10);
-    txtHeight2 = $(textSel).height();
-    this.setPositionCss(textSel, this.buttonTextX, (this.sizeY - txtHeight2) / 2);
+    this.setPositionCss('#' + this.tileId, this.posX, this.posY, this.sizeX, this.sizeY);
   };
 
   Tile.prototype.setPositionCss = function(selector, posX, posY, sizeX, sizeY, fontScaling) {
@@ -82,8 +74,10 @@ Tile = (function() {
   };
 
   Tile.prototype.setContentFontScaling = function(contentFontScaling) {
+    var textSel;
     this.contentFontScaling = contentFontScaling;
-    this.setPositionCss(this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
+    textSel = '#' + this.tileId + " .sqSceneButtonText";
+    this.setPositionCss(textSel, this.posX, this.posY, this.sizeX, this.sizeY, this.fontScaling);
   };
 
   Tile.prototype.getElement = function(element) {
@@ -122,14 +116,15 @@ Tile = (function() {
   };
 
   Tile.prototype.setIcon = function(iconName) {
-    var iconUrl;
+    var iconUrl, testImage;
     if (iconName === "") {
       return;
     }
     iconUrl = 'img/' + iconName + '.png';
-    if (iconUrl !== "") {
-      $('#' + this.tileId + " .sqSceneButtonIcon").html("<img src=" + iconUrl + "></img>");
-    }
+    $('#' + this.tileId + " .sqSceneButtonIcon").html("<img src=" + iconUrl + " style='height:100%'></img>");
+    testImage = new Image();
+    testImage.src = iconUrl;
+    this.iconSize = [testImage.width, testImage.height];
   };
 
   Tile.prototype.setText = function(textStr) {
