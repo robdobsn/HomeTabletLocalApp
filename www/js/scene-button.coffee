@@ -1,6 +1,6 @@
 class SceneButton extends Tile
 	constructor: (tileDef) ->
-		super tileDef
+		super(tileDef)
 		@buttonMarginX = 10
 		@iconSize = [0,0]
 		@fontPixels = 40
@@ -8,7 +8,7 @@ class SceneButton extends Tile
 		return
 
 	addToDoc: (elemToAddTo) ->
-		super()
+		super(elemToAddTo)
 		@contents.append """
 			<div class="sqSceneButtonIcon" style="position:absolute"></div>
 			<div class="sqSceneButtonText" style="position:absolute; font-size: #{@fontPixels}px;"></div>
@@ -60,22 +60,7 @@ class SceneButton extends Tile
 			txtWidth = $(textSel).width()
 			txtHeight = $(textSel).height()
 			@setPositionCss(textSel, (@sizeX-txtWidth)/2, (@sizeY-txtHeight)/2)
-
-
-
-		# if fontScaling? then css["font-size"] = (fontScaling * @contentFontScaling) + "%"
-
 		return
-
-	# setContentFontScaling: (@contentFontScaling) ->
-	# 	textSel = '#'+@tileId + " .sqSceneButtonText"
-	# 	@setPositionCss(textSel, @posX, @posY, @sizeX, @sizeY, @fontScaling)
-	# 	return
-
-	# calcFontSizePercent: ->
-	# 	100 * Math.max(@cellWidth, @cellHeight) / 300
-
-
 
 	setIcon: (iconName) ->
 		if iconName is ""

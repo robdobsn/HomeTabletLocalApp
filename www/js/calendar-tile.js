@@ -19,7 +19,7 @@ CalendarTile = (function(_super) {
 
   CalendarTile.prototype.handleAction = function(action) {
     if (action === "next") {
-      if (this.calDayIndex < this.app.calendarServer.getCalNumDays()) {
+      if (this.calDayIndex < this.app.calendarManager.getCalNumDays()) {
         this.calDayIndex++;
       }
     } else if (action === "prev") {
@@ -37,7 +37,7 @@ CalendarTile = (function(_super) {
 
   CalendarTile.prototype.updateCalendar = function() {
     var calData;
-    calData = this.app.calendarServer.getCalData();
+    calData = this.app.calendarManager.getCalData();
     return this.showCalendar(calData);
   };
 

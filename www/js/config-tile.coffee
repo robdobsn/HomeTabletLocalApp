@@ -17,4 +17,14 @@ class ConfigTile extends Tile
 		@setText(buttonText)
 		return
 
-	
+	       #  <div id="tabnameform" style="display:none;">
+        #     <p>Tablet name</p>
+        #     <div class="formField">
+        #     Name: <input id="tabnamefield" name="tabnamefield" placeholder="Tablet Name" type="text">
+        #     </div>
+        #     <button id="tabnameok" 
+        #             href="javascript:void(0);" 
+        #             style="display:block; opacity:1;">
+        #         Ok
+        #     </button>
+        # </div>

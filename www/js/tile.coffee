@@ -16,7 +16,7 @@ class Tile
 			  </div>
 			</a>
 			"""
-		if @tileDef.clickFn?
+		if @tileDef.clickFn? and @tileDef.clickFn isnt ""
 			$("##{@tileId}").click =>
 				(@tileDef.clickFn) @tileDef
 		@contents = $("##{@tileId}>.sqInner")

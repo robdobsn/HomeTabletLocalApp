@@ -1,5 +1,5 @@
 class AppPages
-	constructor: (@app, @parentTag, @defaultActionFn) ->
+	constructor: (@app, @parentTag, @automationManager) ->
 		@curPageDef = { "pageName": "" }
 		@generatedPage = {}
 		@defaultPageName = ""
@@ -11,12 +11,20 @@ class AppPages
 			"""
 
 	userIsIdle: ->
+		# Check for auto-dim
+		autoDim = LocalStorage.get("AutoDim")
+		if autoDim? and autoDim
+			if @setCurrentPage("DimDisplay")
+				@display()
+				return
+		# Return to home page
 		if @curPageDef.pageName isnt @defaultPageName
 			@setCurrentPage(@defaultPageName)
 			@display()
+		return
 
 	setCurrentPage: (pageName, forceSet) ->
-		tabConfig = @app.tabletConfigServer.getConfigData()
+		tabConfig = @app.tabletConfigManager.getConfigData()
 		if tabConfig.common? and tabConfig.common.pages?
 			if pageName of tabConfig.common.pages
 				if forceSet or (@curPageDef.pageName isnt pageName)
@@ -29,108 +37,10 @@ class AppPages
 
 	build: (@automationActionGroups) ->
 		@rebuild(true)
-		# console.log JSON.stringify(tabletConfig.getConfigData())
-		# console.log JSON.stringify(automationActionGroups)
-
-		# @tabletConfig = 
-		# common:
-		# 	pages: 
-		# 		"Home":
-		# 			defaultPage: true
-		# 			pageName: "Home"
-		# 			pageTitle: "Home"
-		# 			columns: 
-		# 				landscape: [ 
-		# 					{ "title": "", "colSpan": 2 },
-		# 					{ "title": "", "colSpan": 2 },
-		# 					{ "title": "", "colSpan": 1, "colType": "nav" }
-		# 				]
-		# 				portrait: [ 
-		# 					{ "title": "", "colSpan": 2 },
-		# 					{ "title": "", "colSpan": 1, "colType": "nav" }
-		# 				]
-		# 			tilesFixed: [
-		# 				{ "tileType": "clock", "tileName": "Clock", "groupName": "Clock", "positionCue": "end", "rowSpan": 2, "colSpan": 2 },
-		# 				{ "tileType": "nav", "tileName": "Rooms", "colType":"nav", "iconName": "floorplan", "tileText": "Rooms", "url": "Rooms" }
-		# 				{ "tileType": "nav", "tileName": "Music", "colType":"nav", "iconName": "musicicon", "tileText": "Music" }
-		# 				{ "tileType": "nav", "tileName": "Calendar", "colType":"nav", "iconName": "calendar", "tileText": "Events", "url": "Calendar" }
-		# 				{ "tileType": "nav", "tileName": "Energy", "colType":"nav", "iconName": "energy", "tileText": "Energy" }
-		# 				{ "tileType": "nav", "tileName": "Settings", "colType":"nav", "iconName": "config", "tileText": "Settings" }
-		# 			]
-		# 			tileGen: [
-		# 				{ "tileFilterVal":"Grace", "tileNameSelect":"Grace Off", "tileType": "action", "tileSelect":"groupName", "tileMult": "all", "tileSort": "tileText", "tileNameFrom": "actionName", "tileTextFrom":"actionName", "urlFrom": "actionUrl", "rowSpan": 1, "colSpan": 2 }
-		# 			]
-		# 		"Rooms": 
-		# 			pageName: "Rooms"
-		# 			pageTitle: "Rooms"
-		# 			columns:
-		# 				landscape: [
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1, "colType": "nav" }
-		# 				]
-		# 				portrait: [ 
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1, "colType": "nav" }
-		# 				]
-		# 			tileGen: [ 
-		# 				{ "tileType": "action", "colType": "", "tileSelect":"groupName", "tileMult": "unique", "tileSort": "groupName", "tileNameFrom": "groupName", "tileTextFrom":"groupName", "pageGenRule": "RoomPages", "urlFrom": "groupName", "iconName": "" }
-		# 			]
-		# 			tilesFixed: [
-		# 				{ "tileType": "nav", "tileName": "Home", "colType":"nav", "iconName": "home", "tileText": "Home", "url": "Home" }
-		# 				{ "tileType": "nav", "tileName": "Music", "colType":"nav", "iconName": "musicicon", "tileText": "Music" }
-		# 				{ "tileType": "nav", "tileName": "Calendar", "colType":"nav", "iconName": "calendar", "tileText": "Calendar", "url": "Calendar" }
-		# 				{ "tileType": "nav", "tileName": "Settings", "colType":"nav", "iconName": "config", "tileText": "Settings" }
-		# 				{ "tileType": "nav", "tileName": "Energy", "colType":"nav", "iconName": "energy", "tileText": "Energy" }
-		# 			]
-		# 		"Calendar": 
-		# 			pageName: "Calendar"
-		# 			pageTitle: "Calendar"
-		# 			columns:
-		# 				landscape: [
-		# 					{ "title": "", "colSpan": 4 },
-		# 					{ "title": "", "colSpan": 1, "colType": "nav" }
-		# 				]
-		# 				portrait: [ 
-		# 					{ "title": "", "colSpan": 2 },
-		# 					{ "title": "", "colSpan": 1, "colType": "nav" }
-		# 				]
-		# 			tilesFixed: [
-		# 				{ "tileType": "nav", "tileName": "Home", "colType":"nav", "iconName": "home", "tileText": "Home", "url": "Home" }
-		# 				{ "tileType": "calendar", "tileName": "Calendar", "groupName": "Calendar", "rowSpan": 8, "colSpan": 4 }
-		# 			]
-		# 	pageGen: 
-		# 		"RoomPages" :
-		# 			"pageNameFrom": "tileText"
-		# 			"pageTitleFrom": "tileText"
-		# 			columns:
-		# 				landscape: [
-		# 					{ "title": "", "titleGen":"pageName", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1, "colType": "nav" }
-		# 				]
-		# 				portrait: [ 
-		# 					{ "title": "", "titleGen":"pageName", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1 },
-		# 					{ "title": "", "colSpan": 1, "colType": "nav" }
-		# 				]
-		# 			tilesFixed: [
-		# 				{ "tileType": "nav", "tileName": "Home", "colType":"nav", "iconName": "home", "tileText": "Home", "url": "Home" }
-		# 			]
-		# 			tileGen: [ 
-		# 				{ "tileType": "action", "colType": "", "tileSelect":"groupName", "tileMult": "all", "tileFilterValFrom":"pageName", "tileSort": "tileName", "tileNameFrom": "actionName", "tileTextFrom":"actionName", "urlFrom": "actionUrl" }
-		# 			]
-
-		# console.log JSON.stringify(@tabletConfig)
 
 	rebuild: (forceSetInitialPage) ->
 		# Generate pages from data
-		tabConfig = @app.tabletConfigServer.getConfigData()
+		tabConfig = @app.tabletConfigManager.getConfigData()
 		if tabConfig.common? and tabConfig.common.pages?
 			for pageName, pageDef of tabConfig.common.pages
 				if pageDef.defaultPage? and pageDef.defaultPage
@@ -195,7 +105,7 @@ class AppPages
 								# Select a single specific tile but using data from the tabled config
 								# such as the favourites list - e.g. using the groupname (room) and
 								# tilename (action) to get a favourite tile
-								else if "tabConfigFavListName" of tileGen
+								else if "tabConfigFavListName" of tileGen and tileGen.tabConfigFavListName of tabletSpecificConfig
 									for favList in tabletSpecificConfig[tileGen.tabConfigFavListName]
 										if newTile[tileGen.tileSelect] is favList[tileGen.tileSelect]
 											if newTile.tileName is favList.tileName
@@ -215,16 +125,12 @@ class AppPages
 				if a[tileGen.tileSort] < b[tileGen.tileSort] then return -1
 				if a[tileGen.tileSort] > b[tileGen.tileSort] then return 1
 				return 0
-			if uniqList.length > 0
-				console.log "UNIQLIST " + JSON.stringify(uniqList)
-			else
-				console.log "TILELIST " + JSON.stringify(tileList)
 			for tile in tileList
 				pageDef.tiles.push tile
 		return pageDef
 
 	generateNewPage: (context) ->
-		tabConfig = @app.tabletConfigServer.getConfigData()
+		tabConfig = @app.tabletConfigManager.getConfigData()
 		if context.pageGenRule? and context.pageGenRule isnt ""
 			if context.pageGenRule of tabConfig.common.pageGen
 				pageGen = tabConfig.common.pageGen[context.pageGenRule]
@@ -252,14 +158,15 @@ class AppPages
 		@curTabPage.updateDom()
 
 	buttonCallback: (context) =>
-		console.log "Pressed " + JSON.stringify(context)
 		# Check for navigation button
+		if context.forceReloadPages? and context.forceReloadPages
+			@app.requestConfigData()
 		if "tileMode" of context and context.tileMode is "SelFavs"
 			@addFavouriteButton(context)
 			@setCurrentPage(@defaultPageName, false)
 			@display()
 		else if "/" in context.url
-			(@defaultActionFn) context.url
+			(@automationManager.executeCommand) context.url
 		else if "~" in context.url
 			if @curTabPage?
 				@curTabPage.handlePageNav(context.url)
@@ -277,24 +184,10 @@ class AppPages
 		return
 
 	addFavouriteButton: (context) ->
-		console.log "NEED TO ADD CODE TO SELECT BUTTON TO ADD HERE"
-		@app.tabletConfigServer.addFavouriteButton(context)
+		@app.tabletConfigManager.addFavouriteButton(context)
 		@rebuild(false)
 
 	deleteFavouriteButton: (context) ->
-		@app.tabletConfigServer.deleteFavouriteButton(context)
+		@app.tabletConfigManager.deleteFavouriteButton(context)
 		@rebuild(false)
 
-	# addTileToTierGroup: (tileDef, tile) ->
-	#     tierName = tileDef.tierName
-	#     groupName = tileDef.groupName
-	#     groupPriority = if "groupPriority" of tileDef then tileDef.groupPriority else 5
-	#     tierIdx = @tileTiers.findTierIdx(tierName)
-	#     if tierIdx < 0 then tierIdx = @tileTiers.findTierIdx("actionsTier")
-	#     if tierIdx < 0 then return
-	#     if groupName is "" then groupName = "Lights"
-	#     groupIdx = @getUIGroupIdxAddGroupIfReqd(tierIdx, groupName, groupPriority)
-	#     #groupIdx = @tileTiers.findGroupIdx(tierIdx, groupName)
-	#     #if groupIdx < 0 then return
-	#     @tileTiers.addTileToTierGroup(tierIdx, groupIdx, tile)
-	#     return

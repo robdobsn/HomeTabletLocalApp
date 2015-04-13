@@ -7,7 +7,7 @@ class CalendarTile extends Tile
 
 	handleAction: (action) ->
 		if action is "next"
-			if @calDayIndex < @app.calendarServer.getCalNumDays()
+			if @calDayIndex < @app.calendarManager.getCalNumDays()
 				@calDayIndex++
 		else if action is "prev"
 			if @calDayIndex > 0
@@ -21,7 +21,7 @@ class CalendarTile extends Tile
 		return
 
 	updateCalendar: () ->
-		calData = @app.calendarServer.getCalData()
+		calData = @app.calendarManager.getCalData()
 		@showCalendar(calData)
 
 	showCalendar: (jsonData) ->

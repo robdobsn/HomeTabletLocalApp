@@ -1,17 +1,28 @@
-class CalendarServer
-	constructor: (@app, @calendarNumDays) ->
+class CalendarManager
+	constructor: (@app) ->
 		@calendarData = []
 		@secsBetweenCalendarRefreshes = 60
 		@firstRefreshAfterFailSecs = 10
 		@nextRefreshesAfterFailSecs = 60
 		@numRefreshFailuresSinceSuccess = 0
 		@requestCalUpdate()
+		@calendarUrl = ""
+		@calendarNumDays = 31
+		return
+
+	setConfig: (config) ->
+		if config.url?
+			@calendarUrl = config.url
+		if config.numDays?
+			@calendarNumDays = config.numDays
 		return
 
 	requestCalUpdate: ->
+		if @calendarUrl is "" 
+			return
 		dateTimeNow = new Date()
-		console.log("ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + @app.calendarUrl) 
-		$.ajax @app.calendarUrl,
+		console.log("ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + @calendarUrl) 
+		$.ajax @calendarUrl,
 			type: "GET"
 			dataType: "text"
 			crossDomain: true

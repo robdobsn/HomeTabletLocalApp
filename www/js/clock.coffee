@@ -23,6 +23,7 @@ class Clock extends Tile
 					       -webkit-animation: mymove 1s ease infinite;">:
 			</span> 
 			"""
+		@updateClock()
 		@setRefreshInterval(1, @updateClock, false)
 		return
 

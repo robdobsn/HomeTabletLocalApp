@@ -14,7 +14,7 @@ Tile = (function() {
   Tile.prototype.addToDoc = function() {
     this.tileId = "sqTile_" + this.tileDef.tierIdx + "_" + this.tileDef.groupIdx + "_" + this.tileIdx;
     $(this.tileDef.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileDef.tileColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\" style=\"height:100%\">\n  </div>\n</a>");
-    if (this.tileDef.clickFn != null) {
+    if ((this.tileDef.clickFn != null) && this.tileDef.clickFn !== "") {
       $("#" + this.tileId).click((function(_this) {
         return function() {
           return _this.tileDef.clickFn(_this.tileDef);

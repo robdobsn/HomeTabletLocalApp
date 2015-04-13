@@ -17,7 +17,7 @@ SceneButton = (function(_super) {
 
   SceneButton.prototype.addToDoc = function(elemToAddTo) {
     var iconName;
-    SceneButton.__super__.addToDoc.call(this);
+    SceneButton.__super__.addToDoc.call(this, elemToAddTo);
     this.contents.append("<div class=\"sqSceneButtonIcon\" style=\"position:absolute\"></div>\n<div class=\"sqSceneButtonText\" style=\"position:absolute; font-size: " + this.fontPixels + "px;\"></div>");
     iconName = this.tileDef.iconName;
     if (iconName === null) {

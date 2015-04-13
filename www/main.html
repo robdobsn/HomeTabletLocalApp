@@ -5,7 +5,6 @@
         <meta name="format-detection" content="telephone=no" />
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height"/>
         <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <link href='http://fonts.googleapis.com/css?family=Audiowide' rel='stylesheet' type='text/css'>
         <title>Rob's Wall Tablet</title>
         <script src="cordova.js"></script>
         <script type="text/javascript" src="js/jquery-1.10.1.js"></script>
@@ -22,10 +21,9 @@
         <script type="text/javascript" src="js/tile-colours.js"></script>
         <script type="text/javascript" src="js/tile-basics.js"></script>
         <script type="text/javascript" src="js/tablet-config.js"></script>
+        <script type="text/javascript" src="js/default-tablet-config.js"></script>
         <script type="text/javascript" src="js/automation-manager.js"></script>
         <script type="text/javascript" src="js/calendar-server.js"></script>
-        <script type="text/javascript" src="js/blinds-actions.js"></script>
-        <script type="text/javascript" src="js/automation-server.js"></script>
         <script type="text/javascript" src="js/indigo-server.js"></script>
         <script type="text/javascript" src="js/indigo-test-server.js"></script>
         <script type="text/javascript" src="js/fibaro-server.js"></script>
@@ -33,9 +31,10 @@
         <script type="text/javascript" src="js/tile.js"></script>
         <script type="text/javascript" src="js/clock.js"></script>
         <script type="text/javascript" src="js/calendar-tile.js"></script>
-        <script type="text/javascript" src="js/config-tile.js"></script>
         <script type="text/javascript" src="js/iframe-tile.js"></script>
         <script type="text/javascript" src="js/scene-button.js"></script>
+        <script type="text/javascript" src="js/checkbox-tile.js"></script>
+        <script type="text/javascript" src="js/text-entry-tile.js"></script>
         <script type="text/javascript" src="js/user-idle-catcher.js"></script>
         <script type="text/javascript" src="js/media-play-help.js"></script>
         <script>
@@ -51,23 +50,14 @@
         </script>
     </head>
     <body onload="onBodyLoad();">
-        <div id="tabnameform" style="display:none;">
-            <p>Tablet name</p>
-            <div class="formField">
-            Name: <input id="tabnamefield" name="tabnamefield" placeholder="Tablet Name" type="text">
-            </div>
-            <button id="tabnameok" 
-                    href="javascript:void(0);" 
-                    style="display:block; opacity:1;">
-                Ok
-            </button>
-        </div>
         <div id="invisIcons" style="display:none">
             <img id="iicon-add" src="img/add.png"/>
             <img id="iicon-announce" src="img/announce.png"/>
             <img id="iicon-arrow-down" src="img/arrow-down.png"/>
             <img id="iicon-arrow-left" src="img/arrow-left.png"/>
             <img id="iicon-arrow-right" src="img/arrow-right.png"/>
+            <img id="iicon-autodimoff" src="img/autodimoff.png"/>
+            <img id="iicon-autodimon" src="img/autodimon.png"/>
             <img id="iicon-back" src="img/back.png"/>
             <img id="iicon-blinds-down" src="img/blinds-down.png"/>
             <img id="iicon-blinds-stop" src="img/blinds-stop.png"/>
@@ -77,6 +67,7 @@
             <img id="iicon-bulb-off" src="img/bulb-off.png"/>
             <img id="iicon-bulb-on" src="img/bulb-on.png"/>
             <img id="iicon-calendar" src="img/calendar.png"/>
+            <img id="iicon-checked" src="img/checked.png"/>
             <img id="iicon-config" src="img/config.png"/>
             <img id="iicon-delete" src="img/delete.png"/>
             <img id="iicon-dim" src="img/dim.png"/>
@@ -94,6 +85,10 @@
             <img id="iicon-musicicon" src="img/musicicon.png"/>
             <img id="iicon-radio" src="img/radio.png"/>
             <img id="iicon-shadesicon" src="img/shadesicon.png"/>
+            <img id="iicon-star" src="img/star.png"/>
+            <img id="iicon-stars" src="img/stars.png"/>
+            <img id="iicon-text" src="img/text.png"/>
+            <img id="iicon-unchecked" src="img/unchecked.png"/>
         </div>
     </body>
 </html>

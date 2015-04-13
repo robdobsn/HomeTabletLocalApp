@@ -101,10 +101,12 @@ TabPage = (function() {
       tile = new CalendarTile(this.app, tileDef, dayIdx);
     } else if (tileDef.tileType === "clock") {
       tile = new Clock(tileDef);
-    } else if (tileDef.tileType === "config") {
-      tile = new ConfigTile(tileDef, tileDef.configType);
     } else if (tileDef.tileType === "iframe") {
       tile = new IframeTile(tileDef);
+    } else if (tileDef.tileType === "checkbox") {
+      tile = new CheckBoxTile(tileDef);
+    } else if (tileDef.tileType === "textentry") {
+      tile = new TextEntryTile(tileDef);
     } else {
       tile = new SceneButton(tileDef);
     }
@@ -165,14 +167,14 @@ TabPage = (function() {
     winHeight = $(window).height();
     isPortrait = winWidth < winHeight;
     if (isPortrait) {
-      this.columnsDef = this.pageDef.columns != null ? this.pageDef.columns.portrait : {};
-      this.tilesAcross = 3;
-      this.tilesDown = 8;
+      this.columnsDef = this.pageDef.columns != null ? this.pageDef.columns.portrait : null;
+      this.tilesAcross = 2;
+      this.tilesDown = this.pageDef.rows != null ? this.pageDef.rows.portrait : 8;
       this.columnsAcross = 2;
     } else {
-      this.columnsDef = this.pageDef.columns != null ? this.pageDef.columns.landscape : {};
-      this.tilesAcross = 5;
-      this.tilesDown = 5;
+      this.columnsDef = this.pageDef.columns != null ? this.pageDef.columns.landscape : null;
+      this.tilesAcross = 2;
+      this.tilesDown = this.pageDef.rows != null ? this.pageDef.rows.landscape : 5;
       this.columnsAcross = 3;
     }
     this.noTitles = true;

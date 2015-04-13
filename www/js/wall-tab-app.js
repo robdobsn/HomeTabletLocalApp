@@ -7,31 +7,29 @@ WallTabApp = (function() {
     this.actionOnUserIdle = __bind(this.actionOnUserIdle, this);
     this.automationManagerReadyCb = __bind(this.automationManagerReadyCb, this);
     this.tabletConfigReadyCb = __bind(this.tabletConfigReadyCb, this);
-    this.mainServer = "localhost";
     this.defaultTabletName = "tabdefault";
-    this.calendarNumDays = 31;
-    this.calendarUrl = "http://" + this.mainServer + ":5077/calendar/min/" + this.calendarNumDays;
-    this.sonosActionsUrl = "";
-    this.tabletConfigUrl = "http://" + this.mainServer + ":5076/tabletconfig";
-    this.tabletLogUrl = "http://" + this.mainServer + ":5076/log";
+    this.hoursBetweenActionUpdates = 12;
+    this.minsBetweenEventLogChecks = 1;
+    this.maxEventsPerLogSend = 50;
     this.mediaPlayHelper = new MediaPlayHelper({
       "click": "assets/click.mp3",
       "ok": "assets/blip.mp3",
       "fail": "assets/fail.mp3"
     });
-    this.hoursBetweenActionUpdates = 12;
-    this.minsBetweenEventLogChecks = 1;
-    this.maxEventsPerLogSend = 50;
     return;
   }
 
+  WallTabApp.prototype.getLogServerUrl = function() {
+    return LocalStorage.get("ConfigServerUrl") + "/log";
+  };
+
   WallTabApp.prototype.go = function() {
     this.userIdleCatcher = new UserIdleCatcher(90, this.actionOnUserIdle);
-    this.tabletConfigServer = new TabletConfig(this.tabletConfigUrl, this.defaultTabletName);
-    this.tabletConfigServer.setReadyCallback(this.tabletConfigReadyCb);
+    this.tabletConfigManager = new TabletConfigManager(this.defaultTabletName);
+    this.tabletConfigManager.setReadyCallback(this.tabletConfigReadyCb);
     this.automationManager = new AutomationManager(this, this.automationManagerReadyCb);
-    this.calendarServer = new CalendarServer(this, this.calendarNumDays);
-    this.appPages = new AppPages(this, "#sqWrapper", this.automationManager.executeCommand);
+    this.calendarManager = new CalendarManager(this);
+    this.appPages = new AppPages(this, "#sqWrapper", this.automationManager);
     $(window).on('orientationchange', (function(_this) {
       return function() {
         return _this.buildAndDisplayUI();
@@ -57,11 +55,16 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.requestConfigData = function() {
-    return this.tabletConfigServer.requestConfig();
+    return this.tabletConfigManager.requestConfig();
   };
 
   WallTabApp.prototype.tabletConfigReadyCb = function() {
-    return this.automationManager.requestUpdate(this.tabletConfigServer.getConfigData());
+    var configData;
+    configData = this.tabletConfigManager.getConfigData();
+    if ((configData.common != null) && (configData.common.calendar != null)) {
+      this.calendarManager.setConfig(configData.common.calendar);
+    }
+    return this.automationManager.requestUpdate(configData);
   };
 
   WallTabApp.prototype.automationManagerReadyCb = function(hasChanged) {
@@ -102,7 +105,7 @@ WallTabApp = (function() {
     if (evList.length > 0) {
       evListJson = JSON.stringify(evList);
       $.ajax({
-        url: this.tabletLogUrl,
+        url: this.getLogServerUrl(),
         type: 'POST',
         data: evListJson,
         contentType: "application/json",

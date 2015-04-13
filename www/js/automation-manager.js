@@ -26,43 +26,45 @@ AutomationManager = (function() {
     } else {
       this.sumActions["fixedActions"] = null;
     }
-    if (!("servers" in configData.common)) {
-      return;
-    }
-    dataChanged = false;
-    if (this.servers.length === configData.common.servers.length) {
-      _ref = configData.common.servers;
-      for (idx = _i = 0, _len = _ref.length; _i < _len; idx = ++_i) {
-        serverDef = _ref[idx];
-        if (this.serverDefs[idx].type !== serverDef.type) {
-          dataChanged = true;
+    if ("servers" in configData.common) {
+      dataChanged = false;
+      if (this.serverDefs.length === configData.common.servers.length) {
+        _ref = configData.common.servers;
+        for (idx = _i = 0, _len = _ref.length; _i < _len; idx = ++_i) {
+          serverDef = _ref[idx];
+          if (this.serverDefs[idx].type !== serverDef.type) {
+            dataChanged = true;
+          }
+          if (this.serverDefs[idx].name !== serverDef.name) {
+            dataChanged = true;
+          }
+          if (this.serverDefs[idx].url !== serverDef.url) {
+            dataChanged = true;
+          }
         }
-        if (this.serverDefs[idx].name !== serverDef.name) {
-          dataChanged = true;
-        }
-        if (this.serverDefs[idx].url !== serverDef.url) {
-          dataChanged = true;
+      } else {
+        dataChanged = true;
+      }
+      if (dataChanged) {
+        this.servers = [];
+        _ref1 = configData.common.servers;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          serverDef = _ref1[_j];
+          if (serverDef.type === "indigo" || serverDef.type === "Indigo") {
+            this.servers.push(new IndigoServer(this, serverDef, this.actionsReadyCb));
+          } else if (serverDef.type === "indigo-test") {
+            this.servers.push(new IndigoTestServer(this, serverDef, this.actionsReadyCb));
+          } else if (serverDef.type === "vera" || serverDef.type === "Vera") {
+            this.servers.push(new VeraServer(this, serverDef, this.actionsReadyCb));
+          } else if (serverDef.type === "fibaro" || serverDef.type === "Fibaro") {
+            this.servers.push(new FibaroServer(this, serverDef, this.actionsReadyCb));
+          }
         }
       }
     } else {
-      dataChanged = true;
-    }
-    if (dataChanged) {
       this.servers = [];
-      _ref1 = configData.common.servers;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        serverDef = _ref1[_j];
-        if (serverDef.type === "indigo") {
-          this.servers.push(new IndigoServer(this, serverDef, this.actionsReadyCb));
-        } else if (serverDef.type === "indigo-test") {
-          this.servers.push(new IndigoTestServer(this, serverDef, this.actionsReadyCb));
-        } else if (serverDef.type === "vera") {
-          this.servers.push(new VeraServer(this, serverDef, this.actionsReadyCb));
-        } else if (serverDef.type === "fibaro") {
-          this.servers.push(new FibaroServer(this, serverDef, this.actionsReadyCb));
-        }
-      }
     }
+    this.serverDefs = configData.common.servers;
     _ref2 = this.servers;
     for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
       server = _ref2[_k];
@@ -72,8 +74,15 @@ AutomationManager = (function() {
   };
 
   AutomationManager.prototype.actionsReadyCb = function(serverName, actions) {
-    this.sumActions[serverName] = actions;
-    this.readyCallback(true);
+    var dataChanged;
+    dataChanged = true;
+    if (serverName in this.sumActions) {
+      dataChanged = JSON.stringify(this.sumActions[serverName]) !== actions;
+    }
+    if (dataChanged) {
+      this.sumActions[serverName] = actions;
+    }
+    this.readyCallback(dataChanged);
   };
 
   AutomationManager.prototype.getActionGroups = function() {

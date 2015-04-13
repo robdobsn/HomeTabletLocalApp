@@ -18,6 +18,7 @@ Clock = (function(_super) {
   Clock.prototype.addToDoc = function() {
     Clock.__super__.addToDoc.call(this);
     this.contents.append("<div class=\"sqClockDow\" style=\"text-align:center\"></div>\n<div class=\"sqClockDayMonthYear\" style=\"text-align:center\"></div>\n<div class=\"sqClockTime\" style=\"display:block;text-align:center\">\n	<span class=\"sqClockHours\" style=\"padding:5px\"></span>\n	<span class=\"sqClockMins\"></span>\n	<span class=\"sqClockSecs\" style=\"display:inline;font-size:20%;position:absolute;\"></span>\n</div>\n<span class=\"sqClockPoint1\" \n		style=\"position:absolute;\n		       -moz-animation: mymove 1s ease infinite;\n		       -webkit-animation: mymove 1s ease infinite;\">:\n</span> ");
+    this.updateClock();
     this.setRefreshInterval(1, this.updateClock, false);
   };
 

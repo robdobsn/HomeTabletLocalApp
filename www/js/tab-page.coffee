@@ -87,13 +87,15 @@ class TabPage
 			dayIdx = if tileDef.calDayIndex? then tileDef.calDayIndex else 0
 			tile = new CalendarTile(@app, tileDef, dayIdx)
 		else if tileDef.tileType is "clock"
-			tile = new Clock tileDef
-		else if tileDef.tileType is "config"
-			tile = new ConfigTile tileDef, tileDef.configType
+			tile = new Clock(tileDef)
 		else if tileDef.tileType is "iframe"
-			tile = new IframeTile tileDef
+			tile = new IframeTile(tileDef)
+		else if tileDef.tileType is "checkbox"
+			tile = new CheckBoxTile(tileDef)
+		else if tileDef.tileType is "textentry"
+			tile = new TextEntryTile(tileDef)
 		else
-			tile = new SceneButton tileDef
+			tile = new SceneButton(tileDef)
 		tile.setTileIndex(@nextTileIdx++)
 		return tile
 
@@ -135,14 +137,14 @@ class TabPage
 		winHeight = $(window).height()
 		isPortrait = (winWidth < winHeight)
 		if isPortrait
-			@columnsDef = if @pageDef.columns? then @pageDef.columns.portrait else {}
-			@tilesAcross = 3
-			@tilesDown = 8
+			@columnsDef = if @pageDef.columns? then @pageDef.columns.portrait else null
+			@tilesAcross = 2
+			@tilesDown = if @pageDef.rows? then @pageDef.rows.portrait else 8
 			@columnsAcross = 2
 		else
-			@columnsDef = if @pageDef.columns? then @pageDef.columns.landscape else {}
-			@tilesAcross = 5
-			@tilesDown = 5
+			@columnsDef = if @pageDef.columns? then @pageDef.columns.landscape else null
+			@tilesAcross = 2
+			@tilesDown = if @pageDef.rows? then @pageDef.rows.landscape else 5
 			@columnsAcross = 3
 		@noTitles = true
 		if @columnsDef?

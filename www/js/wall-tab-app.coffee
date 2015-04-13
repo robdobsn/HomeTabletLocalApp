@@ -1,40 +1,40 @@
 class WallTabApp
     constructor: ->
-        @mainServer = "localhost"
+        # Default the tablet name and get the configuration server
         @defaultTabletName = "tabdefault"
-        @calendarNumDays = 31
-        @calendarUrl = "http://" + @mainServer + ":5077/calendar/min/" + @calendarNumDays
-        @sonosActionsUrl = ""
-        @tabletConfigUrl = "http://" + @mainServer + ":5076/tabletconfig"
-        @tabletLogUrl = "http://" + @mainServer + ":5076/log"
+        # Basic settings
+        @hoursBetweenActionUpdates = 12
+        @minsBetweenEventLogChecks = 1
+        @maxEventsPerLogSend = 50
+        # Helper for playing media files
         @mediaPlayHelper = new MediaPlayHelper(
             {
                 "click": "assets/click.mp3",
                 "ok": "assets/blip.mp3",
                 "fail": "assets/fail.mp3"
             })
-        @hoursBetweenActionUpdates = 12
-        @minsBetweenEventLogChecks = 1
-        @maxEventsPerLogSend = 50
         return
+
+    getLogServerUrl: ->
+        return LocalStorage.get("ConfigServerUrl")+ "/log"
 
     go: ->
         # Goes back to home display after user idle timeout
         @userIdleCatcher = new UserIdleCatcher(90, @actionOnUserIdle)
 
         # Tablet config is based on the name or IP address of the tablet
-        @tabletConfigServer = new TabletConfig @tabletConfigUrl, @defaultTabletName
-        @tabletConfigServer.setReadyCallback(@tabletConfigReadyCb)
+        @tabletConfigManager = new TabletConfigManager(@defaultTabletName)
+        @tabletConfigManager.setReadyCallback(@tabletConfigReadyCb)
 
         # Automation manager handles communicaton with automaion devices like
         # Indigo/vera/fibaro
         @automationManager = new AutomationManager(this, @automationManagerReadyCb)
 
         # Calendar server communications
-        @calendarServer = new CalendarServer(this, @calendarNumDays)
+        @calendarManager = new CalendarManager(this)
 
         # App Pages
-        @appPages = new AppPages(this, "#sqWrapper", @automationManager.executeCommand)
+        @appPages = new AppPages(this, "#sqWrapper", @automationManager)
 
         # Handler for orientation change
         $(window).on 'orientationchange', =>
@@ -58,12 +58,18 @@ class WallTabApp
         return
 
     requestConfigData: ->
-        return @tabletConfigServer.requestConfig()
+        # Request tablet configuration from config server
+        return @tabletConfigManager.requestConfig()
 
     tabletConfigReadyCb: =>
-        @automationManager.requestUpdate(@tabletConfigServer.getConfigData())
+        # Configuration data is available
+        configData = @tabletConfigManager.getConfigData()
+        if configData.common? and configData.common.calendar?
+            @calendarManager.setConfig(configData.common.calendar)
+        @automationManager.requestUpdate(configData)
 
     automationManagerReadyCb: (hasChanged) =>
+        # Automation server data is available
         if hasChanged
             @buildAndDisplayUI()
 
@@ -92,7 +98,7 @@ class WallTabApp
         if evList.length > 0
             evListJson = JSON.stringify(evList)
             $.ajax 
-                url: @tabletLogUrl
+                url: @getLogServerUrl()
                 type: 'POST'
                 data: evListJson
                 contentType: "application/json"
