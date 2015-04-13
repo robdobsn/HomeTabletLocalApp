@@ -58,7 +58,7 @@ class TabletConfigManager
 			console.log "Unable to save device config as tablet name unknown"
 		else
 			console.log "Saving device config for " + tabName
-		console.log "NEED TO IMPLEMENT SAVING BACK TO SERVER " + reqURL
+		# Store back to the server 
 		$.ajax 
 			url: reqURL
 			type: 'POST'

@@ -85,7 +85,6 @@ TabletConfigManager = (function() {
     } else {
       console.log("Saving device config for " + tabName);
     }
-    console.log("NEED TO IMPLEMENT SAVING BACK TO SERVER " + reqURL);
     return $.ajax({
       url: reqURL,
       type: 'POST',
