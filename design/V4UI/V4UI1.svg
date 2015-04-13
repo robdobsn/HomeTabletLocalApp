@@ -25,8 +25,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="471.0596"
-     inkscape:cy="324.23522"
+     inkscape:cx="163.15422"
+     inkscape:cy="409.9495"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -34,10 +34,10 @@
      inkscape:snap-global="true"
      gridtolerance="6"
      objecttolerance="10"
-     inkscape:window-width="2327"
-     inkscape:window-height="1131"
-     inkscape:window-x="83"
-     inkscape:window-y="187"
+     inkscape:window-width="1262"
+     inkscape:window-height="943"
+     inkscape:window-x="2"
+     inkscape:window-y="2"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -578,8 +578,11 @@
        inkscape:export-ydpi="103.75708" />
     <path
        id="path4194"
-       d="m -50.430731,746.07913 0,-18.00265 -2.000216,2.00032 -3.000424,-5.00074 19.00275,-15.00222 7.001055,5.52715 0,-3.77693 4.000531,-0.75011 0,7.68536 8.001263,6.31675 -3.000524,5.00074 -2.000215,-2.00032 0,18.00265 -28.00422,0 z m 14.00211,-29.08763 -11.001587,9.08467 0,17.00253 6.000847,0 0,-11.00148 10.001479,0 0,11.00148 6.000847,0 0,-17.00253 -11.001586,-9.08467 z"
+       d="m 250.28355,761.79342 0,-18.00265 -2.00021,2.00032 -3.00043,-5.00074 19.00275,-15.00222 7.00106,5.52715 0,-3.77693 4.00053,-0.75011 0,7.68536 8.00126,6.31675 -3.00052,5.00074 -2.00022,-2.00032 0,18.00265 -28.00422,0 z m 14.00211,-29.08763 -11.00158,9.08467 0,17.00253 6.00084,0 0,-11.00148 10.00148,0 0,11.00148 6.00085,0 0,-17.00253 -11.00159,-9.08467 z"
        inkscape:connector-curvature="0"
-       style="fill:#ffffff;fill-opacity:1;stroke-width:0.20000000000000001;stroke-linejoin:round" />
+       style="fill:#ffffff;fill-opacity:1;stroke-width:0.2;stroke-linejoin:round"
+       inkscape:export-filename="M:\RobDev\Projects\HomeAutomation\WallTablet\Software\HomeTabletLocalApp\www\img\home.png"
+       inkscape:export-xdpi="174.97433"
+       inkscape:export-ydpi="174.97433" />
   </g>
 </svg>
