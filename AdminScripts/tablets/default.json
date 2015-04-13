@@ -1,0 +1,39 @@
+{
+    "deviceName": "tabdefault",
+    "roomName": "Default",
+    "sonosRoomName": "",
+    "favourites":
+    [
+        {
+        "tileName": "Main Lock",
+        "groupName": "Front Door"
+        },
+        {
+        "tileName": "Hall Off",
+        "groupName": "Hall"
+        },
+        {
+        "tileName": "Hall On",
+        "groupName": "Hall"
+        },
+        {
+        "tileName": "Cellar On",
+        "groupName": "Cellar"
+        },
+        {
+        "tileName": "Cellar Off",
+        "groupName": "Cellar"
+        },
+        {
+        "tileName": "Nighttime"
+        },
+        {
+        "tileName": "Snug Books On",
+        "groupName": "Hall"
+        },
+        {
+        "tileName": "Snug Books Off",
+        "groupName": "Hall"
+        }
+    ]
+}

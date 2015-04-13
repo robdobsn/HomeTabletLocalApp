@@ -77,8 +77,8 @@ for tabname in tablet_names:
         continue
 
     # Install the app
-    print("Running phonegap install on " + tabname)
-    p2 = Popen(['phonegap', 'install', '--device=' + tabfullplusport, 'android'], shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+    print("Running cordova install on " + tabname)
+    p2 = Popen(['cordova', 'install', '--device=' + tabfullplusport, 'android'], shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
     output2 = p2.stdout.read()
     output3 = p2.stderr.read()
     p2.wait()

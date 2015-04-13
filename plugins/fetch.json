@@ -1,9 +1,0 @@
-{
-    "com.rjfun.cordova.plugin.lowlatencyaudio": {
-        "source": {
-            "type": "git",
-            "url": "https://github.com/floatinghotpot/cordova-plugin-lowlatencyaudio.git",
-            "subdir": "."
-        }
-    }
-}

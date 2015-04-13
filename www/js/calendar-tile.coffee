@@ -3,6 +3,7 @@ class CalendarTile extends Tile
 		super tileDef
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 		@calLineCount = 0; @calCharCount = 0; @calMaxLineLen = 0
+		@secsBetweenCalendarRefreshes = 60
 		return
 
 	handleAction: (action) ->
@@ -125,11 +126,17 @@ class CalendarTile extends Tile
 	# Provide a different font scaling based on the amount of text in the calendar box
 	recalculateFontScaling: () ->
 		if not @sizeX? or not @sizeY? or (@calLineCount is 0) then return
-		fontScale = @findOptimumFontSize(true, ".sqCalEvents", 1.0, 2)
+		fontScale = @findOptimumFontSize(true, ".sqCalEvents", 1.0, 3.0)
 		#fontScale = @findOptimumFontSize(false, ".sqCalEvents", yScale)
 		@setContentFontScaling(fontScale)
 		return
 	
+	setContentFontScaling: (contentFontScaling) ->
+		css =
+			"font-size": (100 * contentFontScaling) + "%"
+		$(".sqCalEvents").css(css)
+		return
+
 	formatDurationStr: (val) ->
 		dur = val.split(":")
 		days = parseInt(dur[0])

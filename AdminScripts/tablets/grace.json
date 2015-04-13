@@ -1,0 +1,40 @@
+{
+  "deviceName": "tabgrace",
+  "deviceIP": "192.168.0.83",
+  "roomName": "Grace",
+  "sonosRoomName": "Grace's Bedroom",
+  "favourites": [
+    {
+      "tileName": "Grace 1",
+      "groupName": "Grace"
+    },
+    {
+      "tileName": "Grace 2",
+      "groupName": "Grace"
+    },
+    {
+      "tileName": "Grace 3",
+      "groupName": "Grace"
+    },
+    {
+      "tileName": "Grace Off",
+      "groupName": "Grace"
+    },
+    {
+      "tileName": "Grace Stars On",
+      "groupName": "Grace"
+    },
+    {
+      "tileName": "Grace Stars Off",
+      "groupName": "Grace"
+    },
+    {
+      "tileName": "Grace Bath On",
+      "groupName": "Grace Bath"
+    },
+    {
+      "tileName": "Grace Bath Off",
+      "groupName": "Grace Bath"
+    }
+  ]
+}

@@ -137,16 +137,34 @@ class TabPage
 		winHeight = $(window).height()
 		isPortrait = (winWidth < winHeight)
 		if isPortrait
-			@columnsDef = if @pageDef.columns? then @pageDef.columns.portrait else null
-			@tilesAcross = 2
+			@baseColumnsDef = if @pageDef.columns? then @pageDef.columns.portrait else null
 			@tilesDown = if @pageDef.rows? then @pageDef.rows.portrait else 8
+			@tilesAcross = 2
 			@columnsAcross = 2
 		else
-			@columnsDef = if @pageDef.columns? then @pageDef.columns.landscape else null
-			@tilesAcross = 2
+			@baseColumnsDef = if @pageDef.columns? then @pageDef.columns.landscape else null
 			@tilesDown = if @pageDef.rows? then @pageDef.rows.landscape else 5
+			@tilesAcross = 3
 			@columnsAcross = 3
+		@columnsDef = (col for col in @baseColumnsDef)
 		@noTitles = true
+		# Check for auto-add columns
+		autoAddColIdx = -1
+		colsToAdd = 0
+		for colDef, colIdx in @columnsDef
+			if colDef.autoAdd? and colDef.autoAdd
+				autoAddColIdx = colIdx
+				numTilesInAutoCol = 0
+				for tile in @pageDef.tiles
+					if not (tile.colType? and colDef.colType and (tile.colType isnt colDef.colType))
+						numTilesInAutoCol++
+				colsToAdd = Math.floor(numTilesInAutoCol/@tilesDown + 0.5) - 2
+				break
+		if colsToAdd > 0
+			colToCopy = @columnsDef[autoAddColIdx]
+			for i in [0...colsToAdd]
+				@columnsDef.splice(autoAddColIdx, 0, colToCopy)
+		# Handle columns
 		if @columnsDef?
 			@tilesAcross = 0
 			for colDef, colIdx in @columnsDef
@@ -172,6 +190,7 @@ class TabPage
 					endTileCount: 0
 					colStartIdx: 0
 					colCount: 1
+		# Layout page
 		@cellWidth = (winWidth - @pageBorders[1] - @pageBorders[3]) / @tilesAcross
 		@cellHeight = (winHeight - @pageBorders[0] - @pageBorders[2] - (if @noTitles then 0 else @titlesTopMargin)) / @tilesDown
 		@tileWidth = @cellWidth - @tileSepXPixels
@@ -188,7 +207,7 @@ class TabPage
 		# Work out from column def
 		cellXIdx = 0
 		for i in [0...colIdx]
-			cellXIdx += if @columnsDef? then @columnsDef[i].colSpan
+			cellXIdx += if @columnsDef? and @columnsDef[i] then @columnsDef[i].colSpan else 1
 		return xStart + cellXIdx * @cellWidth
 
 	getTitlePos: () ->

@@ -1,6 +1,6 @@
 class DefaultTabletConfig
 
-	get: (serverSettings, additionalSettings) ->
+	get: (serverSettings) ->
 		# Add the basic pages
 		tabConfig = 
 			common:
@@ -160,12 +160,12 @@ class DefaultTabletConfig
 						columns:
 							landscape: [
 								{ "title": "", "titleGen":"pageName", "colSpan": 1 },
-								{ "title": "", "colSpan": 1 },
+								{ "title": "", "colSpan": 1, "autoAdd":true },
 								{ "title": "", "colSpan": 1, "colType": "nav" }
 							]
 							portrait: [ 
 								{ "title": "", "titleGen":"pageName", "colSpan": 1 },
-								{ "title": "", "colSpan": 1 },
+								{ "title": "", "colSpan": 1, "autoAdd":true },
 								{ "title": "", "colSpan": 1, "colType": "nav" }
 							]
 						tilesFixed: [
@@ -195,108 +195,104 @@ class DefaultTabletConfig
 							{ "tabConfigFavListName":"favourites", "tileType": "action", "tileSelect":"groupName", "tileMult": "all", "tileSort": "tileText", "tileNameFrom": "actionName", "tileTextFrom":"actionName", "url": "DelFav", "rowSpan": 1, "colSpan": 2, "iconName":"delete" }
 						]
 
-		# Add additional settings for automation servers as required
-		for autServ, servIdx in serverSettings.showAutomationServerSettings
-			tabConfig.common.pages["Settings"].tilesFixed.push
-				"tileType": "textentry"
-				"tileName": "AutServer" + servIdx
-				"groupName": "Settings"
-				"rowSpan": 1
-				"colSpan": 2
-				"label": autServ + " "
-				"contentType":"url"
-				"varName": autServ + "ServerUrl"
-				"clickFn":""
+		# Automation servers
+		if serverSettings? and serverSettings.showAutomationServerSettings?
+			for autServ, servIdx in serverSettings.showAutomationServerSettings
+				# Add additional settings for automation servers as required
+				tabConfig.common.pages["Settings"].tilesFixed.push
+					"tileType": "textentry"
+					"tileName": "AutServer" + servIdx
+					"groupName": "Settings"
+					"rowSpan": 1
+					"colSpan": 2
+					"label": autServ + " "
+					"contentType":"url"
+					"varName": autServ + "ServerUrl"
+					"clickFn":""
+				# Add automation servers if we have URLs for them
+				servUrl = LocalStorage.get(autServ + "ServerUrl")
+				if servUrl? and servUrl isnt ""
+					tabConfig.common.servers.push
+						"type":autServ
+						"name":autServ
+						"url":servUrl
+						"iconAliasing":"automationIcons"
 
-		# Add automation servers if we have URLs for them
-		for autServ, servIdx in serverSettings.showAutomationServerSettings
-			servUrl = LocalStorage.get(autServ + "ServerUrl")
-			if servUrl? and servUrl isnt ""
-				tabConfig.common.servers.push
-					"type":autServ
-					"name":autServ
-					"url":servUrl
-					"iconAliasing":"automationIcons"
+		# Additional settings
+		if serverSettings?
+			# Calendar
+			if serverSettings.showCalServerSetting? and serverSettings.showCalServerSetting
+				# Add additional settings for calendar server as required
+				tabConfig.common.pages["Settings"].tilesFixed.push
+					"tileType": "textentry"
+					"tileName": "CalServer"
+					"groupName": "Settings"
+					"rowSpan": 1
+					"colSpan": 2
+					"label":"CalServer "
+					"contentType":"url"
+					"varName":"CalServerUrl"
+					"clickFn":""
+			# Add calendar server and home page button if we have a URL for it
+			calServerUrl = ""
+			if serverSettings.calServerUrl?
+				calServerUrl = serverSettings.calServerUrl
+			else
+				calServerUrl = LocalStorage.get("CalServerUrl")
+			if calServerUrl? and calServerUrl isnt ""
+				tabConfig.common.calendar =
+					"url": calServerUrl
+					"numDays":45
+				tabConfig.common.pages["Home"].tilesFixed.push
+					"tileType": "nav"
+					"tileName": "Calendar"
+					"colType":"nav"
+					"iconName": "calendar"
+					"tileText": ""
+					"url": "Calendar"
+					"iconX":"centre"
 
-		# Add additional settings for calendar server as required
-		if serverSettings.showCalServerSetting
-			tabConfig.common.pages["Settings"].tilesFixed.push
-				"tileType": "textentry"
-				"tileName": "CalServer"
-				"groupName": "Settings"
-				"rowSpan": 1
-				"colSpan": 2
-				"label":"CalServer "
-				"contentType":"url"
-				"varName":"CalServerUrl"
-				"clickFn":""
+			# Energy server settings
+			if serverSettings.showEnergyServerSetting? and serverSettings.showEnergyServerSetting
+				# Button
+				tabConfig.common.pages["Settings"].tilesFixed.push
+					"tileType": "textentry"
+					"tileName": "EnergyServer"
+					"groupName": "Settings"
+					"rowSpan": 1
+					"colSpan": 2
+					"label":"EnergyUrl "
+					"contentType":"url"
+					"varName":"EnergyServerUrl"
+					"clickFn":""
 
-		# Add calendar server and home page button if we have a URL for it
-		calServerUrl = LocalStorage.get("CalServerUrl")
-		if calServerUrl? and calServerUrl isnt ""
-			tabConfig.common.calendar =
-				"url": calServerUrl
-				"numDays":90
-			tabConfig.common.pages["Home"].tilesFixed.push
-				"tileType": "nav"
-				"tileName": "Calendar"
-				"colType":"nav"
-				"iconName": "calendar"
-				"tileText": ""
-				"url": "Calendar"
-				"iconX":"centre"
-
-		# Energy server settings
-		if serverSettings.showEnergyServerSetting
-			tabConfig.common.pages["Settings"].tilesFixed.push
-				"tileType": "textentry"
-				"tileName": "EnergyServer"
-				"groupName": "Settings"
-				"rowSpan": 1
-				"colSpan": 2
-				"label":"EnergyUrl "
-				"contentType":"url"
-				"varName":"EnergyServerUrl"
-				"clickFn":""
-
-		# Add energy server tile on energy page and home page button if we have a URL for it
-		energyServerUrl = LocalStorage.get("EnergyServerUrl")
-		if energyServerUrl? and energyServerUrl isnt ""
-			tabConfig.common.pages["Energy"].tilesFixed.push
-				"tileType": "iframe"
-				"tileName": "EnergyWidget"
-				"groupName": "Energy"
-				"contentUrl": energyServerUrl
-				"rowSpan": 0
-				"colSpan": 0
-			tabConfig.common.pages["Home"].tilesFixed.push
-				"tileType": "nav"
-				"tileName": "Energy"
-				"colType":"nav"
-				"iconName": "energy"
-				"tileText": ""
-				"url": "Energy"
-				"iconX":"centre"
-
-		# Add any additional settings
-		if additionalSettings?
-			for key,val of additionalSettings
-				if key is "common"
-					for comKey, comVal in val
-						if comKey is "pages" or comKey is "pageGen"
-							for pagKey, pagVal in comVal
-								# Overwrite page definitions
-								tabConfig.common[comKey][pagKey] = pagVal
-						else if comKey is "servers"
-							# Add servers
-							tabConfig.common.servers.push(comVal)
-						else if comKey is "fixedActions"
-							# Add to fixed actions
-							tabConfig.common.fixedActions.push(comVal)
-						else
-							tabConfig.common[comKey] = comVal
-				# Add other settings
-				tabConfig[key] = val
+			# Add energy server tile on energy page and home page button if we have a URL for it
+			energyServerUrl = ""
+			if serverSettings.energyServerUrl?
+				energyServerUrl = serverSettings.energyServerUrl
+			else
+				energyServerUrl = LocalStorage.get("EnergyServerUrl")
+			if energyServerUrl? and energyServerUrl isnt ""
+				tabConfig.common.pages["Energy"].tilesFixed.push
+					"tileType": "iframe"
+					"tileName": "EnergyWidget"
+					"groupName": "Energy"
+					"contentUrl": energyServerUrl
+					"rowSpan": 0
+					"colSpan": 0
+				tabConfig.common.pages["Home"].tilesFixed.push
+					"tileType": "nav"
+					"tileName": "Energy"
+					"colType":"nav"
+					"iconName": "energy"
+					"tileText": ""
+					"url": "Energy"
+					"iconX":"centre"
 
 		return tabConfig
+
+try
+	module.exports = DefaultTabletConfig
+catch e
+	console.log "Running in web page"
 

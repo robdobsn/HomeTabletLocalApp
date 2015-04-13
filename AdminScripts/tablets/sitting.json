@@ -1,0 +1,17 @@
+{
+    "deviceName": "tabsitting",
+    "deviceIP": "192.168.0.203",
+    "roomName": "Lounge",
+    "sonosRoomName": "Lounge",
+    "favourites":
+    [
+        {
+        "tileName": "Lounge On",
+        "groupName": "Lounge Room"
+        },
+        {
+        "tileName": "Lounge Off",
+        "groupName": "Lounge Room"
+        }
+    ]
+}

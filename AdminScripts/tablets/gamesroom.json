@@ -1,0 +1,40 @@
+{
+    "deviceName": "tabgames",
+    "deviceIP": "192.168.0.218",
+    "roomName": "Games Room",
+    "sonosRoomName": "Playroom",
+    "favourites":
+    [
+        {
+        "tileName": "Shade 1 Up",
+        "groupName": "Games Room"
+        },
+        {
+        "tileName": "Shade 2 Up",
+        "groupName": "Games Room"
+        },
+        {
+        "tileName": "Games On"
+        },
+        {
+        "tileName": "Shade 1 Stop",
+        "groupName": "Games Room"
+        },
+        {
+        "tileName": "Shade 2 Stop",
+        "groupName": "Games Room"
+        },
+        {
+        "tileName": "Games Off"
+        },
+        {
+        "tileName": "Shade 1 Down",
+        "groupName": "Games Room"
+        },
+        {
+        "tileName": "Shade 2 Down",
+        "groupName": "Games Room"
+        }
+
+    ]
+}

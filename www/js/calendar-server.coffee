@@ -5,7 +5,6 @@ class CalendarManager
 		@firstRefreshAfterFailSecs = 10
 		@nextRefreshesAfterFailSecs = 60
 		@numRefreshFailuresSinceSuccess = 0
-		@requestCalUpdate()
 		@calendarUrl = ""
 		@calendarNumDays = 31
 		return
@@ -15,6 +14,7 @@ class CalendarManager
 			@calendarUrl = config.url
 		if config.numDays?
 			@calendarNumDays = config.numDays
+		@requestCalUpdate()
 		return
 
 	requestCalUpdate: ->

@@ -1,0 +1,29 @@
+{
+    "deviceName": "taboffice",
+    "deviceIP": "192.168.0.222",
+    "roomName": "Office",
+    "sonosRoomName": "Office",
+    "favourites":
+    [
+        {
+        "tileName": "Office Mood",
+        "groupName": "Office"
+        },
+        {
+        "tileName": "Office Off",
+        "groupName": "Office"
+        },
+        {
+        "tileName": "Office On",
+        "groupName": "Office"
+        },
+        {
+        "tileName": "Office Bath On",
+        "groupName": "Office"
+        },
+        {
+        "tileName": "Office Bath Off",
+        "groupName": "Office"
+        }
+    ]
+}

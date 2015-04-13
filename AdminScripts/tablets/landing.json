@@ -1,0 +1,45 @@
+{
+    "deviceName": "tablanding",
+    "deviceIP": "192.168.0.47",
+    "roomName": "Landing",
+    "sonosRoomName": "",
+    "favourites":
+    [
+        {
+        "tileName": "Hall Mood",
+        "groupName": "Hall"
+        },
+        {
+        "tileName": "Hall Off",
+        "groupName": "Hall"
+        },
+        {
+        "tileName": "Office Mood",
+        "groupName": "Office"
+        },
+        {
+        "tileName": "Nighttime"
+        },
+        {
+        "tileName": "Grace Bath On"
+        },
+        {
+        "tileName": "Grace Bath Off"
+        },
+        {
+        "tileName": "Shade Up",
+        "groupName": "Grace Bath",
+        "destGroup": "Blinds"
+        },
+        {
+        "tileName": "Shade Stop",
+        "groupName": "Grace Bath",
+        "destGroup": "Blinds"
+        },
+        {
+        "tileName": "Shade Down",
+        "groupName": "Grace Bath",
+        "destGroup": "Blinds"
+        }
+    ]
+}

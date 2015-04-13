@@ -1,0 +1,29 @@
+{
+    "deviceName": "tabguest",
+    "deviceIP": "192.168.0.215",
+    "roomName": "Guest Bedroom",
+    "sonosRoomName": "",
+    "favourites":
+    [
+        {
+        "tileName": "Guest Bed 1 On",
+        "groupName": "Guest Bed 1"
+        },
+        {
+        "tileName": "Guest Bed 1 Off",
+        "groupName": "Guest Bed 1"
+        },
+        {
+        "tileName": "Guest Bath 1 On",
+        "groupName": "Guest Bath"
+        },
+        {
+        "tileName": "Guest Bath 1 Off",
+        "groupName": "Guest Bath"
+        },
+        {
+        "tileName": "Guest Bath Night",
+        "groupName": "Guest Bath"
+        }
+    ]
+}

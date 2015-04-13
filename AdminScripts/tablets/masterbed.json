@@ -1,0 +1,36 @@
+{
+    "deviceName": "tabmasterbed",
+    "deviceIP": "192.168.0.23",
+    "roomName": "Master Bed",
+    "sonosRoomName": "Master Bedroom",
+    "favourites":
+    [
+        {
+        "tileName": "Master Bed Mood",
+        "groupName": "Master Bed"
+        },
+        {
+        "tileName": "Master Bed Off",
+        "groupName": "Master Bed"
+        },
+        {
+        "tileName": "Master Bed On",
+        "groupName": "Master Bed"
+        },
+        {
+        "tileName": "Nighttime"
+        },
+        {
+        "tileName": "Master Bath Mood",
+        "groupName": "Master Bath"
+        },
+        {
+        "tileName": "Master Bath Off",
+        "groupName": "Master Bath"
+        },
+        {
+        "tileName": "Master Bath On",
+        "groupName": "Master Bath"
+        }
+    ]
+}
