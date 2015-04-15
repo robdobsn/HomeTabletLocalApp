@@ -186,17 +186,19 @@ AppPages = (function() {
           }
         }
       }
-      tileList.sort((function(_this) {
-        return function(a, b) {
-          if (a[tileGen.tileSort] < b[tileGen.tileSort]) {
-            return -1;
-          }
-          if (a[tileGen.tileSort] > b[tileGen.tileSort]) {
-            return 1;
-          }
-          return 0;
-        };
-      })(this));
+      if ("tileSort" in tileGen) {
+        tileList.sort((function(_this) {
+          return function(a, b) {
+            if (a[tileGen.tileSort] < b[tileGen.tileSort]) {
+              return -1;
+            }
+            if (a[tileGen.tileSort] > b[tileGen.tileSort]) {
+              return 1;
+            }
+            return 0;
+          };
+        })(this));
+      }
       for (_m = 0, _len4 = tileList.length; _m < _len4; _m++) {
         tile = tileList[_m];
         pageDef.tiles.push(tile);

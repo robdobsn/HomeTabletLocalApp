@@ -123,10 +123,11 @@ class AppPages
 											tileList.push newTile
 								else
 									tileList.push newTile
-			tileList.sort (a,b) =>
-				if a[tileGen.tileSort] < b[tileGen.tileSort] then return -1
-				if a[tileGen.tileSort] > b[tileGen.tileSort] then return 1
-				return 0
+			if "tileSort" of tileGen
+				tileList.sort (a,b) =>
+					if a[tileGen.tileSort] < b[tileGen.tileSort] then return -1
+					if a[tileGen.tileSort] > b[tileGen.tileSort] then return 1
+					return 0
 			for tile in tileList
 				pageDef.tiles.push tile
 		return pageDef

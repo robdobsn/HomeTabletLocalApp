@@ -36,7 +36,7 @@ class DefaultTabletConfig
 							{ "tileType": "nav", "tileName": "Settings", "colType":"nav", "iconName": "config", "tileText": "", "url": "Settings", "iconX":"centre" }
 						]
 						tileGen: [
-							{ "tabConfigFavListName":"favourites", "tileType": "action", "tileSelect":"groupName", "tileMult": "all", "tileSort": "tileText", "tileNameFrom": "actionName", "tileTextFrom":"actionName", "urlFrom": "actionUrl", "rowSpan": 1, "colSpan": 2 }
+							{ "tabConfigFavListName":"favourites", "tileType": "action", "tileSelect":"groupName", "tileMult": "all", "tileNameFrom": "actionName", "tileTextFrom":"actionName", "urlFrom": "actionUrl", "rowSpan": 1, "colSpan": 2 }
 						]
 					"Rooms": 
 						pageName: "Rooms"

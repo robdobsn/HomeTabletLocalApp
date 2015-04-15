@@ -4,6 +4,7 @@ class AutomationManager
 		@servers = []
 		@sumActions = {}
 		@iconAliasing = {}
+		@combinedActions = {}
 
 	setReadyCallback: (@readyCallback) ->
 
@@ -43,34 +44,70 @@ class AutomationManager
 		# Request data from servers
 		for server in @servers
 			server.reqActions()
-		# Callback now with initial actions
+		# Callback now with initial actions (fixed actions)
 		@readyCallback(true)
 		return
 
 	actionsReadyCb: (serverName, actions) =>
+		# Check if the data for this action has changed
 		dataChanged = true
 		if serverName of @sumActions
 			dataChanged = JSON.stringify(@sumActions[serverName]) isnt actions
 		if dataChanged
 			@sumActions[serverName] = actions
+		# Process the data further to remove duplications (two servers might have the same action)
+		# and convert these duplicates into separate action maintained by this object
+		@combinedActions["actions"] = @generateCombinedActions() 
 		@readyCallback(dataChanged)
 		return
 
 	getActionGroups: ->
-		return @sumActions
+		return @combinedActions
+
+	generateCombinedActions: () ->
+		# Flatten all sources into an actions list
+		mergedActionsList = []
+		duplicatedActions = {}
+		# Go through the actions of each server
+		for serverName, serverActions of @sumActions
+			for serverAction in serverActions
+				dupFound = false
+				# Check against other server's actions
+				for otherServerName, otherServerActions of @sumActions
+					if otherServerName is serverName
+						continue
+					for otherServerAction in otherServerActions
+						if otherServerAction.actionName is serverAction.actionName and
+							((not otherServerAction.groupName? and not serverAction.groupName?) or (otherServerAction.groupName is serverAction.groupName))
+								if serverAction.actionName of duplicatedActions
+									duplicatedActions[serverAction.actionName].actionUrl += ";" + serverAction.actionUrl
+								else
+									duplicatedActions[serverAction.actionName] = serverAction
+								dupFound = true
+								break
+					if dupFound
+						break
+				if not dupFound
+					mergedActionsList.push serverAction
+		for key,val of duplicatedActions
+			mergedActionsList.push val
+		return mergedActionsList
 
 	executeCommand: (cmdParams) =>
 		if not cmdParams? or cmdParams is "" then return
-		$.ajax cmdParams,
-			type: "GET"
-			dataType: "text"
-			success: (data, textStatus, jqXHR) =>
-				@app.mediaPlayHelper.play("ok")
-				return
-			error: (jqXHR, textStatus, errorThrown) =>
-				console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmdParams)
-				@app.mediaPlayHelper.play("fail")
-				return
+		# Commands can be ; separated
+		cmds = cmdParams.split(";")
+		for cmd in cmds
+			$.ajax cmd,
+				type: "GET"
+				dataType: "text"
+				success: (data, textStatus, jqXHR) =>
+					@app.mediaPlayHelper.play("ok")
+					return
+				error: (jqXHR, textStatus, errorThrown) =>
+					console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
+					@app.mediaPlayHelper.play("fail")
+					return
 
 	getIconFromActionName: (actionName, aliasingGroup) ->
 		if not aliasingGroup? then return ""

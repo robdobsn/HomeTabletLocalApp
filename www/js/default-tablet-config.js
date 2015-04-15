@@ -92,7 +92,6 @@ DefaultTabletConfig = (function() {
                 "tileType": "action",
                 "tileSelect": "groupName",
                 "tileMult": "all",
-                "tileSort": "tileText",
                 "tileNameFrom": "actionName",
                 "tileTextFrom": "actionName",
                 "urlFrom": "actionUrl",
