@@ -77,8 +77,8 @@ for tabname in tablet_names:
         continue
 
     # Install the app
-    print("Running cordova install on " + tabname)
-    p2 = Popen(['cordova', 'install', '--device=' + tabfullplusport, 'android'], shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+    print("Running cordova run on " + tabname)
+    p2 = Popen(['cordova', 'run', '--device=' + tabfullplusport, 'android'], shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
     output2 = p2.stdout.read()
     output3 = p2.stderr.read()
     p2.wait()
@@ -94,6 +94,7 @@ for tabname in tablet_names:
         commandResults.append("Install OK for " + tabname)
     else:
         commandResults.append("No LAUNCH SUCCESS for " + tabname)
+        commandResults.append("STDERR output " + output3)
 
     # disconnect 
     os.system("adb disconnect " + tabfullplusport)

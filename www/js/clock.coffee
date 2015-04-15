@@ -44,7 +44,7 @@ class Clock extends Tile
 		timeTextHeight = $('#'+@tileId+" .sqClockTime").height()
 		$('#'+@tileId+" .sqClockPoint1").css
 			position: "absolute"
-			left: (@sizeX/2-5) + "px"
+			left: (@sizeX/2-12) + "px"
 			top: (timePos + (timeTextHeight/5)) + "px"
 			fontSize: (@sizeY/3) + "px"				
 		return

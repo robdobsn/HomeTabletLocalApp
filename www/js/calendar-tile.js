@@ -74,7 +74,7 @@ CalendarTile = (function(_super) {
     if (newHtml === "") {
       newHtml = "Nothing doing";
     }
-    this.contents.html("<div class=\"sqCalTitle\">" + calTitle + "</div>\n<ul class=\"sqCalEvents\">\n	" + newHtml + "\n</ul>");
+    this.contents.html("<div class=\"sqCalTitle\" style=\"font-size:26px;font-weight:bold;color:white;\">" + calTitle + "</div>\n<ul class=\"sqCalEvents\">\n	" + newHtml + "\n</ul>");
     this.recalculateFontScaling();
   };
 
@@ -134,7 +134,7 @@ CalendarTile = (function(_super) {
     if ((this.sizeX == null) || (this.sizeY == null) || (this.calLineCount === 0)) {
       return;
     }
-    fontScale = this.findOptimumFontSize(true, ".sqCalEvents", 1.0, 3.0);
+    fontScale = this.findOptimumFontSize(true, ".sqCalEvents", 1.0, 2.2);
     this.setContentFontScaling(fontScale);
   };
 

@@ -5,5 +5,6 @@ $(document).bind ("mobileinit"), ->
 	$.support.cors = true
 
 $(document).ready ->
-    wallTabApp = new WallTabApp()
-    wallTabApp.go()
+	FastClick.attach(document.body)
+	wallTabApp = new WallTabApp()
+	wallTabApp.go()

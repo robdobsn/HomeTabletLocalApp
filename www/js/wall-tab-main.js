@@ -6,6 +6,7 @@ $(document).bind("mobileinit", function() {
 
 $(document).ready(function() {
   var wallTabApp;
+  FastClick.attach(document.body);
   wallTabApp = new WallTabApp();
   return wallTabApp.go();
 });

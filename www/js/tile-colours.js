@@ -3,7 +3,7 @@ var TileColours;
 
 TileColours = (function() {
   function TileColours() {
-    this.tileColours = ["#a20025", "#1ba1e2", "#d80073", "#741b47", "#a4c400", "#6a00ff", "#76608a", "#6d8764", "#aa00ff", "#647687", "#9900ff", "#2566c2", "#bf9000", "#00aba9", "#008a00", "#f0a30a", "#825a2c", "#0050ef"];
+    this.tileColours = ["#e7821c", "#8bc73b", "#a20025", "#1b81e2", "#d80073", "#00b5ac", "#741b47", "#137409", "#76608a", "#aa00ff", "#0f38d3", "#a08306", "#825a2c", "#6a00ff", "#647687", "#9900ff", "#aca42a"];
     this.curTileColour = 0;
     return;
   }

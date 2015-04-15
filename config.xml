@@ -26,4 +26,5 @@
     <preference name="android-installLocation" value="auto" />
     <access origin="*" />
     <content src="index.html" />
+    <icon src="icon.png" />
 </widget>

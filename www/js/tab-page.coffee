@@ -1,6 +1,5 @@
 class TabPage
 	constructor: (@app, @parentTag, @pageDef, @defaultActionFn) ->
-		@tileColours = new TileColours
 		@tiles = []
 		@titlesTopMargin = 60
 		@titlesYPos = 10
@@ -102,7 +101,7 @@ class TabPage
 	tileDefCleanCheck: (tileDef) ->
 		tileDef.parentTag = @tilesSelector
 		if "tileColour" not of tileDef
-			tileDef.tileColour = @tileColours.getNextColour()
+			tileDef.tileColour = @app.tileColours.getNextColour()
 		if "clickFn" not of tileDef
 			tileDef.clickFn = @defaultActionFn
 		if "colSpan" not of tileDef

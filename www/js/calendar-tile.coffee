@@ -67,7 +67,7 @@ class CalendarTile extends Tile
 			newHtml = "Nothing doing"
 		# Place the calendar text
 		@contents.html """
-			<div class="sqCalTitle">#{calTitle}</div>
+			<div class="sqCalTitle" style="font-size:26px;font-weight:bold;color:white;">#{calTitle}</div>
 			<ul class="sqCalEvents">
 				#{newHtml}
 			</ul>
@@ -126,7 +126,7 @@ class CalendarTile extends Tile
 	# Provide a different font scaling based on the amount of text in the calendar box
 	recalculateFontScaling: () ->
 		if not @sizeX? or not @sizeY? or (@calLineCount is 0) then return
-		fontScale = @findOptimumFontSize(true, ".sqCalEvents", 1.0, 3.0)
+		fontScale = @findOptimumFontSize(true, ".sqCalEvents", 1.0, 2.2)
 		#fontScale = @findOptimumFontSize(false, ".sqCalEvents", yScale)
 		@setContentFontScaling(fontScale)
 		return

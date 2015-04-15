@@ -7,7 +7,6 @@ TabPage = (function() {
     this.parentTag = parentTag;
     this.pageDef = pageDef;
     this.defaultActionFn = defaultActionFn;
-    this.tileColours = new TileColours;
     this.tiles = [];
     this.titlesTopMargin = 60;
     this.titlesYPos = 10;
@@ -117,7 +116,7 @@ TabPage = (function() {
   TabPage.prototype.tileDefCleanCheck = function(tileDef) {
     tileDef.parentTag = this.tilesSelector;
     if (!("tileColour" in tileDef)) {
-      tileDef.tileColour = this.tileColours.getNextColour();
+      tileDef.tileColour = this.app.tileColours.getNextColour();
     }
     if (!("clickFn" in tileDef)) {
       tileDef.clickFn = this.defaultActionFn;
