@@ -1,6 +1,5 @@
 {
     "deviceName": "tabhall",
-    "deviceIP": "192.168.0.184",
     "roomName": "Hall",
     "sonosRoomName": "",
     "favourites":
@@ -14,7 +13,15 @@
         "groupName": "Hall"
         },
         {
-        "tileName": "Hall On",
+        "tileName": "Hall Bright",
+        "groupName": "Hall"
+        },
+        {
+        "tileName": "Snug Books On",
+        "groupName": "Hall"
+        },
+        {
+        "tileName": "Snug Books Off",
         "groupName": "Hall"
         },
         {
@@ -26,15 +33,9 @@
         "groupName": "Cellar"
         },
         {
-        "tileName": "Nighttime"
-        },
-        {
-        "tileName": "Snug Books On",
-        "groupName": "Hall"
-        },
-        {
-        "tileName": "Snug Books Off",
-        "groupName": "Hall"
+        "tileName": "8 Dick Place Nighttime Off",
+        "groupName": "8 Dick Place",
+        "tileText": "Nighttime Off"
         }
     ]
 }

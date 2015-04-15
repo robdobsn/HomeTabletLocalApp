@@ -1,0 +1,41 @@
+{
+    "deviceName": "tabspidey",
+    "deviceIP": "192.168.0.183",
+    "roomName": "Spidey",
+    "sonosRoomName": "Spidey Room",
+    "favourites":
+    [
+        {
+        "tileName": "Spidey Bed Mood",
+        "groupName": "Spidey"
+        },
+        {
+        "tileName": "Spidey Bed Bright",
+        "groupName": "Spidey"
+        },
+        {
+        "tileName": "Spidey Bed Off",
+        "groupName": "Spidey"
+        },
+        {
+        "tileName": "Spidey Bath Mood",
+        "groupName": "Spidey"
+        },
+        {
+        "tileName": "Spidey Bath On",
+        "groupName": "Spidey"
+        },
+        {
+        "tileName": "Spidey Bath Off",
+        "groupName": "Spidey"
+        },
+        {
+        "tileName": "Spidey Wall On",
+        "groupName": "Spidey"
+        },
+        {
+        "tileName": "Spidey Wall Off",
+        "groupName": "Spidey"
+        }
+    ]
+}

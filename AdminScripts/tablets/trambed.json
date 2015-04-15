@@ -1,0 +1,31 @@
+{
+  "deviceName": "tabtrambed",
+  "roomName": "Tram Bed",
+  "sonosRoomName": "Tram Bedroom",
+  "favourites": [
+    {
+      "tileName": "Tram Bed Mood",
+      "groupName": "Tram Bed"
+    },
+    {
+      "tileName": "Tram Bed Stars",
+      "groupName": "Tram Bed"
+    },
+    {
+      "tileName": "Tram Bed Bright",
+      "groupName": "Tram Bed"
+    },
+    {
+      "tileName": "Tram Bed Off",
+      "groupName": "Tram Bed"
+    },
+    {
+      "tileName": "Landing Bath On",
+      "groupName": "Landing Bath"
+    },
+    {
+      "tileName": "Landing Bath Off",
+      "groupName": "Landing Bath"
+    }
+  ]
+}

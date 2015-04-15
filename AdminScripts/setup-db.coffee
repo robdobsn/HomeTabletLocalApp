@@ -4,14 +4,18 @@ fs = require('fs')
 DefaultTabletConfig = require('../www/js/default-tablet-config.js')
 
 # Mongo client
+mongoUrl = 'mongodb://macallan:27017/WallTablets'
 if process.argv[2]?
 	if process.argv[2] is "localhost"
 		mongoUrl = 'mongodb://localhost:27017/WallTablets'
-	else
+	else if process.argv[2][0] isnt '-'
 		mongoUrl = process.argv[2]
-else
-	mongoUrl = 'mongodb://macallan:27017/WallTablets'
 console.log "Mongo database is " + mongoUrl
+
+# Check for override current favourites from files
+replaceFavs = false
+if process.argv[2]? and process.argv[2] is "-replacefavs" or process.argv[3]? and process.argv[3] is "-replacefavs"
+	replaceFavs = true
 
 # Sonos Server URL
 sonosServerUrl = 'http://macallan:5005'
@@ -65,21 +69,39 @@ setConfigInDb = (configDb, deviceConfig, configsToSet, favourites) ->
 	configDb.collection('TabletConfig').findOne { 'deviceName': deviceConfig['deviceName'] },
 		(err, doc) ->
 			# console.log("current doc " + JSON.stringify(doc))
+			# Get favourites - use current database unless not there
 			curFavourites = []
-			if doc? and doc.favourites?
-				curFavourites = doc.favourites
-			# Merge favourites - adding only distinct ones
-			favsToAdd = []
-			for curFav in curFavourites
-				addThis = true
-				for newFav in deviceConfig["favourites"]
-					if curFav.tileName is newFav.tileName and curFav.groupName is newFav.groupName
-						addThis = false
-						break
-				if addThis
-					favsToAdd.push curFav
-			for fav in favsToAdd
-				deviceConfig["favourites"].push fav
+			if (not replaceFavs) and doc? and doc.favourites? and doc.favourites.length isnt 0
+				# De-duplicate
+				curFavourites.push fav for fav in doc.favourites when fav not in curFavourites
+
+			# Debug code
+			# if deviceConfig['deviceName'] is "tabmasterbed"
+			# 	for fav in curFavourites
+			# 		console.log "tab " + deviceConfig['deviceName'] + " curdbFavourite " + JSON.stringify(fav)
+			# 	for fav in deviceConfig["favourites"]
+			# 		console.log "tab " + deviceConfig['deviceName'] + " fileFavourite " + JSON.stringify(fav)
+
+			if curFavourites.length > 0
+				deviceConfig["favourites"] = curFavourites
+			# Merge favourites - adding only distinct ones - no longer doing this way
+			# favsToAdd = []
+			# for curFav in curFavourites
+			# 	addThis = true
+			# 	for newFav in deviceConfig["favourites"]
+			# 		if curFav.tileName is newFav.tileName and curFav.groupName is newFav.groupName
+			# 			addThis = false
+			# 			break
+			# 	if addThis
+			# 		favsToAdd.push curFav
+			# for fav in favsToAdd
+			# 	deviceConfig["favourites"].push fav
+
+			# Debug code
+			# if deviceConfig['deviceName'] is "tabmasterbed"
+			# 	for fav in deviceConfig["favourites"]
+			# 		console.log "tab " + deviceConfig['deviceName'] + " finalFavourite " + JSON.stringify(fav)
+
 			# Set the new config
 			configsToSet.count++
 			# console.log "++ " + configsToSet.count
@@ -150,8 +172,8 @@ getSonosConfig = (deviceConfigList) ->
 getBlindsActions = () ->
 	blindsDef = 
 		[
-			[ "Games Room", [ ["1", "Shade 1"], ["2", "Shade 2"] ], "http://192.168.0.225/blind/"],
-			[ "Grace Bath", [ ["1", "Shade"] ], "http://192.168.0.226/blind/" ],
+			[ "Games", [ ["1", "Shade 1"], ["2", "Shade 2"] ], "http://192.168.0.225/blind/"],
+			[ "Landing Bath", [ ["1", "Shade"] ], "http://192.168.0.226/blind/" ],
 			[ "Office", [ ["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"] ], "http://192.168.0.220/blind/"]
 		]
 	return genBlindsActions(blindsDef)

@@ -109,6 +109,8 @@ class AppPages
 									for favList in tabletSpecificConfig[tileGen.tabConfigFavListName]
 										if newTile[tileGen.tileSelect] is favList[tileGen.tileSelect]
 											if newTile.tileName is favList.tileName
+												if "tileText" of favList
+													newTile.tileText = favList.tileText
 												tileList.push newTile
 								# Only select a single specific tile explicitly named in the pageDef
 								# e.g. using the specific groupname (room) and tilename (action)

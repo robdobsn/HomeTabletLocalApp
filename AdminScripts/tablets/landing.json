@@ -18,28 +18,27 @@
         "groupName": "Office"
         },
         {
-        "tileName": "Nighttime"
+        "tileName": "Landing Bath On",
+        "groupName": "Landing Bath"
         },
         {
-        "tileName": "Grace Bath On"
-        },
-        {
-        "tileName": "Grace Bath Off"
+        "tileName": "Landing Bath Off",
+        "groupName": "Landing Bath"
         },
         {
         "tileName": "Shade Up",
-        "groupName": "Grace Bath",
-        "destGroup": "Blinds"
-        },
-        {
-        "tileName": "Shade Stop",
-        "groupName": "Grace Bath",
+        "groupName": "Landing Bath",
         "destGroup": "Blinds"
         },
         {
         "tileName": "Shade Down",
-        "groupName": "Grace Bath",
+        "groupName": "Landing Bath",
         "destGroup": "Blinds"
+        },
+        {
+        "tileName": "8 Dick Place Nighttime Off",
+        "groupName": "8 Dick Place",
+        "tileText": "Nighttime Off"
         }
     ]
 }

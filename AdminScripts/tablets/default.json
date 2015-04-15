@@ -25,7 +25,9 @@
         "groupName": "Cellar"
         },
         {
-        "tileName": "Nighttime"
+        "tileName": "8 Dick Place Nighttime Off",
+        "groupName": "8 Dick Place",
+        "tileText": "Nighttime Off"
         },
         {
         "tileName": "Snug Books On",

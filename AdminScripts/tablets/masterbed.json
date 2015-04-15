@@ -1,36 +1,42 @@
 {
     "deviceName": "tabmasterbed",
     "deviceIP": "192.168.0.23",
-    "roomName": "Master Bed",
+    "roomName": "Master",
     "sonosRoomName": "Master Bedroom",
     "favourites":
     [
         {
-        "tileName": "Master Bed Mood",
-        "groupName": "Master Bed"
+        "tileName": "Master Mood",
+        "groupName": "Master"
         },
         {
-        "tileName": "Master Bed Off",
-        "groupName": "Master Bed"
+        "tileName": "Master Mood 2",
+        "groupName": "Master"
         },
         {
-        "tileName": "Master Bed On",
-        "groupName": "Master Bed"
+        "tileName": "Master Off",
+        "groupName": "Master"
         },
         {
-        "tileName": "Nighttime"
+        "tileName": "Master On",
+        "groupName": "Master"
         },
         {
         "tileName": "Master Bath Mood",
-        "groupName": "Master Bath"
+        "groupName": "Master"
         },
         {
         "tileName": "Master Bath Off",
-        "groupName": "Master Bath"
+        "groupName": "Master"
         },
         {
         "tileName": "Master Bath On",
-        "groupName": "Master Bath"
+        "groupName": "Master"
+        },
+        {
+        "tileName": "8 Dick Place Nighttime Off",
+        "groupName": "8 Dick Place",
+        "tileText": "Nighttime Off"
         }
     ]
 }

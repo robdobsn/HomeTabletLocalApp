@@ -13,19 +13,19 @@ DefaultTabletConfig = (function() {
         iconAliasing: {
           automationIcons: [
             {
-              regex: "^Off$",
+              regex: "Off$",
               iconName: "bulb-off"
             }, {
-              regex: "^On$",
+              regex: "On$",
               iconName: "bulb-on"
             }, {
-              regex: "^Bright$",
+              regex: "Bright$",
               iconName: "bulb-on"
             }, {
-              regex: "^Mood",
+              regex: "Mood$",
               iconName: "bulb-mood"
             }, {
-              regex: "^Stars",
+              regex: "Stars$",
               iconName: "stars"
             }
           ]

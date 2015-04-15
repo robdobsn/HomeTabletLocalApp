@@ -10,15 +10,11 @@
 	    "groupName": "Kitchen"
 	    },
 	    {
-	    "tileName": "Kitchen Mood 2",
-	    "groupName": "Kitchen"
-	    },
-	    {
 	    "tileName": "Kitchen Off",
 	    "groupName": "Kitchen"
 	    },
 	    {
-	    "tileName": "Kitchen On",
+	    "tileName": "Kitchen Bright",
 	    "groupName": "Kitchen"
 	    },
 	    {

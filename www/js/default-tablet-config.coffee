@@ -9,11 +9,11 @@ class DefaultTabletConfig
 				iconAliasing:
 					automationIcons:
 						[
-							{ regex: "^Off$", iconName: "bulb-off"}
-							{ regex: "^On$", iconName: "bulb-on"}
-							{ regex: "^Bright$", iconName: "bulb-on"}
-							{ regex: "^Mood", iconName: "bulb-mood"}
-							{ regex: "^Stars", iconName: "stars"}
+							{ regex: "Off$", iconName: "bulb-off"}
+							{ regex: "On$", iconName: "bulb-on"}
+							{ regex: "Bright$", iconName: "bulb-on"}
+							{ regex: "Mood$", iconName: "bulb-mood"}
+							{ regex: "Stars$", iconName: "stars"}
 						]
 				pages:
 					"Home":
