@@ -22,8 +22,12 @@
 	    "groupName": "Conservatory"
 	    },
 	    {
-	    "tileName": "Conservatory Off",
-	    "groupName": "Conservatory"
+	    "tileName": "Play",
+	    "groupName": "Kitchen"
+	    },
+	    {
+	    "tileName": "Stop",
+	    "groupName": "Kitchen"
 	    }
 	],
 	"tileDefs_Sonos":

@@ -5,17 +5,19 @@ import sys
 from subprocess import Popen, PIPE
 
 # Note that on windows this script is best run from cmd prompt rather than in IDLE
-all_tablet_names = ["tabgames",
-                    "tabhall",
-                    "tabmasterbed",
-                    "tablanding",
-                    # "192.168.0.78", # "tabgrace"
+all_tablet_names = ["tabdining", 
+                    "tabgames",
                     "tabguest",
+                    "tabhall",
+                    "tabkitchen",
+                    "tablanding",
+                    "tablobby",
+                    "tablounge",
+                    "tabmasterbed",
                     "taboffice",
-                    "tabjoe",
-                    # "tablobby",
-                    # "192.168.0.219",
-                    "tabsitting"]
+                    "tabspidey",
+                    "tabtrambed"
+                    ]
 adbRemoteCmds = ["setprop service.adb.tcp.port 5555", "stop adbd", "start adbd"]
 
 # Check if we want all tablets or just one
@@ -77,8 +79,8 @@ for tabname in tablet_names:
         continue
 
     # Install the app
-    print("Running cordova run on " + tabname)
-    p2 = Popen(['cordova', 'run', '--device=' + tabfullplusport, 'android'], shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+    print("Running cordova run on " + tabfullplusport)
+    p2 = Popen(['cordova', 'run', 'android'], shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
     output2 = p2.stdout.read()
     output3 = p2.stderr.read()
     p2.wait()

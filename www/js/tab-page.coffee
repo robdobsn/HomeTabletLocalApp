@@ -137,12 +137,12 @@ class TabPage
 		isPortrait = (winWidth < winHeight)
 		if isPortrait
 			@baseColumnsDef = if @pageDef.columns? then @pageDef.columns.portrait else null
-			@tilesDown = if @pageDef.rows? then @pageDef.rows.portrait else 8
+			@tilesDown = if @pageDef.rows? then @pageDef.rows.portrait else 10
 			@tilesAcross = 2
 			@columnsAcross = 2
 		else
 			@baseColumnsDef = if @pageDef.columns? then @pageDef.columns.landscape else null
-			@tilesDown = if @pageDef.rows? then @pageDef.rows.landscape else 5
+			@tilesDown = if @pageDef.rows? then @pageDef.rows.landscape else 6
 			@tilesAcross = 3
 			@columnsAcross = 3
 		@columnsDef = (col for col in @baseColumnsDef)

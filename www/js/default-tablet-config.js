@@ -25,6 +25,9 @@ DefaultTabletConfig = (function() {
               regex: "Mood$",
               iconName: "bulb-mood"
             }, {
+              regex: "Mood 2$",
+              iconName: "bulb-mood"
+            }, {
               regex: "Stars$",
               iconName: "stars"
             }
@@ -83,6 +86,14 @@ DefaultTabletConfig = (function() {
                 "iconName": "config",
                 "tileText": "",
                 "url": "Settings",
+                "iconX": "centre"
+              }, {
+                "tileType": "nav",
+                "tileName": "Exit",
+                "colType": "nav",
+                "iconName": "exit",
+                "tileText": "",
+                "url": "Exit",
                 "iconX": "centre"
               }
             ],
@@ -346,6 +357,49 @@ DefaultTabletConfig = (function() {
                 "contentType": "devname",
                 "varName": "DeviceConfigName",
                 "clickFn": ""
+              }
+            ]
+          },
+          "Exit": {
+            pageName: "Exit",
+            pageTitle: "Exit?",
+            columns: {
+              landscape: [
+                {
+                  "title": "",
+                  "colSpan": 1,
+                  "colType": "nav"
+                }
+              ],
+              portrait: [
+                {
+                  "title": "",
+                  "colSpan": 1,
+                  "colType": "nav"
+                }
+              ]
+            },
+            rows: {
+              landscape: 4,
+              portrait: 6
+            },
+            tilesFixed: [
+              {
+                "tileType": "nav",
+                "tileName": "ExitYes",
+                "colType": "nav",
+                "tileText": "Exit? - Yes",
+                "url": "ExitYes",
+                "rowSpan": 1,
+                "tileColour": "black"
+              }, {
+                "tileType": "nav",
+                "tileName": "ExitNo",
+                "colType": "nav",
+                "tileText": "Exit? - No",
+                "url": "Home",
+                "rowSpan": 1,
+                "tileColour": "black"
               }
             ]
           },

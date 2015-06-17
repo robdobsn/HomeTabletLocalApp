@@ -167,12 +167,12 @@ TabPage = (function() {
     isPortrait = winWidth < winHeight;
     if (isPortrait) {
       this.baseColumnsDef = this.pageDef.columns != null ? this.pageDef.columns.portrait : null;
-      this.tilesDown = this.pageDef.rows != null ? this.pageDef.rows.portrait : 8;
+      this.tilesDown = this.pageDef.rows != null ? this.pageDef.rows.portrait : 10;
       this.tilesAcross = 2;
       this.columnsAcross = 2;
     } else {
       this.baseColumnsDef = this.pageDef.columns != null ? this.pageDef.columns.landscape : null;
-      this.tilesDown = this.pageDef.rows != null ? this.pageDef.rows.landscape : 5;
+      this.tilesDown = this.pageDef.rows != null ? this.pageDef.rows.landscape : 6;
       this.tilesAcross = 3;
       this.columnsAcross = 3;
     }

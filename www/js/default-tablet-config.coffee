@@ -13,6 +13,7 @@ class DefaultTabletConfig
 							{ regex: "On$", iconName: "bulb-on"}
 							{ regex: "Bright$", iconName: "bulb-on"}
 							{ regex: "Mood$", iconName: "bulb-mood"}
+							{ regex: "Mood 2$", iconName: "bulb-mood"}
 							{ regex: "Stars$", iconName: "stars"}
 						]
 				pages:
@@ -34,6 +35,7 @@ class DefaultTabletConfig
 							{ "tileType": "clock", "tileName": "Clock", "groupName": "Clock", "positionCue": "end", "rowSpan": 2, "colSpan": 2 },
 							{ "tileType": "nav", "tileName": "Rooms", "colType":"nav", "iconName": "floorplan", "tileText": "", "url": "Rooms", "iconX":"centre" }
 							{ "tileType": "nav", "tileName": "Settings", "colType":"nav", "iconName": "config", "tileText": "", "url": "Settings", "iconX":"centre" }
+							{ "tileType": "nav", "tileName": "Exit", "colType":"nav", "iconName": "exit", "tileText": "", "url": "Exit", "iconX":"centre" }
 						]
 						tileGen: [
 							{ "tabConfigFavListName":"favourites", "tileType": "action", "tileSelect":"groupName", "tileMult": "all", "tileNameFrom": "actionName", "tileTextFrom":"actionName", "urlFrom": "actionUrl", "rowSpan": 1, "colSpan": 2 }
@@ -117,6 +119,25 @@ class DefaultTabletConfig
 							{ "tileType": "textentry", "tileName": "ConfigServer", "groupName": "Settings", "rowSpan": 1, "colSpan": 2, "label":"Cfg URL ", "contentType":"url", "varName":"ConfigServerUrl", "clickFn":"" }
 							{ "tileType": "textentry", "tileName": "TabletName", "groupName": "Settings", "rowSpan": 1, "colSpan": 2, "label":"TabName ", "contentType":"devname", "varName":"DeviceConfigName", "clickFn":"" }
 						]
+
+					"Exit":
+						pageName: "Exit"
+						pageTitle: "Exit?"
+						columns:
+							landscape: [
+								{ "title": "", "colSpan": 1, "colType": "nav" }
+							]
+							portrait: [ 
+								{ "title": "", "colSpan": 1, "colType": "nav" }
+							]
+						rows:
+							landscape: 4
+							portrait: 6
+						tilesFixed: [
+							{ "tileType": "nav", "tileName": "ExitYes", "colType":"nav", "tileText": "Exit? - Yes", "url": "ExitYes", "rowSpan":1, "tileColour":"black" }
+							{ "tileType": "nav", "tileName": "ExitNo", "colType":"nav", "tileText": "Exit? - No", "url": "Home", "rowSpan":1, "tileColour":"black" }
+						]
+
 					"DimDisplay":
 						pageName: "Dim"
 						pageTitle: "Dim"

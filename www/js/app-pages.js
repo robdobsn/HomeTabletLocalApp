@@ -84,127 +84,176 @@ AppPages = (function() {
   };
 
   AppPages.prototype.generatePageContents = function(pageDef, tabletSpecificConfig) {
-    var favList, key, newTile, source, sourceList, tile, tileGen, tileList, tileSource, uniqList, val, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3;
+    var favFound, favList, newTile, source, sourceList, tile, tileGen, tileList, tileSource, uniqList, val, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _s, _t, _u;
     tileList = [];
     uniqList = [];
-    if ("tileGen" in pageDef) {
-      _ref = pageDef.tileGen;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        tileGen = _ref[_i];
-        sourceList = [];
-        if ("tileSources" in tileGen) {
-          sourceList = (function() {
-            var _j, _len1, _ref1, _results;
-            _ref1 = tileGen.tileSources;
-            _results = [];
-            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-              source = _ref1[_j];
+    if (!("tileGen" in pageDef)) {
+      return;
+    }
+    _ref = pageDef.tileGen;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      tileGen = _ref[_i];
+      sourceList = [];
+      if ("tileSources" in tileGen) {
+        sourceList = (function() {
+          var _j, _len1, _ref1, _results;
+          _ref1 = tileGen.tileSources;
+          _results = [];
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            source = _ref1[_j];
+            if (source in this.automationActionGroups) {
               _results.push(source);
             }
-            return _results;
-          })();
-        } else {
-          sourceList = (function() {
-            var _ref1, _results;
-            _ref1 = this.automationActionGroups;
-            _results = [];
-            for (source in _ref1) {
-              val = _ref1[source];
-              _results.push(source);
-            }
-            return _results;
-          }).call(this);
-        }
+          }
+          return _results;
+        }).call(this);
+      } else {
+        sourceList = (function() {
+          var _ref1, _results;
+          _ref1 = this.automationActionGroups;
+          _results = [];
+          for (source in _ref1) {
+            val = _ref1[source];
+            _results.push(source);
+          }
+          return _results;
+        }).call(this);
+      }
+      if (tileGen.tileMult === "unique") {
         for (_j = 0, _len1 = sourceList.length; _j < _len1; _j++) {
           tileSource = sourceList[_j];
-          if (tileSource in this.automationActionGroups) {
-            _ref1 = this.automationActionGroups[tileSource];
-            for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-              tile = _ref1[_k];
+          _ref1 = this.automationActionGroups[tileSource];
+          for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+            tile = _ref1[_k];
+            if (tileGen.tileSelect in tile) {
+              if (_ref2 = tile[tileGen.tileSelect], __indexOf.call(uniqList, _ref2) < 0) {
+                newTile = this.generateTileInfo(tileGen, tile);
+                tileList.push(newTile);
+                uniqList.push(newTile[tileGen.tileSelect]);
+              }
+            }
+          }
+        }
+      } else if ("tileFilterValFrom" in tileGen) {
+        for (_l = 0, _len3 = sourceList.length; _l < _len3; _l++) {
+          tileSource = sourceList[_l];
+          _ref3 = this.automationActionGroups[tileSource];
+          for (_m = 0, _len4 = _ref3.length; _m < _len4; _m++) {
+            tile = _ref3[_m];
+            if (tileGen.tileSelect in tile) {
+              if (tile[tileGen.tileSelect] === pageDef[tileGen.tileFilterValFrom]) {
+                newTile = this.generateTileInfo(tileGen, tile);
+                tileList.push(newTile);
+              }
+            }
+          }
+        }
+      } else if ("tabConfigFavListName" in tileGen && tileGen.tabConfigFavListName in tabletSpecificConfig) {
+        _ref4 = tabletSpecificConfig[tileGen.tabConfigFavListName];
+        for (_n = 0, _len5 = _ref4.length; _n < _len5; _n++) {
+          favList = _ref4[_n];
+          favFound = false;
+          for (_o = 0, _len6 = sourceList.length; _o < _len6; _o++) {
+            tileSource = sourceList[_o];
+            _ref5 = this.automationActionGroups[tileSource];
+            for (_p = 0, _len7 = _ref5.length; _p < _len7; _p++) {
+              tile = _ref5[_p];
               if (tileGen.tileSelect in tile) {
-                newTile = {};
-                for (key in tile) {
-                  val = tile[key];
-                  newTile[key] = val;
+                if (tile[tileGen.tileSelect] === favList[tileGen.tileSelect] && tile[tileGen.tileNameFrom] === favList.tileName) {
+                  newTile = this.generateTileInfo(tileGen, tile);
+                  if ("tileText" in favList) {
+                    newTile.tileText = favList.tileText;
+                  }
+                  tileList.push(newTile);
+                  favFound = true;
+                  break;
                 }
-                newTile.tileType = tileGen.tileType;
-                newTile.pageMode = "pageMode" in tileGen ? tileGen.pageMode : "";
-                newTile.tileMode = "tileMode" in tileGen ? tileGen.tileMode : "";
-                newTile.tileName = tile[tileGen.tileNameFrom];
-                newTile.colType = tileGen.colType != null ? tileGen.colType : "";
-                newTile.url = "urlFrom" in tileGen ? tile[tileGen.urlFrom] : ("url" in tileGen ? newTile.url = tileGen.url : void 0);
-                if (tileGen.pageGenRule != null) {
-                  newTile.pageGenRule = tileGen.pageGenRule;
-                }
-                if (tileGen.rowSpan != null) {
-                  newTile.rowSpan = tileGen.rowSpan;
-                }
-                if (tileGen.colSpan != null) {
-                  newTile.colSpan = tileGen.colSpan;
-                }
-                newTile.tileText = tile[tileGen.tileTextFrom];
-                if ("iconName" in tileGen) {
-                  newTile.iconName = tileGen.iconName;
-                }
-                if (tileGen.tileMult === "unique") {
-                  if (_ref2 = newTile[tileGen.tileSelect], __indexOf.call(uniqList, _ref2) < 0) {
+              }
+            }
+            if (favFound) {
+              break;
+            }
+          }
+        }
+      } else if ("tileFilterVal" in tileGen) {
+        for (_q = 0, _len8 = sourceList.length; _q < _len8; _q++) {
+          tileSource = sourceList[_q];
+          _ref6 = this.automationActionGroups[tileSource];
+          for (_r = 0, _len9 = _ref6.length; _r < _len9; _r++) {
+            tile = _ref6[_r];
+            if (tileGen.tileSelect in tile) {
+              if (tile[tileGen.tileSelect] === tileGen.tileFilterVal) {
+                if ("tileNameSelect" in tileGen) {
+                  if (tile[tileGenInfo.tileNameFrom] === tileGen.tileNameSelect) {
+                    newTile = this.generateTileInfo(tileGen, tile);
                     tileList.push(newTile);
-                    uniqList.push(newTile[tileGen.tileSelect]);
-                  }
-                } else if ("tileFilterValFrom" in tileGen) {
-                  if (newTile[tileGen.tileSelect] === pageDef[tileGen.tileFilterValFrom]) {
-                    tileList.push(newTile);
-                  }
-                } else if ("tabConfigFavListName" in tileGen && tileGen.tabConfigFavListName in tabletSpecificConfig) {
-                  _ref3 = tabletSpecificConfig[tileGen.tabConfigFavListName];
-                  for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-                    favList = _ref3[_l];
-                    if (newTile[tileGen.tileSelect] === favList[tileGen.tileSelect]) {
-                      if (newTile.tileName === favList.tileName) {
-                        if ("tileText" in favList) {
-                          newTile.tileText = favList.tileText;
-                        }
-                        tileList.push(newTile);
-                      }
-                    }
-                  }
-                } else if ("tileFilterVal" in tileGen) {
-                  if (newTile[tileGen.tileSelect] === tileGen.tileFilterVal) {
-                    if ("tileNameSelect" in tileGen) {
-                      if (newTile.tileName === tileGen.tileNameSelect) {
-                        tileList.push(newTile);
-                      }
-                    } else {
-                      tileList.push(newTile);
-                    }
                   }
                 } else {
+                  newTile = this.generateTileInfo(tileGen, tile);
                   tileList.push(newTile);
                 }
               }
             }
           }
         }
-      }
-      if ("tileSort" in tileGen) {
-        tileList.sort((function(_this) {
-          return function(a, b) {
-            if (a[tileGen.tileSort] < b[tileGen.tileSort]) {
-              return -1;
-            }
-            if (a[tileGen.tileSort] > b[tileGen.tileSort]) {
-              return 1;
-            }
-            return 0;
-          };
-        })(this));
-      }
-      for (_m = 0, _len4 = tileList.length; _m < _len4; _m++) {
-        tile = tileList[_m];
-        pageDef.tiles.push(tile);
+      } else {
+        for (_s = 0, _len10 = sourceList.length; _s < _len10; _s++) {
+          tileSource = sourceList[_s];
+          _ref7 = this.automationActionGroups[tileSource];
+          for (_t = 0, _len11 = _ref7.length; _t < _len11; _t++) {
+            tile = _ref7[_t];
+            newTile = this.generateTileInfo(tileGen, tile);
+            tileList.push(newTile);
+          }
+        }
       }
     }
-    return pageDef;
+    if ("tileSort" in tileGen) {
+      tileList.sort((function(_this) {
+        return function(a, b) {
+          if (a[tileGen.tileSort] < b[tileGen.tileSort]) {
+            return -1;
+          }
+          if (a[tileGen.tileSort] > b[tileGen.tileSort]) {
+            return 1;
+          }
+          return 0;
+        };
+      })(this));
+    }
+    for (_u = 0, _len12 = tileList.length; _u < _len12; _u++) {
+      tile = tileList[_u];
+      pageDef.tiles.push(tile);
+    }
+  };
+
+  AppPages.prototype.generateTileInfo = function(tileGenInfo, tile) {
+    var key, newTile, val;
+    newTile = {};
+    for (key in tile) {
+      val = tile[key];
+      newTile[key] = val;
+    }
+    newTile.tileType = tileGenInfo.tileType;
+    newTile.pageMode = "pageMode" in tileGenInfo ? tileGenInfo.pageMode : "";
+    newTile.tileMode = "tileMode" in tileGenInfo ? tileGenInfo.tileMode : "";
+    newTile.tileName = tile[tileGenInfo.tileNameFrom];
+    newTile.colType = tileGenInfo.colType != null ? tileGenInfo.colType : "";
+    newTile.url = "urlFrom" in tileGenInfo ? tile[tileGenInfo.urlFrom] : ("url" in tileGenInfo ? newTile.url = tileGenInfo.url : void 0);
+    if (tileGenInfo.pageGenRule != null) {
+      newTile.pageGenRule = tileGenInfo.pageGenRule;
+    }
+    if (tileGenInfo.rowSpan != null) {
+      newTile.rowSpan = tileGenInfo.rowSpan;
+    }
+    if (tileGenInfo.colSpan != null) {
+      newTile.colSpan = tileGenInfo.colSpan;
+    }
+    newTile.tileText = tile[tileGenInfo.tileTextFrom];
+    if ("iconName" in tileGenInfo) {
+      newTile.iconName = tileGenInfo.iconName;
+    }
+    return newTile;
   };
 
   AppPages.prototype.generateNewPage = function(context) {
@@ -292,6 +341,8 @@ AppPages = (function() {
       this.deleteFavouriteButton(context);
       this.setCurrentPage(this.defaultPageName, false);
       this.display();
+    } else if (context.url === "ExitYes") {
+      navigator.app.exitApp();
     } else {
       console.log("Attempting page generation " + context.url);
       newPageName = this.generateNewPage(context);

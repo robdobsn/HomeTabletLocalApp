@@ -1,0 +1,24 @@
+{
+    "deviceName": "tabdining",
+    "roomName": "Dining",
+    "sonosRoomName": "Kitchen",
+    "favourites":
+    [
+        {
+        "tileName": "Play",
+        "groupName": "Kitchen"
+        },
+        {
+        "tileName": "Stop",
+        "groupName": "Kitchen"
+        },
+        {
+        "tileName": "Vol +",
+        "groupName": "Kitchen"
+        },
+        {
+        "tileName": "Vol -",
+        "groupName": "Kitchen"
+        }
+    ]
+}

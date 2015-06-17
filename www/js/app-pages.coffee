@@ -58,79 +58,108 @@ class AppPages
 		uniqList = []
 		# Tile generators provide metadata to allow tiles to be constructed from
 		# tilesources like indigo/fibaro/vera/sonos/blind/door controllers
-		if "tileGen" of pageDef
-			for tileGen in pageDef.tileGen
-				# Allow a specific tile source to be specified - otherwise all sources are used
-				sourceList = []
-				if "tileSources" of tileGen
-					sourceList = (source for source in tileGen.tileSources)
-				else
-					sourceList = (source for source, val of @automationActionGroups)
+		if "tileGen" not of pageDef
+			return
+
+		# Go through tileGen requirements
+		for tileGen in pageDef.tileGen
+
+			# Check if a specific tile source is specified - otherwise all sources are used
+			sourceList = []
+			if "tileSources" of tileGen
+				sourceList = (source for source in tileGen.tileSources when source of @automationActionGroups)
+			else
+				sourceList = (source for source, val of @automationActionGroups)
+
+			# The tileMult "unique" is used to select a single tile from
+			# a tile group - this is for creating menu listing rooms, etc
+			if tileGen.tileMult is "unique"
+				# Iterate tiles in the tile sources
 				for tileSource in sourceList
-					# Check this tilesource exists
-					if tileSource of @automationActionGroups
-						# Iterate tiles in the tile source
+					for tile in @automationActionGroups[tileSource]
+						if tileGen.tileSelect of tile
+							if tile[tileGen.tileSelect] not in uniqList
+								newTile = @generateTileInfo(tileGen, tile)
+								tileList.push newTile
+								uniqList.push newTile[tileGen.tileSelect]
+			# Handle generation of pages for a specific group - e.g. a specific room menu
+			else if "tileFilterValFrom" of tileGen
+				for tileSource in sourceList
+					for tile in @automationActionGroups[tileSource]
+						if tileGen.tileSelect of tile
+							if tile[tileGen.tileSelect] is pageDef[tileGen.tileFilterValFrom]
+								newTile = @generateTileInfo(tileGen, tile)
+								tileList.push newTile
+			# Select a single specific tile but using data from the tabled config
+			# such as the favourites list - e.g. using the groupname (room) and
+			# tilename (action) to get a favourite tile
+			else if "tabConfigFavListName" of tileGen and tileGen.tabConfigFavListName of tabletSpecificConfig
+				for favList in tabletSpecificConfig[tileGen.tabConfigFavListName]
+					favFound = false
+					for tileSource in sourceList
 						for tile in @automationActionGroups[tileSource]
-							# Tiles can be selected either specifically or using data
-							# from the tablet configuration - such as favourites
 							if tileGen.tileSelect of tile
-								newTile = {}
-								for key, val of tile
-									newTile[key] = val
-								newTile.tileType = tileGen.tileType
-								newTile.pageMode = if "pageMode" of tileGen then tileGen.pageMode else ""
-								newTile.tileMode = if "tileMode" of tileGen then tileGen.tileMode else ""
-								newTile.tileName = tile[tileGen.tileNameFrom]
-								newTile.colType = if tileGen.colType? then tileGen.colType else ""
-								newTile.url = if "urlFrom" of tileGen then tile[tileGen.urlFrom] else (if "url" of tileGen then newTile.url = tileGen.url)
-								if tileGen.pageGenRule?
-									newTile.pageGenRule = tileGen.pageGenRule
-								if tileGen.rowSpan?
-									newTile.rowSpan = tileGen.rowSpan
-								if tileGen.colSpan?
-									newTile.colSpan = tileGen.colSpan								
-								newTile.tileText = tile[tileGen.tileTextFrom]
-								if "iconName" of tileGen
-									newTile.iconName = tileGen.iconName
-								# The tileMult "unique" is used to select a single tile from
-								# a tile group - this is for creating menu listing rooms, etc
-								if tileGen.tileMult is "unique"
-									if newTile[tileGen.tileSelect] not in uniqList
-										tileList.push newTile
-										uniqList.push newTile[tileGen.tileSelect]
-								# Handle generation of pages for a specific group - e.g. a specific room menu
-								else if "tileFilterValFrom" of tileGen
-									if newTile[tileGen.tileSelect] is pageDef[tileGen.tileFilterValFrom]
-										tileList.push newTile
-								# Select a single specific tile but using data from the tabled config
-								# such as the favourites list - e.g. using the groupname (room) and
-								# tilename (action) to get a favourite tile
-								else if "tabConfigFavListName" of tileGen and tileGen.tabConfigFavListName of tabletSpecificConfig
-									for favList in tabletSpecificConfig[tileGen.tabConfigFavListName]
-										if newTile[tileGen.tileSelect] is favList[tileGen.tileSelect]
-											if newTile.tileName is favList.tileName
-												if "tileText" of favList
-													newTile.tileText = favList.tileText
-												tileList.push newTile
-								# Only select a single specific tile explicitly named in the pageDef
-								# e.g. using the specific groupname (room) and tilename (action)
-								else if "tileFilterVal" of tileGen
-									if newTile[tileGen.tileSelect] is tileGen.tileFilterVal
-										if "tileNameSelect" of tileGen
-											if newTile.tileName is tileGen.tileNameSelect
-												tileList.push newTile
-										else
-											tileList.push newTile
-								else
+								if tile[tileGen.tileSelect] is favList[tileGen.tileSelect] and tile[tileGen.tileNameFrom] is favList.tileName
+									newTile = @generateTileInfo(tileGen, tile)
+									if "tileText" of favList
+										newTile.tileText = favList.tileText
 									tileList.push newTile
-			if "tileSort" of tileGen
-				tileList.sort (a,b) =>
-					if a[tileGen.tileSort] < b[tileGen.tileSort] then return -1
-					if a[tileGen.tileSort] > b[tileGen.tileSort] then return 1
-					return 0
-			for tile in tileList
-				pageDef.tiles.push tile
-		return pageDef
+									favFound = true
+									break
+						if favFound
+							break
+			# Only select a single specific tile explicitly named in the pageDef
+			# e.g. using the specific groupname (room) and tilename (action)
+			else if "tileFilterVal" of tileGen
+				for tileSource in sourceList
+					for tile in @automationActionGroups[tileSource]
+						if tileGen.tileSelect of tile
+							if tile[tileGen.tileSelect] is tileGen.tileFilterVal
+								if "tileNameSelect" of tileGen
+									if tile[tileGenInfo.tileNameFrom] is tileGen.tileNameSelect
+										newTile = @generateTileInfo(tileGen, tile)
+										tileList.push newTile
+								else
+									newTile = @generateTileInfo(tileGen, tile)
+									tileList.push newTile
+			else
+				for tileSource in sourceList
+					for tile in @automationActionGroups[tileSource]
+						newTile = @generateTileInfo(tileGen, tile)
+						tileList.push newTile
+
+		# Sort tiles if required
+		if "tileSort" of tileGen
+			tileList.sort (a,b) =>
+				if a[tileGen.tileSort] < b[tileGen.tileSort] then return -1
+				if a[tileGen.tileSort] > b[tileGen.tileSort] then return 1
+				return 0
+		for tile in tileList
+			pageDef.tiles.push tile
+		return
+
+	generateTileInfo: (tileGenInfo, tile) ->
+		# Tiles can be selected either specifically or using data
+		# from the tablet configuration - such as favourites
+		newTile = {}
+		for key, val of tile
+			newTile[key] = val
+		newTile.tileType = tileGenInfo.tileType
+		newTile.pageMode = if "pageMode" of tileGenInfo then tileGenInfo.pageMode else ""
+		newTile.tileMode = if "tileMode" of tileGenInfo then tileGenInfo.tileMode else ""
+		newTile.tileName = tile[tileGenInfo.tileNameFrom]
+		newTile.colType = if tileGenInfo.colType? then tileGenInfo.colType else ""
+		newTile.url = if "urlFrom" of tileGenInfo then tile[tileGenInfo.urlFrom] else (if "url" of tileGenInfo then newTile.url = tileGenInfo.url)
+		if tileGenInfo.pageGenRule?
+			newTile.pageGenRule = tileGenInfo.pageGenRule
+		if tileGenInfo.rowSpan?
+			newTile.rowSpan = tileGenInfo.rowSpan
+		if tileGenInfo.colSpan?
+			newTile.colSpan = tileGenInfo.colSpan
+		newTile.tileText = tile[tileGenInfo.tileTextFrom]
+		if "iconName" of tileGenInfo
+			newTile.iconName = tileGenInfo.iconName
+		return newTile
 
 	generateNewPage: (context) ->
 		tabConfig = @app.tabletConfigManager.getConfigData()
@@ -179,6 +208,8 @@ class AppPages
 			@deleteFavouriteButton(context)
 			@setCurrentPage(@defaultPageName, false)
 			@display()
+		else if context.url is "ExitYes"
+			navigator.app.exitApp()
 		else 
 			console.log "Attempting page generation " + context.url
 			newPageName = @generateNewPage(context)
