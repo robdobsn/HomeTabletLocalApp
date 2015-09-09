@@ -256,12 +256,12 @@ getServerList = function() {
     {
       "type": "indigo",
       "name": "IndigoUp",
-      "url": "http://IndigoServer.local:8176",
+      "url": "http://192.168.0.230:8176",
       "iconAliasing": "automationIcons"
     }, {
       "type": "indigo",
       "name": "IndigoDown",
-      "url": "http://IndigoDown.local:8176",
+      "url": "http://192.168.0.231:8176",
       "iconAliasing": "automationIcons"
     }
   ];
