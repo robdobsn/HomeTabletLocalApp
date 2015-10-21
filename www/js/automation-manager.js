@@ -60,6 +60,9 @@ AutomationManager = (function() {
           } else if (serverDef.type === "fibaro" || serverDef.type === "Fibaro") {
             this.servers.push(new FibaroServer(this, serverDef, this.actionsReadyCb));
           }
+          if (serverDef.type === "domoticz" || serverDef.type === "Domoticz") {
+            this.servers.push(new DomoticzServer(this, serverDef, this.actionsReadyCb));
+          }
         }
       }
     } else {
@@ -135,27 +138,44 @@ AutomationManager = (function() {
     return mergedActionsList;
   };
 
+  AutomationManager.prototype.soundResult = function(cmdsToDo, cmdsCompleted, cmdsFailed) {
+    if (cmdsCompleted === cmdsToDo) {
+      if (cmdsFailed === 0) {
+        return this.app.mediaPlayHelper.play("ok");
+      } else {
+        return this.app.mediaPlayHelper.play("fail");
+      }
+    }
+  };
+
   AutomationManager.prototype.executeCommand = function(cmdParams) {
-    var cmd, cmds, _i, _len, _results;
+    var cmd, cmds, cmdsCompleted, cmdsFailed, cmdsToDo, _i, _len, _results;
     if ((cmdParams == null) || cmdParams === "") {
       return;
     }
     cmds = cmdParams.split(";");
+    this.app.mediaPlayHelper.play("click");
+    cmdsCompleted = 0;
+    cmdsFailed = 0;
+    cmdsToDo = cmds.length;
     _results = [];
     for (_i = 0, _len = cmds.length; _i < _len; _i++) {
       cmd = cmds[_i];
+      console.log("Exec command " + cmd);
       _results.push($.ajax(cmd, {
         type: "GET",
         dataType: "text",
         success: (function(_this) {
           return function(data, textStatus, jqXHR) {
-            _this.app.mediaPlayHelper.play("ok");
+            cmdsCompleted++;
+            _this.soundResult(cmdsToDo, cmdsCompleted, cmdsFailed);
           };
         })(this),
         error: (function(_this) {
           return function(jqXHR, textStatus, errorThrown) {
             console.error("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd);
-            _this.app.mediaPlayHelper.play("fail");
+            cmdsFailed++;
+            cmdsCompleted++;
           };
         })(this)
       }));

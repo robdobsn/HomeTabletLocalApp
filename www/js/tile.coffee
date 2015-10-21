@@ -17,8 +17,10 @@ class Tile
 			</a>
 			"""
 		if @tileDef.clickFn? and @tileDef.clickFn isnt ""
-			$("##{@tileId}").click =>
+			$("##{@tileId}").click (event) =>
+				event.stopPropagation()
 				(@tileDef.clickFn) @tileDef
+				return false
 		@contents = $("##{@tileId}>.sqInner")
 		return
 

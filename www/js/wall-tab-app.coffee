@@ -98,6 +98,7 @@ class WallTabApp
 					break
 		if evList.length > 0
 			evListJson = JSON.stringify(evList)
+			console.log "Sending " + evList.length + " log event(s) to log server"
 			$.ajax 
 				url: @getLogServerUrl()
 				type: 'POST'

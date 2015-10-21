@@ -38,6 +38,8 @@ class AutomationManager
 						@servers.push new VeraServer(this, serverDef, @actionsReadyCb)
 					else if serverDef.type is "fibaro" or serverDef.type is "Fibaro"
 						@servers.push new FibaroServer(this, serverDef, @actionsReadyCb)
+					if serverDef.type is "domoticz" or serverDef.type is "Domoticz"
+						@servers.push new DomoticzServer(this, serverDef, @actionsReadyCb)
 		else
 			@servers = []
 		@serverDefs = configData.common.servers
@@ -93,20 +95,34 @@ class AutomationManager
 			mergedActionsList.push val
 		return mergedActionsList
 
+	soundResult: (cmdsToDo, cmdsCompleted, cmdsFailed) ->
+		if cmdsCompleted is cmdsToDo
+			if cmdsFailed is 0
+				@app.mediaPlayHelper.play("ok")
+			else
+				@app.mediaPlayHelper.play("fail")
+
 	executeCommand: (cmdParams) =>
 		if not cmdParams? or cmdParams is "" then return
 		# Commands can be ; separated
 		cmds = cmdParams.split(";")
+		@app.mediaPlayHelper.play("click")
+		cmdsCompleted = 0
+		cmdsFailed = 0
+		cmdsToDo = cmds.length
 		for cmd in cmds
+			console.log "Exec command " + cmd
 			$.ajax cmd,
 				type: "GET"
 				dataType: "text"
 				success: (data, textStatus, jqXHR) =>
-					@app.mediaPlayHelper.play("ok")
+					cmdsCompleted++
+					@soundResult(cmdsToDo, cmdsCompleted, cmdsFailed)
 					return
 				error: (jqXHR, textStatus, errorThrown) =>
 					console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
-					@app.mediaPlayHelper.play("fail")
+					cmdsFailed++
+					cmdsCompleted++
 					return
 
 	getIconFromActionName: (actionName, aliasingGroup) ->

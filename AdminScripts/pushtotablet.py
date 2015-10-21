@@ -52,7 +52,7 @@ for tabname in tablet_names:
     print("Attempting connection to " + tabname)
 
     # Using plink which is like putty but takes a command to run remotely as parameter
-    tabfullname = tabname+".local"
+    tabfullname = tabname
     tabfullplusport = tabfullname + ":5555"
     plinkCmd = 'plink.exe root@' + tabfullname + ' -pw ' + tablet_pw + " "
 

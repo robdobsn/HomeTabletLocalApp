@@ -1,0 +1,51 @@
+{
+	"deviceName": "kitchenpc",
+	"roomName": "Kitchen",
+	"sonosRoomName": "Kitchen",
+	"favourites":
+	[
+	    {
+	    "tileName": "Calendar",
+	    "groupName": "Calendar"
+	    },
+	    {
+	    "tileName": "Kitchen Mood",
+	    "groupName": "Kitchen"
+	    },
+	    {
+	    "tileName": "Kitchen Off",
+	    "groupName": "Kitchen"
+	    },
+	    {
+	    "tileName": "Kitchen Bright",
+	    "groupName": "Kitchen"
+	    },
+	    {
+	    "tileName": "Conservatory On",
+	    "groupName": "Conservatory"
+	    },
+	    {
+	    "tileName": "Play",
+	    "groupName": "Kitchen"
+	    },
+	    {
+	    "tileName": "Stop",
+	    "groupName": "Kitchen"
+	    }
+	],
+	"tileDefs_Sonos":
+	[
+		{
+			"actionUrl": "@sonosServerUrl/Kitchen/favorite/BBC%20Radio%204",
+			"uri": "@sonosServerUrl/Kitchen/favorite/BBC%20Radio%204",
+	    	"groupName": "Kitchen",
+	    	"tierName": "sonosTier",
+	    	"colSpan": 1,
+	    	"rowSpan": 1,
+	    	"name": "Radio 4",
+	    	"visibility": "all",
+	    	"tileType": "Sonos",
+	    	"iconName": "music-play"
+	    }
+	]
+}

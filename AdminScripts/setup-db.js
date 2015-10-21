@@ -263,6 +263,11 @@ getServerList = function() {
       "name": "IndigoDown",
       "url": "http://192.168.0.231:8176",
       "iconAliasing": "automationIcons"
+    }, {
+      "type": "domoticz",
+      "name": "DomoticzUT",
+      "url": "http://192.168.0.232:80",
+      "iconAliasing": "automationIcons"
     }
   ];
 };

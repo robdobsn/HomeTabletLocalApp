@@ -105,6 +105,7 @@ WallTabApp = (function() {
     }
     if (evList.length > 0) {
       evListJson = JSON.stringify(evList);
+      console.log("Sending " + evList.length + " log event(s) to log server");
       $.ajax({
         url: this.getLogServerUrl(),
         type: 'POST',
