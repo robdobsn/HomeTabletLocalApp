@@ -5,37 +5,39 @@ import sys
 from subprocess import Popen, PIPE
 
 # Note that on windows this script is best run from cmd prompt rather than in IDLE
-all_tablet_names = ["tabdining", 
-                    "tabgames",
-                    "tabguest",
-                    "tabhall",
-                    "tabkitchen",
-                    "tablanding",
-                    "tablobby",
-                    "tablounge",
-                    "tabmasterbed",
-                    "taboffice",
-                    "tabspidey",
-                    "tabtrambed"
+all_tablet_names = [ ["tabdining", "209"],
+                     ["tabgames", "200"],
+                     ["tabguest", "201"],
+                     ["tabhall", "202"],
+                     ["tabkitchen", "207"],
+                     ["tablanding", "206"],
+                     ["tablobby", "208"],
+                     ["tablounge", "198"],
+                     ["tabmasterbed", "204"],
+                     ["taboffice", "205"],
+                     ["tabspidey", "199"],
+                     ["tabtrambed", "203"]
                     ]
 adbRemoteCmds = ["setprop service.adb.tcp.port 5555", "stop adbd", "start adbd"]
 
 # Check if we want all tablets or just one
 if len(sys.argv) > 1:
-    if sys.argv[1] == "-":
-        tablet_names = all_tablet_names
-        for i in range(2,len(sys.argv)):
-            tablet_names.remove(sys.argv[i])
-    else:
+    # if sys.argv[1] == "-":
+    #     tablet_names = all_tablet_names
+    #     for i in range(2,len(sys.argv)):
+    #         tablet_names.remove(sys.argv[i])
+    # else:
         tablet_names = []
         for i in range(1,len(sys.argv)):
-            tablet_names.append(sys.argv[i])
+            tablet_names.append(["tab",sys.argv[i]])
 else:
-    tablet_names = all_tablet_names
+    tablet_names = []
+    for tabname in all_tablet_names:
+        tablet_names.append([tabname[0], "192.168.0." + tabname[1]])        
 
 print("Operating on ", end="")
 for tabname in tablet_names:
-    print(tabname, end="")
+    print(tabname[0] + " ", end="")
 print()
 
 # Get admin pw for tablets
@@ -49,10 +51,10 @@ tablet_pw = input("Enter password for walltablet(s): ")
 # Now install on each tablet
 commandResults = []
 for tabname in tablet_names:
-    print("Attempting connection to " + tabname)
+    print("Attempting connection to " + tabname[0] + " (" + tabname[1] + ")")
 
     # Using plink which is like putty but takes a command to run remotely as parameter
-    tabfullname = tabname
+    tabfullname = tabname[1]
     tabfullplusport = tabfullname + ":5555"
     plinkCmd = 'plink.exe root@' + tabfullname + ' -pw ' + tablet_pw + " "
 
@@ -74,8 +76,8 @@ for tabname in tablet_names:
     p.wait()
     print("ADB DEVICES Result = " + str(output))
 
-    if not tabname in output:
-        commandResults.append("Failed to connect to " + tabname)
+    if not tabname[1] in output:
+        commandResults.append("Failed to connect to " + tabname[1])
         continue
 
     # Install the app
@@ -93,9 +95,9 @@ for tabname in tablet_names:
 
     # Check for success
     if "LAUNCH SUCCESS" in output2:
-        commandResults.append("Install OK for " + tabname)
+        commandResults.append("Install OK for " + tabname[0] + "(" + tabname[1] + ")")
     else:
-        commandResults.append("No LAUNCH SUCCESS for " + tabname)
+        commandResults.append("No LAUNCH SUCCESS for " + tabname[0] + "(" + tabname[1] + ")")
         commandResults.append("STDERR output " + output3)
 
     # disconnect 

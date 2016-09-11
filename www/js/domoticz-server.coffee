@@ -62,7 +62,7 @@ class DomoticzServer
 					actionNum: ""
 					actionName: roomName + " " + actionName
 					groupName: roomName
-					actionUrl: @serverDef.url + "/json.htm?type=command&param=switchscene&idx=" + serverScene.idx + "&switchcmd=on"
+					actionUrl: @serverDef.url + "/json.htm?type=command&param=switchscene&idx=" + serverScene.idx + "&switchcmd=On"
 					iconName: @manager.getIconFromActionName(actionName, @serverDef.iconAliasing)
 				scenes.push(scene)
 		return scenes

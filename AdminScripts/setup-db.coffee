@@ -212,9 +212,14 @@ getDeviceConfigList = (configDb) ->
 
 getServerList = () ->
 	return [
-			{"type":"indigo", "name":"IndigoUp", "url":"http://192.168.0.230:8176", "iconAliasing":"automationIcons" },
-			{"type":"indigo", "name":"IndigoDown", "url":"http://192.168.0.231:8176", "iconAliasing":"automationIcons"  },
+			# {"type":"indigo", "name":"IndigoUp", "url":"http://192.168.0.230:8176", "iconAliasing":"automationIcons" },
+			# {"type":"indigo", "name":"IndigoDown", "url":"http://192.168.0.231:8176", "iconAliasing":"automationIcons"  },
 			{"type":"domoticz", "name":"DomoticzUT", "url":"http://192.168.0.232:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzPLC", "url":"http://192.168.0.233:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzCEL", "url":"http://192.168.0.234:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzOFF", "url":"http://192.168.0.235:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzKIT", "url":"http://192.168.0.236:80", "iconAliasing":"automationIcons"  },
+			# {"type":"domoticz", "name":"DomoticzOFI", "url":"http://192.168.0.235:80", "iconAliasing":"automationIcons"  },
 			# {"type":"indigo-test", "name":"IndigoTest", "url":"", "iconAliasing":"automationIcons"  },
 			# {"type":"fibaro", "name":"FibaroHS2", "url":"http://macallan:5079" },
 			# {"type":"vera", "name":"Vera", "url":"http://192.168.0.206:3480" },

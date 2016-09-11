@@ -82,7 +82,7 @@ DomoticzServer = (function() {
           actionNum: "",
           actionName: roomName + " " + actionName,
           groupName: roomName,
-          actionUrl: this.serverDef.url + "/json.htm?type=command&param=switchscene&idx=" + serverScene.idx + "&switchcmd=on",
+          actionUrl: this.serverDef.url + "/json.htm?type=command&param=switchscene&idx=" + serverScene.idx + "&switchcmd=On",
           iconName: this.manager.getIconFromActionName(actionName, this.serverDef.iconAliasing)
         };
         scenes.push(scene);
