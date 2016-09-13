@@ -1,4 +1,4 @@
-class CalendarTile extends Tile
+class App.CalendarTile extends App.Tile
 	constructor: (@app, tileDef, @calDayIndex) ->
 		super tileDef
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]

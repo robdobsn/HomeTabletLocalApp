@@ -1,4 +1,4 @@
-class Clock extends Tile
+class App.Clock extends App.Tile
 	constructor: (tileDef) ->
 		super tileDef
 		@dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -28,7 +28,7 @@ class Clock extends Tile
 		return
 
 	reposition: (@posX, @posY, @sizeX, @sizeY) ->
-		super(posX, posY, sizeX, sizeY)
+		super(@posX, @posY, @sizeX, @sizeY)
 		timePos = (@sizeY / 3)
 		$('#'+@tileId+" .sqClockDayMonthYear").css
 			position: "absolute"

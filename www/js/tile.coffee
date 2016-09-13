@@ -1,4 +1,4 @@
-class Tile
+class App.Tile
 	constructor: (@tileDef) ->
 		return
 

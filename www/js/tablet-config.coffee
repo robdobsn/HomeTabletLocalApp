@@ -1,7 +1,7 @@
-class TabletConfigManager
+class App.TabletConfigManager
 	constructor: (@defaultTabletName) ->
 		@configData = {}
-		@defaultTabletConfig = new DefaultTabletConfig()
+		@defaultTabletConfig = new App.DefaultTabletConfig()
 		@defaultConfigSettings =
 			showCalServerSetting: true
 			showAutomationServerSettings: ["Indigo","Vera","Fibaro"]
@@ -10,13 +10,13 @@ class TabletConfigManager
 
 	getTabName: ->
 		# See if the tablet's name is in the local storage
-		tabName = LocalStorage.get("DeviceConfigName")
+		tabName = App.LocalStorage.get("DeviceConfigName")
 		if not tabName? or tabName is ""
 			tabName = @defaultTabletName
 		return tabName
 
 	getReqUrl: ->
-		reqURL = LocalStorage.get("ConfigServerUrl")
+		reqURL = App.LocalStorage.get("ConfigServerUrl")
 		if not reqURL? or reqURL is ""
 			return ""
 		tabName = @getTabName()
@@ -53,7 +53,7 @@ class TabletConfigManager
 
 	saveDeviceConfig: ->
 		reqURL = @getReqUrl()
-		LocalStorage.set(reqURL, @configData)
+		App.LocalStorage.set(reqURL, @configData)
 		tabName = @getTabName()
 		if not tabName? or tabName is ""
 			console.log "Unable to save device config as tablet name unknown"
@@ -102,13 +102,13 @@ class TabletConfigManager
 				else
 					console.log "Got tablet config data"
 					tabName = jsonData["deviceName"]
-					curTabName = LocalStorage.get("DeviceConfigName")
+					curTabName = App.LocalStorage.get("DeviceConfigName")
 					if tabName? and tabName isnt curTabName
-						LocalStorage.set("DeviceConfigName", tabName)
+						App.LocalStorage.set("DeviceConfigName", tabName)
 						console.log("DeviceConfigName was " + curTabName + " now set to " + tabName)
-						LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
+						App.LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
 					@configData = jsonData
-					LocalStorage.set(reqURL, @configData)
+					App.LocalStorage.set(reqURL, @configData)
 				@readyCallback()
 				# console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
 				return
@@ -116,7 +116,7 @@ class TabletConfigManager
 				console.log "Get tablet config data failed with an error " + textStatus
 				# Use stored data if available
 				clearTimeout(@catchAjaxFail)
-				storedData = LocalStorage.get(reqURL)
+				storedData = App.LocalStorage.get(reqURL)
 				console.log "Config Getting data stored for " + reqURL + " result = " + storedData
 				if storedData?
 					# console.log "Using stored data" + JSON.stringify(storedData)

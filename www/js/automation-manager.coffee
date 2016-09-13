@@ -1,4 +1,4 @@
-class AutomationManager
+class App.AutomationManager
 	constructor: (@app, @readyCallback) ->
 		@serverDefs = []
 		@servers = []
@@ -7,6 +7,7 @@ class AutomationManager
 		@combinedActions = {}
 
 	setReadyCallback: (@readyCallback) ->
+		return
 
 	requestUpdate: (configData) ->
 		# Stash icon aliasing info
@@ -31,15 +32,15 @@ class AutomationManager
 				@servers = []
 				for serverDef in configData.common.servers
 					if serverDef.type is "indigo" or serverDef.type is "Indigo"
-						@servers.push new IndigoServer(this, serverDef, @actionsReadyCb)
+						@servers.push new App.IndigoServer(this, serverDef, @actionsReadyCb)
 					else if serverDef.type is "indigo-test"
-						@servers.push new IndigoTestServer(this, serverDef, @actionsReadyCb)
+						@servers.push new App.IndigoTestServer(this, serverDef, @actionsReadyCb)
 					else if serverDef.type is "vera" or serverDef.type is "Vera"
-						@servers.push new VeraServer(this, serverDef, @actionsReadyCb)
+						@servers.push new App.VeraServer(this, serverDef, @actionsReadyCb)
 					else if serverDef.type is "fibaro" or serverDef.type is "Fibaro"
-						@servers.push new FibaroServer(this, serverDef, @actionsReadyCb)
+						@servers.push new App.FibaroServer(this, serverDef, @actionsReadyCb)
 					if serverDef.type is "domoticz" or serverDef.type is "Domoticz"
-						@servers.push new DomoticzServer(this, serverDef, @actionsReadyCb)
+						@servers.push new App.DomoticzServer(this, serverDef, @actionsReadyCb)
 		else
 			@servers = []
 		@serverDefs = configData.common.servers
@@ -101,6 +102,7 @@ class AutomationManager
 				@app.mediaPlayHelper.play("ok")
 			else
 				@app.mediaPlayHelper.play("fail")
+		return
 
 	executeCommand: (cmdParams) =>
 		if not cmdParams? or cmdParams is "" then return
@@ -111,19 +113,37 @@ class AutomationManager
 		cmdsFailed = 0
 		cmdsToDo = cmds.length
 		for cmd in cmds
-			console.log "Exec command " + cmd
-			$.ajax cmd,
-				type: "GET"
-				dataType: "text"
-				success: (data, textStatus, jqXHR) =>
-					cmdsCompleted++
-					@soundResult(cmdsToDo, cmdsCompleted, cmdsFailed)
-					return
-				error: (jqXHR, textStatus, errorThrown) =>
-					console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
-					cmdsFailed++
-					cmdsCompleted++
-					return
+			# Check if command contains "~POST~" - to indicate POST rather than GET
+			if cmd.indexOf("~POST~")
+				cmdParts = cmd.split("~")
+				$.ajax cmdParts[0],
+					type: "POST"
+					dataType: "text"
+					data: cmdParts[2]
+					success: (data, textStatus, jqXHR) =>
+						cmdsCompleted++
+						@soundResult(cmdsToDo, cmdsCompleted, cmdsFailed)
+						return
+					error: (jqXHR, textStatus, errorThrown) =>
+						console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
+						cmdsFailed++
+						cmdsCompleted++
+						return
+			else
+				console.log "Exec command " + cmd
+				$.ajax cmd,
+					type: "GET"
+					dataType: "text"
+					success: (data, textStatus, jqXHR) =>
+						cmdsCompleted++
+						@soundResult(cmdsToDo, cmdsCompleted, cmdsFailed)
+						return
+					error: (jqXHR, textStatus, errorThrown) =>
+						console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
+						cmdsFailed++
+						cmdsCompleted++
+						return
+		return
 
 	getIconFromActionName: (actionName, aliasingGroup) ->
 		if not aliasingGroup? then return ""

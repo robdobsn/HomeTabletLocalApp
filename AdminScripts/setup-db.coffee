@@ -189,10 +189,22 @@ genBlindsActions = (blindsDefs) ->
 
 getDoorActions = () ->
 	return [
-			{ actionName: "Main Unlock", groupName: "Front Door", actionUrl: "http://192.168.0.221/main-unlock", iconName: "door-unlock" }
-			{ actionName: "Main Lock", groupName: "Front Door", actionUrl: "http://192.168.0.221/main-lock", iconName: "door-lock" }
-			{ actionName: "Inner Unlock", groupName: "Front Door", actionUrl: "http://192.168.0.221/inner-unlock", iconName: "door-unlock" }
-			{ actionName: "Inner Lock", groupName: "Front Door", actionUrl: "http://192.168.0.221/inner-lock", iconName: "door-lock" }
+		{
+			actionName: "Main Unlock", groupName: "Front Door", iconName: "door-unlock",
+			actionUrl: "https://api.particle.io/v1/devices/3f005a000a51353338363332/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=main-unlock"
+		},
+		{
+			actionName: "Main Lock", groupName: "Front Door", iconName: "door-lock",
+			actionUrl: "https://api.particle.io/v1/devices/3f005a000a51353338363332/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=main-lock"
+		},
+		{
+			actionName: "Inner Unlock", groupName: "Front Door", iconName: "door-unlock",
+			actionUrl: "https://api.particle.io/v1/devices/3f005a000a51353338363332/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=inner-unlock"
+		},
+		{
+			actionName: "Inner Lock", groupName: "Front Door", iconName: "door-lock",
+			actionUrl: "https://api.particle.io/v1/devices/3f005a000a51353338363332/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=inner-unlock"
+		}
 		]
 
 getDeviceConfigList = (configDb) ->

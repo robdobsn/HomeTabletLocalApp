@@ -1,4 +1,4 @@
-class SceneButton extends Tile
+class App.SceneButton extends App.Tile
 	constructor: (tileDef) ->
 		super(tileDef)
 		@buttonMarginX = 10
@@ -21,7 +21,7 @@ class SceneButton extends Tile
 		return
 
 	reposition: (@posX, @posY, @sizeX, @sizeY) ->
-		super(posX, posY, sizeX, sizeY)
+		super(@posX, @posY, @sizeX, @sizeY)
 		iconSel = '#'+@tileId + " .sqSceneButtonIcon"
 		textSel = '#'+@tileId + " .sqSceneButtonText"
 		# Handle position with icon
@@ -38,7 +38,7 @@ class SceneButton extends Tile
 				textLeftX = @iconCellWidth
 				@setPositionCss(textSel, textLeftX, (@sizeY-txtHeight)/2)
 				txtWidth = $(textSel).width()
-				txtCellWidth = sizeX - textLeftX - @buttonMarginX
+				txtCellWidth = @sizeX - textLeftX - @buttonMarginX
 				if txtWidth > txtCellWidth
 					fontScaling = txtCellWidth / txtWidth
 					$(textSel).css
@@ -52,7 +52,7 @@ class SceneButton extends Tile
 				textAlign: "center"
 			@setPositionCss(textSel, 0, (@sizeY-txtHeight)/2)
 			txtWidth = $(textSel).width()
-			txtCellWidth = sizeX - @buttonMarginX*2
+			txtCellWidth = @sizeX - @buttonMarginX*2
 			if txtWidth > txtCellWidth
 				fontScaling = txtCellWidth / txtWidth
 				$(textSel).css
@@ -75,5 +75,5 @@ class SceneButton extends Tile
 		return
 
 	setText: (@textStr) ->
-		$('#'+@tileId+" .sqSceneButtonText").html textStr
+		$('#'+@tileId+" .sqSceneButtonText").html @textStr
 		return

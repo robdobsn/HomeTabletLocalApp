@@ -1,4 +1,4 @@
-class MediaPlayHelper
+class App.MediaPlayHelper
 	constructor: (@soundsDict) ->
 		@soundsLoaded = {}
 		return

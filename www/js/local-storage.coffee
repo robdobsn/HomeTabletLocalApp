@@ -1,4 +1,4 @@
-class LocalStorage
+class App.LocalStorage
 
 	@get: (key) ->
 		rslt = null

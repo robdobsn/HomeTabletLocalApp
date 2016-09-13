@@ -1,4 +1,4 @@
-class CalendarManager
+class App.CalendarManager
 	constructor: (@app) ->
 		@calendarData = []
 		@secsBetweenCalendarRefreshes = 60
@@ -34,7 +34,7 @@ class CalendarManager
 				console.log "Got calendar data"
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
-				LocalStorage.logEvent("CalLog", "AjaxFail Status = " + textStatus + " URL=" + @calendarUrl + " Error= " + errorThrown)
+				App.LocalStorage.logEvent("CalLog", "AjaxFail Status = " + textStatus + " URL=" + @calendarUrl + " Error= " + errorThrown)
 				console.log "GetCalError " + "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown
 				@numRefreshFailuresSinceSuccess++
 				setTimeout =>

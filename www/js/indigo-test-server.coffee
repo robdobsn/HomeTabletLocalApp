@@ -1,4 +1,4 @@
-class IndigoTestServer
+class App.IndigoTestServer
 	constructor: (@manager, @serverDef, @dataReadyCallback) ->
 
 	reqActions: ->

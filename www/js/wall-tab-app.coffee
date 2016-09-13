@@ -1,4 +1,4 @@
-class WallTabApp
+class App.WallTabApp
 	constructor: ->
 		# Default the tablet name and get the configuration server
 		@defaultTabletName = "tabdefault"
@@ -7,35 +7,35 @@ class WallTabApp
 		@minsBetweenEventLogChecks = 1
 		@maxEventsPerLogSend = 50
 		# Helper for playing media files
-		@mediaPlayHelper = new MediaPlayHelper(
+		@mediaPlayHelper = new App.MediaPlayHelper(
 			{
 				"click": "assets/click.mp3",
 				"ok": "assets/blip.mp3",
 				"fail": "assets/fail-doh.mp3"
 			})
-		@tileColours = new TileColours
+		@tileColours = new App.TileColours
 		return
 
 	getLogServerUrl: ->
-		return LocalStorage.get("ConfigServerUrl")+ "/log"
+		return App.LocalStorage.get("ConfigServerUrl")+ "/log"
 
 	go: ->
 		# Goes back to home display after user idle timeout
-		@userIdleCatcher = new UserIdleCatcher(90, @actionOnUserIdle)
+		@userIdleCatcher = new App.UserIdleCatcher(90, @actionOnUserIdle)
 
 		# Tablet config is based on the name or IP address of the tablet
-		@tabletConfigManager = new TabletConfigManager(@defaultTabletName)
+		@tabletConfigManager = new App.TabletConfigManager(@defaultTabletName)
 		@tabletConfigManager.setReadyCallback(@tabletConfigReadyCb)
 
 		# Automation manager handles communicaton with automaion devices like
 		# Indigo/vera/fibaro
-		@automationManager = new AutomationManager(this, @automationManagerReadyCb)
+		@automationManager = new App.AutomationManager(this, @automationManagerReadyCb)
 
 		# Calendar server communications
-		@calendarManager = new CalendarManager(this)
+		@calendarManager = new App.CalendarManager(this)
 
 		# App Pages
-		@appPages = new AppPages(this, "#sqWrapper", @automationManager)
+		@appPages = new App.AppPages(this, "#sqWrapper", @automationManager)
 
 		# Handler for orientation change
 		$(window).on 'orientationchange', =>
@@ -87,7 +87,7 @@ class WallTabApp
 		logCats = ["CalLog", "IndLog", "CnfLog"]
 		for logCat in logCats
 			for i in [0...@maxEventsPerLogSend]
-				ev = LocalStorage.getEvent(logCat)
+				ev = App.LocalStorage.getEvent(logCat)
 				if ev?
 					console.log "Logging event from " + logCat + " = " + JSON.stringify(ev)
 					evList.push
@@ -111,7 +111,7 @@ class WallTabApp
 					console.log ("Error log failed: " + textStatus + " " + errorThrown)
 					# If logging failed then re-log the events
 					for ev in evList
-						LocalStorage.logEvent(ev.logCat, ev.eventText, ev.timestamp)
+						App.LocalStorage.logEvent(ev.logCat, ev.eventText, ev.timestamp)
 					return
 		return
 

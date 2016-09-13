@@ -1,4 +1,4 @@
-class IndigoServer
+class App.IndigoServer
 	constructor: (@manager, @serverDef, @dataReadyCallback) ->
 		@ACTIONS_URI = @serverDef.url + "/actions.json"
 		@numRefreshFailuresSinceSuccess = 0
@@ -20,16 +20,16 @@ class IndigoServer
 				# console.log "Indigo data = " + JSON.stringify(@scenes)
 				console.log "Received Indigo data from " + @ACTIONS_URI
 				@numRefreshFailuresSinceSuccess = 0
-				LocalStorage.set(@ACTIONS_URI, data)
+				App.LocalStorage.set(@ACTIONS_URI, data)
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
-				LocalStorage.logEvent("IndLog", "AjaxFail Status= " + textStatus + " URL= " + @ACTIONS_URI + " Error= " + errorThrown)
+				App.LocalStorage.logEvent("IndLog", "AjaxFail Status= " + textStatus + " URL= " + @ACTIONS_URI + " Error= " + errorThrown)
 				@numRefreshFailuresSinceSuccess++
 				setTimeout =>
 					@getActionGroups
 				, (if @numRefreshFailuresSinceSuccess is 1 then @firstRefreshAfterFailSecs * 1000 else @nextRefreshesAfterFailSecs * 1000)
 				# Use stored data if available
-				storedData = LocalStorage.get(@ACTIONS_URI)
+				storedData = App.LocalStorage.get(@ACTIONS_URI)
 				# console.log "Getting data stored for " + @ACTIONS_URI + " result = " + storedData
 				if storedData?
 					# console.log "Using stored data" + JSON.stringify(storedData)

@@ -1,4 +1,4 @@
-class TabPage
+class App.TabPage
 	constructor: (@app, @parentTag, @pageDef, @defaultActionFn) ->
 		@tiles = []
 		@titlesTopMargin = 60
@@ -84,17 +84,17 @@ class TabPage
 		#Make the tile
 		if tileDef.tileType is "calendar"
 			dayIdx = if tileDef.calDayIndex? then tileDef.calDayIndex else 0
-			tile = new CalendarTile(@app, tileDef, dayIdx)
+			tile = new App.CalendarTile(@app, tileDef, dayIdx)
 		else if tileDef.tileType is "clock"
-			tile = new Clock(tileDef)
+			tile = new App.Clock(tileDef)
 		else if tileDef.tileType is "iframe"
-			tile = new IframeTile(tileDef)
+			tile = new App.IframeTile(tileDef)
 		else if tileDef.tileType is "checkbox"
-			tile = new CheckBoxTile(tileDef)
+			tile = new App.CheckBoxTile(tileDef)
 		else if tileDef.tileType is "textentry"
-			tile = new TextEntryTile(tileDef)
+			tile = new App.TextEntryTile(tileDef)
 		else
-			tile = new SceneButton(tileDef)
+			tile = new App.SceneButton(tileDef)
 		tile.setTileIndex(@nextTileIdx++)
 		return tile
 

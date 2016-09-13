@@ -1,4 +1,4 @@
-class TilePosition
+class App.TilePosition
 	constructor: (@tileValid, @xPos = 0, @yPos = 0, @colSpan = 0, @rowSpan = 0) ->
 		return
 		
@@ -14,5 +14,3 @@ class TilePosition
 		if @yPos + @rowSpan - 1 < tilePos.yPos
 			return false
 		return true
-
-

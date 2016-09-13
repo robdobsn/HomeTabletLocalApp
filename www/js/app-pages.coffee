@@ -1,4 +1,4 @@
-class AppPages
+class App.AppPages
 	constructor: (@app, @parentTag, @automationManager) ->
 		@curPageDef = { "pageName": "" }
 		@generatedPage = {}
@@ -12,7 +12,7 @@ class AppPages
 
 	userIsIdle: ->
 		# Check for auto-dim
-		autoDim = LocalStorage.get("AutoDim")
+		autoDim = App.LocalStorage.get("AutoDim")
 		if autoDim? and autoDim
 			if @setCurrentPage("DimDisplay")
 				@display()
@@ -186,7 +186,7 @@ class AppPages
 		return ""
 
 	display: ->
-		@curTabPage = new TabPage(@app, @parentTag, @curPageDef, @buttonCallback)
+		@curTabPage = new App.TabPage(@app, @parentTag, @curPageDef, @buttonCallback)
 		@curTabPage.updateDom()
 
 	buttonCallback: (context) =>

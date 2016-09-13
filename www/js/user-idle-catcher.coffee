@@ -1,4 +1,4 @@
-class UserIdleCatcher
+class App.UserIdleCatcher
 	constructor: (@interval, @cbFunction) ->
 		@idleTime = 0
 		$("html").mousemove =>

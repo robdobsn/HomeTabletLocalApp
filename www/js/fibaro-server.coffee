@@ -1,4 +1,4 @@
-class FibaroServer
+class App.FibaroServer
 	constructor: (@manager, @serverDef, @dataReadyCallback) ->
 		@ROOMS_URL = @serverDef.url + "/api/rooms"
 		@SCENES_URL = @serverDef.url + "/api/scenes"

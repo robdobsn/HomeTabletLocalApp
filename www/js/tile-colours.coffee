@@ -1,4 +1,4 @@
-class TileColours
+class App.TileColours
 	constructor: ->
 		@tileColours = [ 
 			"#e7821c"			# darkorange

@@ -1,4 +1,4 @@
-class IframeTile extends Tile
+class App.IframeTile extends App.Tile
 	constructor: (tileDef) ->
 		super tileDef
 		@iframeSource = tileDef.contentUrl

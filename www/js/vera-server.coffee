@@ -1,4 +1,4 @@
-class VeraServer
+class App.VeraServer
 	constructor: (@manager, @serverDef, @veraReadyCallback) ->
 		@ACTIONS_URI = @serverDef.url + "/data_request?id=user_data2&output_format=xml"
 

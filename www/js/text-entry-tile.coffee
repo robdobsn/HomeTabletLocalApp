@@ -1,9 +1,9 @@
-class TextEntryTile extends Tile
+class App.TextEntryTile extends App.Tile
 	constructor: (tileDef) ->
 		super(tileDef)
 		@fontPixels = 30
 		@leftMarginX = 10
-		@stateVar = LocalStorage.get(tileDef.varName)
+		@stateVar = App.LocalStorage.get(tileDef.varName)
 		return 
 
 	addToDoc: (elemToAddTo) ->
@@ -15,7 +15,7 @@ class TextEntryTile extends Tile
 			"""
 		inputSel = '#'+@tileId + " .sqTextEntryInput"
 		$(inputSel).bind 'input', =>
-			LocalStorage.set(@tileDef.varName, $(inputSel).val())
+			App.LocalStorage.set(@tileDef.varName, $(inputSel).val())
 		return
 
 	reposition: (@posX, @posY, @sizeX, @sizeY) ->

@@ -231,7 +231,7 @@ class DefaultTabletConfig
 					"varName": autServ + "ServerUrl"
 					"clickFn":""
 				# Add automation servers if we have URLs for them
-				servUrl = LocalStorage.get(autServ + "ServerUrl")
+				servUrl = App.LocalStorage.get(autServ + "ServerUrl")
 				if servUrl? and servUrl isnt ""
 					tabConfig.common.servers.push
 						"type":autServ
@@ -259,7 +259,7 @@ class DefaultTabletConfig
 			if serverSettings.calServerUrl?
 				calServerUrl = serverSettings.calServerUrl
 			else
-				calServerUrl = LocalStorage.get("CalServerUrl")
+				calServerUrl = App.LocalStorage.get("CalServerUrl")
 			if calServerUrl? and calServerUrl isnt ""
 				tabConfig.common.calendar =
 					"url": calServerUrl
@@ -292,7 +292,7 @@ class DefaultTabletConfig
 			if serverSettings.energyServerUrl?
 				energyServerUrl = serverSettings.energyServerUrl
 			else
-				energyServerUrl = LocalStorage.get("EnergyServerUrl")
+				energyServerUrl = App.LocalStorage.get("EnergyServerUrl")
 			if energyServerUrl? and energyServerUrl isnt ""
 				tabConfig.common.pages["Energy"].tilesFixed.push
 					"tileType": "iframe"
@@ -315,5 +315,6 @@ class DefaultTabletConfig
 try
 	module.exports = DefaultTabletConfig
 catch e
+	App.DefaultTabletConfig = DefaultTabletConfig
 	console.log "Running in web page"
 
