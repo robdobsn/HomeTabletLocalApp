@@ -76,7 +76,7 @@ for tabname in tablet_names:
     p.wait()
     print("ADB DEVICES Result = " + str(output))
 
-    if not tabname[1] in output:
+    if not tabname[1] in str(output):
         commandResults.append("Failed to connect to " + tabname[1])
         continue
 
@@ -94,11 +94,11 @@ for tabname in tablet_names:
     # print("Install result = " + str(result))
 
     # Check for success
-    if "LAUNCH SUCCESS" in output2:
+    if "LAUNCH SUCCESS" in str(output2):
         commandResults.append("Install OK for " + tabname[0] + "(" + tabname[1] + ")")
     else:
         commandResults.append("No LAUNCH SUCCESS for " + tabname[0] + "(" + tabname[1] + ")")
-        commandResults.append("STDERR output " + output3)
+        commandResults.append("STDERR output " + str(output3))
 
     # disconnect 
     os.system("adb disconnect " + tabfullplusport)

@@ -114,7 +114,7 @@ class App.AutomationManager
 		cmdsToDo = cmds.length
 		for cmd in cmds
 			# Check if command contains "~POST~" - to indicate POST rather than GET
-			if cmd.indexOf("~POST~")
+			if cmd.indexOf("~POST~") > 0
 				cmdParts = cmd.split("~")
 				$.ajax cmdParts[0],
 					type: "POST"

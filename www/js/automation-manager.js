@@ -160,7 +160,7 @@
       cmdsToDo = cmds.length;
       for (i = 0, len = cmds.length; i < len; i++) {
         cmd = cmds[i];
-        if (cmd.indexOf("~POST~")) {
+        if (cmd.indexOf("~POST~") > 0) {
           cmdParts = cmd.split("~");
           $.ajax(cmdParts[0], {
             type: "POST",
