@@ -18,7 +18,7 @@ if process.argv[2]? and process.argv[2] is "-replacefavs" or process.argv[3]? an
 	replaceFavs = true
 
 # Sonos Server URL
-sonosServerUrl = 'http://macallan:5005'
+sonosServerUrl = 'http://domoticzoff:5005'
 
 replaceAll = (find, replace, str) ->
 	str.replace new RegExp(find, 'g'), replace
@@ -37,8 +37,8 @@ MongoClient.connect mongoUrl, (err, db) ->
 	configSettingsToGet =
 		showCalServerButton: true
 		showEnergyServerButton: true
-		calServerUrl: "http://macallan:5077/calendar/min/45"
-		energyServerUrl: "http://macallan:5098"
+		calServerUrl: "http://domoticzoff:5077/calendar/min/45"
+		energyServerUrl: "http://domoticzoff:5098"
 	commonConfig = defaultTabletConfig.get(configSettingsToGet)
 	# Get the list of tablets from the configuration
 	deviceConfigList = getDeviceConfigList()

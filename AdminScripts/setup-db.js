@@ -29,7 +29,7 @@
     replaceFavs = true;
   }
 
-  sonosServerUrl = 'http://macallan:5005';
+  sonosServerUrl = 'http://domoticzoff:5005';
 
   replaceAll = function(find, replace, str) {
     return str.replace(new RegExp(find, 'g'), replace);
@@ -54,8 +54,8 @@
     configSettingsToGet = {
       showCalServerButton: true,
       showEnergyServerButton: true,
-      calServerUrl: "http://macallan:5077/calendar/min/45",
-      energyServerUrl: "http://macallan:5098"
+      calServerUrl: "http://domoticzoff:5077/calendar/min/45",
+      energyServerUrl: "http://domoticzoff:5098"
     };
     commonConfig = defaultTabletConfig.get(configSettingsToGet);
     deviceConfigList = getDeviceConfigList();
