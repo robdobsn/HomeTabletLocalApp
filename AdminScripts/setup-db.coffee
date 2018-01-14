@@ -3,8 +3,13 @@ Server = require('mongodb').Server
 fs = require('fs')
 DefaultTabletConfig = require('../www/js/default-tablet-config.js')
 
+# Devices info master
+devicesInfoMasterSource = "//MACALLAN/Admin/Config/8DPDevices.json"
+devicesInfoMasterStr = fs.readFileSync(devicesInfoMasterSource, encoding: 'utf8')
+devicesInfoMaster = JSON.parse(devicesInfoMasterStr)
+
 # Mongo client
-mongoUrl = 'mongodb://macallan:27017/WallTablets'
+mongoUrl = devicesInfoMaster.devices.wallTabletConfig.url
 if process.argv[2]?
 	if process.argv[2] is "localhost"
 		mongoUrl = 'mongodb://localhost:27017/WallTablets'
@@ -18,7 +23,29 @@ if process.argv[2]? and process.argv[2] is "-replacefavs" or process.argv[3]? an
 	replaceFavs = true
 
 # Sonos Server URL
-sonosServerUrl = 'http://domoticzoff:5005'
+sonosServerUrl = devicesInfoMaster.devices.sonosServer.url
+console.log("SonosServer is "  + sonosServerUrl)
+
+# Calendar and energy servers
+calendarServerUrl = devicesInfoMaster.devices.calendarServer.url
+energyServerUrl = devicesInfoMaster.devices.energyServer.url
+console.log("CalendarServer is "  + calendarServerUrl)
+console.log("EnergyServer is "  + energyServerUrl)
+
+# Blinds
+officeBlindsHostname = devicesInfoMaster.devices.officeBlinds.hostname
+gamesRoomBlindsHostname = devicesInfoMaster.devices.gamesRoomBlinds.hostname
+landingBathBlindsHostname = devicesInfoMaster.devices.landingBathBlinds.hostname
+console.log("OfficeBlinds is "  + officeBlindsHostname)
+console.log("Games Room Blinds is "  + gamesRoomBlindsHostname)
+console.log("Landing Bath Blinds is "  + landingBathBlindsHostname)
+
+# Front Door Lock
+frontDoorLockHostname = devicesInfoMaster.devices.frontDoorLock.hostname
+frontDoorLockUserNum = devicesInfoMaster.devices.frontDoorLock.userNum
+frontDoorLockUserPin = devicesInfoMaster.devices.frontDoorLock.userPin
+console.log("Front Door is "  + frontDoorLockHostname)
+
 
 replaceAll = (find, replace, str) ->
 	str.replace new RegExp(find, 'g'), replace
@@ -37,8 +64,8 @@ MongoClient.connect mongoUrl, (err, db) ->
 	configSettingsToGet =
 		showCalServerButton: true
 		showEnergyServerButton: true
-		calServerUrl: "http://domoticzoff:5077/calendar/min/45"
-		energyServerUrl: "http://domoticzoff:5098"
+		calServerUrl: calendarServerUrl + "/calendar/min/45"
+		energyServerUrl: energyServerUrl
 	commonConfig = defaultTabletConfig.get(configSettingsToGet)
 	# Get the list of tablets from the configuration
 	deviceConfigList = getDeviceConfigList()
@@ -172,9 +199,9 @@ getSonosConfig = (deviceConfigList) ->
 getBlindsActions = () ->
 	blindsDef = 
 		[
-			[ "Games", [ ["1", "Shade 1"], ["2", "Shade 2"] ], "http://192.168.0.225/blind/"],
-			[ "Landing Bath", [ ["1", "Shade"] ], "http://192.168.0.226/blind/" ],
-			[ "Office", [ ["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"] ], "http://192.168.0.220/blind/"]
+			[ "Games", [ ["1", "Shade 1"], ["2", "Shade 2"] ], "http://" + gamesRoomBlindsHostname + "lan/blind/"],
+			[ "Landing Bath", [ ["1", "Shade"] ], "http://" + landingBathBlindsHostname + "/blind/" ],
+			[ "Office", [ ["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"] ], "http://" + officeBlindsHostname + "/blind/"]
 		]
 	return genBlindsActions(blindsDef)
 
@@ -191,24 +218,24 @@ getDoorActions = () ->
 	return [
 #		{
 #			actionName: "Main Unlock", groupName: "Front Door", iconName: "door-unlock",
-#			actionUrl: "https://api.particle.io/v1/devices/3f005a000a51353338363332/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=main-unlock"
+#			actionUrl: "https://api.particle.io/v1/devices/320035001147343438323536/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=main-unlock"
 #		},
 #		{
 #			actionName: "Main Lock", groupName: "Front Door", iconName: "door-lock",
-#			actionUrl: "https://api.particle.io/v1/devices/3f005a000a51353338363332/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=main-lock"
+#			actionUrl: "https://api.particle.io/v1/devices/320035001147343438323536/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=main-lock"
 #		},
 #		{
 #			actionName: "Inner Unlock", groupName: "Front Door", iconName: "door-unlock",
-#			actionUrl: "https://api.particle.io/v1/devices/3f005a000a51353338363332/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=inner-unlock"
+#			actionUrl: "https://api.particle.io/v1/devices/320035001147343438323536/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=inner-unlock"
 #		},
 #		{
 #			actionName: "Inner Lock", groupName: "Front Door", iconName: "door-lock",
-#			actionUrl: "https://api.particle.io/v1/devices/3f005a000a51353338363332/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=inner-unlock"
+#			actionUrl: "https://api.particle.io/v1/devices/320035001147343438323536/apiCall\?access_token=ab1fba812bf2ff055ef347d9230be5d9a470bdfe~POST~arg=inner-unlock"
 #		}
-			{ actionName: "Main Unlock", groupName: "Front Door", actionUrl: "http://192.168.0.221/main-unlock", iconName: "door-unlock" }
-			{ actionName: "Main Lock", groupName: "Front Door", actionUrl: "http://192.168.0.221/main-lock", iconName: "door-lock" }
-			{ actionName: "Inner Unlock", groupName: "Front Door", actionUrl: "http://192.168.0.221/inner-unlock", iconName: "door-unlock" }
-			{ actionName: "Inner Lock", groupName: "Front Door", actionUrl: "http://192.168.0.221/inner-lock", iconName: "door-lock" }
+			{ actionName: "Main Unlock", groupName: "Front Door", actionUrl: "http://" + frontDoorLockHostname + "/u/0/" + frontDoorLockUserNum + "/" + frontDoorLockUserPin, iconName: "door-unlock" }
+			{ actionName: "Main Lock", groupName: "Front Door", actionUrl: "http://" + frontDoorLockHostname + "/l/0", iconName: "door-lock" }
+			{ actionName: "Inner Unlock", groupName: "Front Door", actionUrl: "http://" + frontDoorLockHostname + "/u/1/" + frontDoorLockUserNum + "/" + frontDoorLockUserPin, iconName: "door-unlock" }
+			{ actionName: "Inner Lock", groupName: "Front Door", actionUrl: "http://" + frontDoorLockHostname + "/l/1", iconName: "door-lock" }
 	]
 
 getDeviceConfigList = (configDb) ->
@@ -230,11 +257,11 @@ getServerList = () ->
 	return [
 			# {"type":"indigo", "name":"IndigoUp", "url":"http://192.168.0.230:8176", "iconAliasing":"automationIcons" },
 			# {"type":"indigo", "name":"IndigoDown", "url":"http://192.168.0.231:8176", "iconAliasing":"automationIcons"  },
-			{"type":"domoticz", "name":"DomoticzUT", "url":"http://192.168.0.232:80", "iconAliasing":"automationIcons"  },
-			{"type":"domoticz", "name":"DomoticzPLC", "url":"http://192.168.0.233:80", "iconAliasing":"automationIcons"  },
-			{"type":"domoticz", "name":"DomoticzCEL", "url":"http://192.168.0.234:80", "iconAliasing":"automationIcons"  },
-			{"type":"domoticz", "name":"DomoticzOFF", "url":"http://192.168.0.235:80", "iconAliasing":"automationIcons"  },
-			{"type":"domoticz", "name":"DomoticzKIT", "url":"http://192.168.0.236:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzUT", "url":"http://domoticzut:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzPLC", "url":"http://domoticzplc:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzCEL", "url":"http://domoticzcel:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzOFF", "url":"http://domoticzoff:80", "iconAliasing":"automationIcons"  },
+			{"type":"domoticz", "name":"DomoticzKIT", "url":"http://calprinter:80", "iconAliasing":"automationIcons"  },
 			# {"type":"domoticz", "name":"DomoticzOFI", "url":"http://192.168.0.235:80", "iconAliasing":"automationIcons"  },
 			# {"type":"indigo-test", "name":"IndigoTest", "url":"", "iconAliasing":"automationIcons"  },
 			# {"type":"fibaro", "name":"FibaroHS2", "url":"http://macallan:5079" },

@@ -1,19 +1,19 @@
 {
-    "prepare_queue": {
-        "installed": [],
-        "uninstalled": []
-    },
-    "config_munge": {
-        "files": {}
-    },
-    "installed_plugins": {
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.robdobsn.walltabletapp"
-        }
-    },
-    "dependent_plugins": {
-        "com.rjfun.cordova.plugin.lowlatencyaudio": {
-            "PACKAGE_NAME": "com.robdobsn.walltabletapp"
-        }
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.robdobsn.walltabletapp"
     }
+  },
+  "dependent_plugins": {
+    "com.rjfun.cordova.plugin.lowlatencyaudio": {
+      "PACKAGE_NAME": "com.robdobsn.walltabletapp"
+    }
+  }
 }

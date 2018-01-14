@@ -175,16 +175,19 @@
         this.tilesAcross = 3;
         this.columnsAcross = 3;
       }
-      this.columnsDef = (function() {
-        var j, len, ref, results;
-        ref = this.baseColumnsDef;
-        results = [];
-        for (j = 0, len = ref.length; j < len; j++) {
-          col = ref[j];
-          results.push(col);
-        }
-        return results;
-      }).call(this);
+      this.columnsDef = [];
+      if (this.baseColumnsDef != null) {
+        this.columnsDef = (function() {
+          var j, len, ref, results;
+          ref = this.baseColumnsDef;
+          results = [];
+          for (j = 0, len = ref.length; j < len; j++) {
+            col = ref[j];
+            results.push(col);
+          }
+          return results;
+        }).call(this);
+      }
       this.noTitles = true;
       autoAddColIdx = -1;
       colsToAdd = 0;

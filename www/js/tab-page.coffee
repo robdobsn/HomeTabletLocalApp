@@ -145,7 +145,9 @@ class App.TabPage
 			@tilesDown = if @pageDef.rows? then @pageDef.rows.landscape else 6
 			@tilesAcross = 3
 			@columnsAcross = 3
-		@columnsDef = (col for col in @baseColumnsDef)
+		@columnsDef = []
+		if @baseColumnsDef?
+  		@columnsDef = (col for col in @baseColumnsDef)
 		@noTitles = true
 		# Check for auto-add columns
 		autoAddColIdx = -1

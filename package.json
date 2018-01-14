@@ -1,0 +1,17 @@
+{
+  "name": "com.robdobsn.walltabletapp",
+  "version": "3.0.0",
+  "displayName": "WallTabletApp",
+  "cordova": {
+    "platforms": [
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-whitelist": {}
+    }
+  },
+  "dependencies": {
+    "cordova-android": "7.0.0",
+    "cordova-plugin-whitelist": "1"
+  }
+}
