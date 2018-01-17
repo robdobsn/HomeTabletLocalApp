@@ -4,7 +4,8 @@ fs = require('fs')
 DefaultTabletConfig = require('../www/js/default-tablet-config.js')
 
 # Devices info master
-devicesInfoMasterSource = "//MACALLAN/Admin/Config/8DPDevices.json"
+devicesInfoMasterSource = "//domoticzoff/PiShare/nodeuser/config/MasterDevices.json"
+#devicesInfoMasterSource = "//MACALLAN/Admin/Config/MasterDevicesFallback.json"
 devicesInfoMasterStr = fs.readFileSync(devicesInfoMasterSource, encoding: 'utf8')
 devicesInfoMaster = JSON.parse(devicesInfoMasterStr)
 
