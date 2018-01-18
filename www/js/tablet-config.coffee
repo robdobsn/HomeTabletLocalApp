@@ -56,9 +56,9 @@ class App.TabletConfigManager
 		App.LocalStorage.set(reqURL, @configData)
 		tabName = @getTabName()
 		if not tabName? or tabName is ""
-			console.log "Unable to save device config as tablet name unknown"
+			console.log "WallTabletDebug Unable to save device config as tablet name unknown"
 		else
-			console.log "Saving device config for " + tabName
+			console.log "WallTabletDebug Saving device config for " + tabName
 		# Store back to the server 
 		$.ajax 
 			url: reqURL
@@ -66,9 +66,9 @@ class App.TabletConfigManager
 			data: JSON.stringify({"favourites":@configData.favourites})
 			contentType: "application/json"
 			success: (data, status, response) =>
-				console.log "Sent new config data ok"
+				console.log "WallTabletDebug Sent new config data ok"
 			error: (jqXHR, textStatus, errorThrown) =>
-				console.error ("Failed to send new config data: " + textStatus + " " + errorThrown)
+				console.error ("WallTabletDebug Failed to send new config data: " + textStatus + " " + errorThrown)
 
 	requestConfig: ->
 		reqURL = @getReqUrl()
@@ -81,7 +81,7 @@ class App.TabletConfigManager
 
 		# Get the configuration from the server
 		tabName = @getTabName()
-		console.log("Requesting tablet config from tabname " + @getTabName() + " using URL " + reqURL)
+		console.log("WallTabletDebug Requesting tablet config from tabname " + @getTabName() + " using URL " + reqURL)
 
 		# get the tablet config from a server
 		@catchAjaxFail = setTimeout =>
@@ -97,30 +97,33 @@ class App.TabletConfigManager
 				jsonText = jqXHR.responseText
 				jsonData = $.parseJSON(jsonText)
 				if jsonText is "{}"
-					console.log("Got tablet config but it's empty")
+					console.log("WallTabletDebug Got tablet config but it's empty")
 					@configData = @defaultTabletConfig.get(@defaultConfigSettings)
 				else
-					console.log "Got tablet config data"
+					console.log "WallTabletDebug Got tablet config data"
 					tabName = jsonData["deviceName"]
 					curTabName = App.LocalStorage.get("DeviceConfigName")
 					if tabName? and tabName isnt curTabName
 						App.LocalStorage.set("DeviceConfigName", tabName)
-						console.log("DeviceConfigName was " + curTabName + " now set to " + tabName)
+						console.log("WallTabletDebug DeviceConfigName was " + curTabName + " now set to " + tabName)
+
+						console.log("WallTabletDebug " + " TABLETCONFIG DeviceConfigName was " + curTabName + " now set to " + tabName);
+
 						App.LocalStorage.logEvent("CnfLog", "DeviceConfigName was " + curTabName + " now set to " + tabName)
 					@configData = jsonData
 					App.LocalStorage.set(reqURL, @configData)
 				@readyCallback()
-				# console.log "Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
+				console.log "WallTabletDebug Storing data for " + reqURL + " = " + JSON.stringify(jsonData)
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
-				console.log "Get tablet config data failed with an error " + textStatus
+				console.log "WallTabletDebug Get tablet config data failed with an error " + textStatus
 				# Use stored data if available
 				clearTimeout(@catchAjaxFail)
 				storedData = App.LocalStorage.get(reqURL)
-				console.log "Config Getting data stored for " + reqURL + " result = " + storedData
+				console.log "WallTabletDebug Config Getting data stored for " + reqURL + " result = " + storedData
 				if storedData?
 					# console.log "Using stored data" + JSON.stringify(storedData)
-					console.log "Using stored data for " + reqURL
+					console.log "WallTabletDebug Using stored data for " + reqURL
 					@configData = storedData
 				else
 					@configData = @defaultTabletConfig.get(@defaultConfigSettings)
@@ -129,7 +132,7 @@ class App.TabletConfigManager
 		return
 
 	ajaxFailTimeout: ->
-		console.log("Get tablet config timed out via setTimeout")
+		console.log("WallTabletDebug Get tablet config timed out via setTimeout")
 		@configData = @defaultTabletConfig.get(@defaultConfigSettings)
 		@readyCallback()
 		return

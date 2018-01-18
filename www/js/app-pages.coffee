@@ -211,7 +211,7 @@ class App.AppPages
 		else if context.url is "ExitYes"
 			navigator.app.exitApp()
 		else 
-			console.log "Attempting page generation " + context.url
+			console.log "WallTabletDebug Attempting page generation " + context.url
 			newPageName = @generateNewPage(context)
 			@setCurrentPage(newPageName, false)
 			@display()

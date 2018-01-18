@@ -21,7 +21,7 @@ class App.CalendarManager
 		if @calendarUrl is "" 
 			return
 		dateTimeNow = new Date()
-		console.log("ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + @calendarUrl) 
+		console.log("WallTabletDebug ReqCalUpdate at " + dateTimeNow.toTimeString() + " from " + @calendarUrl)
 		$.ajax @calendarUrl,
 			type: "GET"
 			dataType: "text"
@@ -31,11 +31,14 @@ class App.CalendarManager
 				jsonData = $.parseJSON(jsonText)
 				@calendarData = jsonData
 				@numRefreshFailuresSinceSuccess = 0
-				console.log "Got calendar data"
+				console.log "WallTabletDebug Got calendar data"
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
+
+				console.log("WallTabletDebug " + " CALENDAR AjaxFail Status = " + textStatus + " URL=" + @calendarUrl + " Error= " + errorThrown);
+
 				App.LocalStorage.logEvent("CalLog", "AjaxFail Status = " + textStatus + " URL=" + @calendarUrl + " Error= " + errorThrown)
-				console.log "GetCalError " + "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown
+				console.log "WallTabletDebug GetCalError " + "ReqCalAjaxFailed TextStatus = " + textStatus + " ErrorThrown = " + errorThrown
 				@numRefreshFailuresSinceSuccess++
 				setTimeout =>
 					@requestCalUpdate

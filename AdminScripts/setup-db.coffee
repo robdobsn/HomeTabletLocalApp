@@ -200,7 +200,7 @@ getSonosConfig = (deviceConfigList) ->
 getBlindsActions = () ->
 	blindsDef = 
 		[
-			[ "Games", [ ["1", "Shade 1"], ["2", "Shade 2"] ], "http://" + gamesRoomBlindsHostname + "lan/blind/"],
+			[ "Games", [ ["1", "Shade 1"], ["2", "Shade 2"] ], "http://" + gamesRoomBlindsHostname + "/blind/"],
 			[ "Landing Bath", [ ["1", "Shade"] ], "http://" + landingBathBlindsHostname + "/blind/" ],
 			[ "Office", [ ["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"] ], "http://" + officeBlindsHostname + "/blind/"]
 		]

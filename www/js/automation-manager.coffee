@@ -115,6 +115,7 @@ class App.AutomationManager
 		for cmd in cmds
 			# Check if command contains "~POST~" - to indicate POST rather than GET
 			if cmd.indexOf("~POST~") > 0
+				console.log "WallTabletDebug Exec POST command " + cmd
 				cmdParts = cmd.split("~")
 				$.ajax cmdParts[0],
 					type: "POST"
@@ -125,12 +126,12 @@ class App.AutomationManager
 						@soundResult(cmdsToDo, cmdsCompleted, cmdsFailed)
 						return
 					error: (jqXHR, textStatus, errorThrown) =>
-						console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
+						console.error ("WallTabletDebug POST exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
 						cmdsFailed++
 						cmdsCompleted++
 						return
 			else
-				console.log "Exec command " + cmd
+				console.log "WallTabletDebug Exec GET command " + cmd
 				$.ajax cmd,
 					type: "GET"
 					dataType: "text"
@@ -139,7 +140,7 @@ class App.AutomationManager
 						@soundResult(cmdsToDo, cmdsCompleted, cmdsFailed)
 						return
 					error: (jqXHR, textStatus, errorThrown) =>
-						console.error ("Direct exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
+						console.error ("WallTabletDebug GET exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
 						cmdsFailed++
 						cmdsCompleted++
 						return

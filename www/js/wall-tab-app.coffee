@@ -1,5 +1,8 @@
 class App.WallTabApp
 	constructor: ->
+
+		console.log "WallTabletDebug APPLICATION STARTING UP"
+
 		# Default the tablet name and get the configuration server
 		@defaultTabletName = "tabdefault"
 		# Basic settings
@@ -89,7 +92,7 @@ class App.WallTabApp
 			for i in [0...@maxEventsPerLogSend]
 				ev = App.LocalStorage.getEvent(logCat)
 				if ev?
-					console.log "Logging event from " + logCat + " = " + JSON.stringify(ev)
+					console.log "WallTabletDebug Logging event from " + logCat + " = " + JSON.stringify(ev)
 					evList.push
 						logCat: logCat
 						timestamp: ev.timestamp
@@ -98,17 +101,17 @@ class App.WallTabApp
 					break
 		if evList.length > 0
 			evListJson = JSON.stringify(evList)
-			console.log "Sending " + evList.length + " log event(s) to log server"
+			console.log "WallTabletDebug Sending " + evList.length + " log event(s) to log server"
 			$.ajax 
 				url: @getLogServerUrl()
 				type: 'POST'
 				data: evListJson
 				contentType: "application/json"
 				success: (data, status, response) =>
-					console.log "logged events success"
+					console.log "WallTabletDebug logged events success"
 					return
 				error: (jqXHR, textStatus, errorThrown) =>
-					console.log ("Error log failed: " + textStatus + " " + errorThrown)
+					console.log ("WallTabletDebug Error log failed: " + textStatus + " " + errorThrown)
 					# If logging failed then re-log the events
 					for ev in evList
 						App.LocalStorage.logEvent(ev.logCat, ev.eventText, ev.timestamp)
