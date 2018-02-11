@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-  	"mongodb":"*"
+    "mongodb": "*",
+    "request": "^2.83.0"
   }
 }
