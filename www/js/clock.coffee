@@ -37,7 +37,7 @@ class App.Clock extends App.Tile
 			width: "100%"
 		$('#'+@tileId+" .sqClockTime").css
 			position: "absolute"
-			fontSize: (@sizeY/1.8) + "px"	
+			fontSize: (@sizeY/2) + "px"	
 			top: timePos + "px"
 			left: "-7px"
 			width: "100%"
@@ -46,7 +46,7 @@ class App.Clock extends App.Tile
 			position: "absolute"
 			left: (@sizeX/2-12) + "px"
 			top: (timePos + (timeTextHeight/5)) + "px"
-			fontSize: (@sizeY/3) + "px"				
+			fontSize: (@sizeY/3.5) + "px"				
 		return
 
 	updateClock: () ->

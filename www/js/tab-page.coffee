@@ -137,17 +137,17 @@ class App.TabPage
 		isPortrait = (winWidth < winHeight)
 		if isPortrait
 			@baseColumnsDef = if @pageDef.columns? then @pageDef.columns.portrait else null
-			@tilesDown = if @pageDef.rows? then @pageDef.rows.portrait else 10
+			@tilesDown = if @pageDef.rows? then @pageDef.rows.portrait else 15
 			@tilesAcross = 2
 			@columnsAcross = 2
 		else
 			@baseColumnsDef = if @pageDef.columns? then @pageDef.columns.landscape else null
-			@tilesDown = if @pageDef.rows? then @pageDef.rows.landscape else 6
+			@tilesDown = if @pageDef.rows? then @pageDef.rows.landscape else 8
 			@tilesAcross = 3
 			@columnsAcross = 3
 		@columnsDef = []
 		if @baseColumnsDef?
-  		@columnsDef = (col for col in @baseColumnsDef)
+			@columnsDef = (col for col in @baseColumnsDef)
 		@noTitles = true
 		# Check for auto-add columns
 		autoAddColIdx = -1
@@ -237,9 +237,18 @@ class App.TabPage
 			rowSpan = tile.tileDef.rowSpan
 		# Check for special positioning cues
 		if tile.tileDef.positionCue is "end"
-			colIdx = colInfo.colStartIdx + colInfo.colCount - 1 - Math.floor(colInfo.endTileCount/@tilesDown)
-			rowIdx = @tilesDown - Math.floor(colInfo.endTileCount % @tilesDown) - rowSpan
-			colInfo.endTileCount+=rowSpan
+			winWidth = $(window).width()
+			winHeight = $(window).height()
+			isPortrait = (winWidth < winHeight)
+			if isPortrait
+				colIdx = 1
+				colSpan = 1
+				rowIdx = @tilesDown - Math.floor(colInfo.endTileCount % @tilesDown) - rowSpan
+				colInfo.endTileCount+=rowSpan
+			else
+				colIdx = colInfo.colStartIdx + colInfo.colCount - 1 - Math.floor(colInfo.endTileCount/@tilesDown)
+				rowIdx = @tilesDown - Math.floor(colInfo.endTileCount % @tilesDown) - rowSpan
+				colInfo.endTileCount+=rowSpan
 		else
 			colIdx = colInfo.colStartIdx + Math.floor(colInfo.frontTileCount / @tilesDown)
 			rowIdx = Math.floor(colInfo.frontTileCount % @tilesDown)

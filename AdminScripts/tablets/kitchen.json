@@ -28,6 +28,42 @@
 	    {
 	    "tileName": "Stop",
 	    "groupName": "Kitchen"
+	    },
+	    {
+	      "tileName": "Front Up",
+	      "groupName": "Kitchen Front"
+	    },
+	    {
+	      "tileName": "Front Stop",
+	      "groupName": "Kitchen Front"
+	    },
+	    {
+	      "tileName": "Front Down",
+	      "groupName": "Kitchen Front"
+	    },
+	    {
+	      "tileName": "Left Up",
+	      "groupName": "Kitchen Back"
+	    },
+	    {
+	      "tileName": "Left Stop",
+	      "groupName": "Kitchen Back"
+	    },
+	    {
+	      "tileName": "Left Down",
+	      "groupName": "Kitchen Back"
+	    },
+	    {
+	      "tileName": "Right Up",
+	      "groupName": "Kitchen Back"
+	    },
+	    {
+	      "tileName": "Right Stop",
+	      "groupName": "Kitchen Back"
+	    },
+	    {
+	      "tileName": "Right Down",
+	      "groupName": "Kitchen Back"
 	    }
 	],
 	"tileDefs_Sonos":

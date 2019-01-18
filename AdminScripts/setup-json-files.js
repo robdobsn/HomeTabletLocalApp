@@ -1,6 +1,12 @@
 
 (function() {
-  var DefaultTabletConfig, bAction, blindsActions, calendarServerUrl, commonConfig, configServerSaveURL, configSettingsToGet, configsToSet, dAction, defaultTabletConfig, devConf, deviceConfigList, devicesInfoMaster, devicesInfoMasterSource, devicesInfoMasterStr, doorActions, energyServerUrl, frontDoorLockHostname, frontDoorLockUserNum, frontDoorLockUserPin, fs, gamesRoomBlindsHostname, genBlindsActions, getBlindsActions, getDeviceConfigList, getDoorActions, getServerList, getSonosConfig, i, j, k, key, l, landingBathBlindsHostname, len, len1, len2, len3, newConfig, officeBlindsHostname, replaceAll, replaceFavs, request, sAction, sendConfigToConfigServer, sonosConfig, sonosServerUrl, val;
+  var DefaultTabletConfig, bAction, blindsActions, calendarServerUrl, commonConfig, configServerSaveURL;
+  var configSettingsToGet, configsToSet, dAction, defaultTabletConfig, devConf, deviceConfigList, devicesInfoMaster;
+  var devicesInfoMasterSource, devicesInfoMasterStr, doorActions, energyServerUrl, frontDoorLockHostname;
+  var frontDoorLockUserNum, frontDoorLockUserPin, fs, gamesRoomBlindsHostname, genBlindsActions, getBlindsActions;
+  var getDeviceConfigList, getDoorActions, getServerList, getSonosConfig, i, j, k, key, l;
+  var landingBathBlindsHostname, len, len1, len2, len3, newConfig, officeBlindsHostname, replaceAll, replaceFavs;
+  var request, sAction, sendConfigToConfigServer, sonosConfig, sonosServerUrl, val;
 
   fs = require('fs');
 
@@ -64,7 +70,12 @@
 
   getBlindsActions = function() {
     var blindsDef;
-    blindsDef = [["Games", [["1", "Shade 1"], ["2", "Shade 2"]], "http://" + gamesRoomBlindsHostname + "/blind/"], ["Landing Bath", [["1", "Shade"]], "http://" + landingBathBlindsHostname + "/blind/"], ["Office", [["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"]], "http://" + officeBlindsHostname + "/blind/"]];
+    blindsDef = [
+       ["Games", [["1", "Shade 1"], ["2", "Shade 2"]], "http://" + gamesRoomBlindsHostname + "/blind/"],
+       ["Kitchen Front", [["3", "Front"]], "http://" + kitchenFrontBlindsHostname + "/blind/"], 
+       ["Kitchen Back", [["4", "Left"], ["5", "Right"]], "http://" + kitchenBackBlindsHostname + "/blind/"], 
+       ["Landing Bath", [["1", "Shade"]], "http://" + landingBathBlindsHostname + "/blind/"], 
+       ["Office", [["1", "Rob's Shade"], ["2", "Left"], ["3", "Mid-Left"], ["4", "Mid-Right"], ["5", "Right"]], "http://" + officeBlindsHostname + "/blind/"]];
     return genBlindsActions(blindsDef);
   };
 
@@ -358,9 +369,15 @@
 
   landingBathBlindsHostname = devicesInfoMaster.devices.landingBathBlinds.hostname;
 
+  let kitchenFrontBlindsHostname = devicesInfoMaster.devices.kitchenFrontBlinds.hostname;
+  let kitchenBackBlindsHostname = devicesInfoMaster.devices.kitchenBackBlinds.hostname;
+
   console.log("OfficeBlinds is " + officeBlindsHostname);
 
   console.log("Games Room Blinds is " + gamesRoomBlindsHostname);
+
+  console.log("Kitchen Front Blinds is " + kitchenFrontBlindsHostname);
+  console.log("Kitchen Back Blinds is " + kitchenBackBlindsHostname);
 
   console.log("Landing Bath Blinds is " + landingBathBlindsHostname);
 

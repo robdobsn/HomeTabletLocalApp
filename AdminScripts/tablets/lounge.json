@@ -12,6 +12,14 @@
         {
         "tileName": "Lounge Off",
         "groupName": "Lounge"
+        },
+        {
+        "tileName": "Lounge Mood",
+        "groupName": "Lounge"
+        },
+        {
+        "tileName": "Lounge Sidelights",
+        "groupName": "Lounge"
         }
     ]
 }

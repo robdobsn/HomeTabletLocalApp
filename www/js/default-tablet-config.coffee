@@ -21,6 +21,7 @@ class DefaultTabletConfig
 						defaultPage: true
 						pageName: "Home"
 						pageTitle: "Home"
+						rows: { "portrait": 15, "landscape": 10 }
 						columns: 
 							landscape: [ 
 								{ "title": "", "colSpan": 2 },
