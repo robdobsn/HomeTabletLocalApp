@@ -39,8 +39,10 @@ class App.AutomationManager
 						@servers.push new App.VeraServer(this, serverDef, @actionsReadyCb)
 					else if serverDef.type is "fibaro" or serverDef.type is "Fibaro"
 						@servers.push new App.FibaroServer(this, serverDef, @actionsReadyCb)
-					if serverDef.type is "domoticz" or serverDef.type is "Domoticz"
+					else if serverDef.type is "domoticz" or serverDef.type is "Domoticz"
 						@servers.push new App.DomoticzServer(this, serverDef, @actionsReadyCb)
+					else if serverDef.type is "robhome" or serverDef.type is "RobHome"
+						@servers.push new App.RobHomeServer(this, serverDef, @actionsReadyCb)
 		else
 			@servers = []
 		@serverDefs = configData.common.servers
@@ -94,6 +96,7 @@ class App.AutomationManager
 					mergedActionsList.push serverAction
 		for key,val of duplicatedActions
 			mergedActionsList.push val
+			console.error("MergedAction " + val.actionUrl)
 		return mergedActionsList
 
 	soundResult: (cmdsToDo, cmdsCompleted, cmdsFailed) ->
