@@ -2,7 +2,7 @@
   App.SceneButton = class SceneButton extends App.Tile {
     constructor(tileDef) {
       super(tileDef);
-      this.buttonMarginX = 10;
+      this.buttonMarginX = 50;
       this.iconSize = [0, 0];
       this.fontPixels = 40;
       this.iconCellWidth = 80;
