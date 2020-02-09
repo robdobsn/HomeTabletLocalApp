@@ -4,6 +4,7 @@
       this.tabletConfigReadyCb = this.tabletConfigReadyCb.bind(this);
       this.automationManagerReadyCb = this.automationManagerReadyCb.bind(this);
       this.actionOnUserIdle = this.actionOnUserIdle.bind(this);
+      this.VERSION = "002.000.000";
       console.log("WallTabletDebug APPLICATION STARTING UP");
       // Default the tablet name and get the configuration server
       this.defaultTabletName = "tabdefault";
@@ -31,6 +32,8 @@
       // Tablet config is based on the name or IP address of the tablet
       this.tabletConfigManager = new App.TabletConfigManager(this.defaultTabletName);
       this.tabletConfigManager.setReadyCallback(this.tabletConfigReadyCb);
+      // App updater
+      this.appUpdater = new App.AppUpdater(this, App.LocalStorage.get("ConfigServerUrl") + "/deployota/WallTabletApp");
       // Automation manager handles communicaton with automaion devices like
       // Indigo/vera/fibaro
       this.automationManager = new App.AutomationManager(this, this.automationManagerReadyCb);
@@ -131,6 +134,11 @@
           }
         });
       }
+    }
+
+    appUpdate() {
+      console.log("App update requested");
+      return this.appUpdater.appUpdate();
     }
 
   };

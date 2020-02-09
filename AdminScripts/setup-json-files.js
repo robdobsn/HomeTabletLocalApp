@@ -173,35 +173,35 @@
   getServerList = function() {
     return [
       {
-        // {"type":"indigo", "name":"IndigoUp", "url":"http://192.168.0.230:8176", "iconAliasing":"automationIcons" },
-        // {"type":"indigo", "name":"IndigoDown", "url":"http://192.168.0.231:8176", "iconAliasing":"automationIcons"  },
-        "type": "domoticz",
-        "name": "DomoticzUT",
-        "url": "http://domoticzut:80",
+      //   // {"type":"indigo", "name":"IndigoUp", "url":"http://192.168.0.230:8176", "iconAliasing":"automationIcons" },
+      //   // {"type":"indigo", "name":"IndigoDown", "url":"http://192.168.0.231:8176", "iconAliasing":"automationIcons"  },
+        "type": "RobHome",
+        "name": "RobHomeServer",
+        "url": "http://192.168.86.235:5076",
         "iconAliasing": "automationIcons"
       },
       {
         "type": "domoticz",
         "name": "DomoticzPLC",
-        "url": "http://domoticzplc:80",
+        "url": "http://192.168.86.233:80",
         "iconAliasing": "automationIcons"
       },
       {
         "type": "domoticz",
         "name": "DomoticzCEL",
-        "url": "http://domoticzcel:80",
+        "url": "http://192.168.86.234:80",
         "iconAliasing": "automationIcons"
       },
       {
         "type": "domoticz",
         "name": "DomoticzOFF",
-        "url": "http://domoticzoff:80",
+        "url": "http://192.168.86.235:80",
         "iconAliasing": "automationIcons"
       },
       {
         "type": "domoticz",
         "name": "DomoticzKIT",
-        "url": "http://calprinter:80",
+        "url": "http://192.168.86.231:80",
         "iconAliasing": "automationIcons"
       }
     ];
@@ -328,7 +328,7 @@
   //	return
 
   // Config server URL
-  configServerSaveURL = "http://domoticzoff:5076/tabletconfig/";
+  configServerSaveURL = "http://192.168.86.235:5076/tabletconfig/";
 
   //configServerSaveURL = "http://localhost:5076/tabletconfig/"
 

@@ -190,6 +190,7 @@ class App.AppPages
 		@curTabPage.updateDom()
 
 	buttonCallback: (context) =>
+		console.log "buttonCallback user button pressed " + context.url
 		# Check for navigation button
 		if context.forceReloadPages? and context.forceReloadPages
 			@app.requestConfigData()
@@ -208,6 +209,8 @@ class App.AppPages
 			@deleteFavouriteButton(context)
 			@setCurrentPage(@defaultPageName, false)
 			@display()
+		else if context.url is "AppUpdate"
+			@app.appUpdate()
 		else if context.url is "ExitYes"
 			navigator.app.exitApp()
 		else 

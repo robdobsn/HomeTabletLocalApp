@@ -1,6 +1,8 @@
 class App.WallTabApp
     constructor: ->
 
+        @VERSION = "002.000.000"
+
         console.log "WallTabletDebug APPLICATION STARTING UP"
 
         # Default the tablet name and get the configuration server
@@ -29,6 +31,9 @@ class App.WallTabApp
         # Tablet config is based on the name or IP address of the tablet
         @tabletConfigManager = new App.TabletConfigManager(@defaultTabletName)
         @tabletConfigManager.setReadyCallback(@tabletConfigReadyCb)
+
+        # App updater
+        @appUpdater = new App.AppUpdater(this, App.LocalStorage.get("ConfigServerUrl")+ "/deployota/WallTabletApp")
 
         # Automation manager handles communicaton with automaion devices like
         # Indigo/vera/fibaro
@@ -118,3 +123,6 @@ class App.WallTabApp
                     return
         return
 
+    appUpdate: ->
+        console.log ("App update requested")
+        @appUpdater.appUpdate()

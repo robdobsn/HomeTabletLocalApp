@@ -338,6 +338,7 @@
 
     buttonCallback(context) {
       var newPageName;
+      console.log("buttonCallback user button pressed " + context.url);
       // Check for navigation button
       if ((context.forceReloadPages != null) && context.forceReloadPages) {
         this.app.requestConfigData();
@@ -358,6 +359,8 @@
         this.deleteFavouriteButton(context);
         this.setCurrentPage(this.defaultPageName, false);
         this.display();
+      } else if (context.url === "AppUpdate") {
+        this.app.appUpdate();
       } else if (context.url === "ExitYes") {
         navigator.app.exitApp();
       } else {

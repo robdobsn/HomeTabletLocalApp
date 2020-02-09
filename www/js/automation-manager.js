@@ -76,6 +76,7 @@
       for (k = 0, len2 = ref2.length; k < len2; k++) {
         server = ref2[k];
         server.reqActions();
+        console.log("reqActions from server " + server.SCENES_URL);
       }
       // Callback now with initial actions (fixed actions)
       this.readyCallback(true);

@@ -9,6 +9,12 @@
   "installed_plugins": {
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.robdobsn.walltabletapp"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.robdobsn.walltabletapp"
+    },
+    "cordova-webintent": {
+      "PACKAGE_NAME": "com.robdobsn.walltabletapp"
     }
   },
   "dependent_plugins": {

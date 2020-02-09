@@ -422,7 +422,7 @@
                   "tileType": "nav",
                   "tileName": "ExitYes",
                   "colType": "nav",
-                  "tileText": "Exit? - Yes",
+                  "tileText": "Yes - Exit",
                   "url": "ExitYes",
                   "rowSpan": 1,
                   "tileColour": "black"
@@ -431,8 +431,17 @@
                   "tileType": "nav",
                   "tileName": "ExitNo",
                   "colType": "nav",
-                  "tileText": "Exit? - No",
+                  "tileText": "No - Return",
                   "url": "Home",
+                  "rowSpan": 1,
+                  "tileColour": "black"
+                },
+                {
+                  "tileType": "nav",
+                  "tileName": "AppUpdate",
+                  "colType": "nav",
+                  "tileText": "AppUpdate",
+                  "url": "AppUpdate",
                   "rowSpan": 1,
                   "tileColour": "black"
                 }

@@ -49,6 +49,7 @@ class App.AutomationManager
 		# Request data from servers
 		for server in @servers
 			server.reqActions()
+			console.log "reqActions from server " + server.SCENES_URL
 		# Callback now with initial actions (fixed actions)
 		@readyCallback(true)
 		return

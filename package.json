@@ -7,11 +7,15 @@
       "android"
     ],
     "plugins": {
-      "cordova-plugin-whitelist": {}
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-file": {},
+      "cordova-webintent": {}
     }
   },
   "dependencies": {
     "cordova-android": "^7.0.0",
-    "cordova-plugin-whitelist": "1"
+    "cordova-plugin-file": "^6.0.2",
+    "cordova-plugin-whitelist": "1",
+    "cordova-webintent": "github:cordova-misc/cordova-webintent"
   }
 }

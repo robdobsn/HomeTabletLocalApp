@@ -2,7 +2,7 @@
   App.SceneButton = class SceneButton extends App.Tile {
     constructor(tileDef) {
       super(tileDef);
-      this.buttonMarginX = 50;
+      this.buttonMarginX = 35;
       this.iconSize = [0, 0];
       this.fontPixels = 40;
       this.iconCellWidth = 80;
@@ -62,7 +62,7 @@
         });
         this.setPositionCss(textSel, 0, (this.sizeY - txtHeight) / 2);
         txtWidth = $(textSel).width();
-        txtCellWidth = this.sizeX - this.buttonMarginX * 2;
+        txtCellWidth = this.sizeX - this.buttonMarginX * 1.6;
         if (txtWidth > txtCellWidth) {
           fontScaling = txtCellWidth / txtWidth;
           $(textSel).css({

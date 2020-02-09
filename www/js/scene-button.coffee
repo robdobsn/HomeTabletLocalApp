@@ -1,7 +1,7 @@
 class App.SceneButton extends App.Tile
 	constructor: (tileDef) ->
 		super(tileDef)
-		@buttonMarginX = 50
+		@buttonMarginX = 35
 		@iconSize = [0,0]
 		@fontPixels = 40
 		@iconCellWidth = 80
@@ -52,7 +52,7 @@ class App.SceneButton extends App.Tile
 				textAlign: "center"
 			@setPositionCss(textSel, 0, (@sizeY-txtHeight)/2)
 			txtWidth = $(textSel).width()
-			txtCellWidth = @sizeX - @buttonMarginX*2
+			txtCellWidth = @sizeX - @buttonMarginX*1.6
 			if txtWidth > txtCellWidth
 				fontScaling = txtCellWidth / txtWidth
 				$(textSel).css
