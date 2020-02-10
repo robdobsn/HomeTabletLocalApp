@@ -7,6 +7,7 @@
     }
 
     appUpdate() {
+      console.log("Use web update");
       return window.plugins.webintent.startActivity({
         action: window.plugins.webintent.ACTION_VIEW,
         // url: @updateURL + "/WallTabletApp.apk",

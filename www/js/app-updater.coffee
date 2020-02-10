@@ -3,6 +3,7 @@ class App.AppUpdater
         console.log "Updater set " + @updateURL
 
     appUpdate: ->
+        console.log "Use web update"
         window.plugins.webintent.startActivity({
             action: window.plugins.webintent.ACTION_VIEW,
             # url: @updateURL + "/WallTabletApp.apk",
