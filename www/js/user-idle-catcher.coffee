@@ -1,5 +1,5 @@
 class App.UserIdleCatcher
-	constructor: (@interval, @cbFunction) ->
+	constructor: (@interval, @cbFunction, @parent) ->
 		@idleTime = 0
 		$("html").mousemove =>
 			@resetIdleTimer()
@@ -13,7 +13,7 @@ class App.UserIdleCatcher
 			@idleTime += 1
 			if @idleTime >= @interval
 				@idleTime = 0
-				@cbFunction()
+				@cbFunction(@parent)
 		, 1000
 
 	resetIdleTimer: ->

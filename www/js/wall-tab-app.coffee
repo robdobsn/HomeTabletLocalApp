@@ -1,12 +1,14 @@
 class App.WallTabApp
     constructor: ->
 
-        @VERSION = "002.000.000"
+        @VERSION = "002.001.000"
 
-        console.log "WallTabletDebug APPLICATION STARTING UP"
+        console.log "wall-tab-app APPLICATION STARTING UP " + @VERSION
 
         # Default the tablet name and get the configuration server
-        @defaultTabletName = "tabdefault"
+        @defaultTabletName = "tabhall"
+        @defaultConfigServerUrl = "http://192.168.86.247:5076"
+
         # Basic settings
         @hoursBetweenActionUpdates = 12
         @minsBetweenEventLogChecks = 1
@@ -21,19 +23,26 @@ class App.WallTabApp
         @tileColours = new App.TileColours
         return
 
+    getConfigServerUrl: ->
+        configUrl = App.LocalStorage.get("ConfigServerUrl")
+        if !(configUrl?) || (configUrl.length == 0)
+            console.log("wall-tab-app App.getConfigServerUrl from localstorage empty so using " + @defaultConfigServerUrl)
+            configUrl = @defaultConfigServerUrl
+        return configUrl
+
     getLogServerUrl: ->
-        return App.LocalStorage.get("ConfigServerUrl")+ "/log"
+        return @getConfigServerUrl() + "/log"
 
     go: ->
         # Goes back to home display after user idle timeout
-        @userIdleCatcher = new App.UserIdleCatcher(90, @actionOnUserIdle)
+        @userIdleCatcher = new App.UserIdleCatcher(90, @actionOnUserIdle, this)
 
         # Tablet config is based on the name or IP address of the tablet
-        @tabletConfigManager = new App.TabletConfigManager(@defaultTabletName)
+        @tabletConfigManager = new App.TabletConfigManager(@defaultTabletName, @defaultConfigServerUrl)
         @tabletConfigManager.setReadyCallback(@tabletConfigReadyCb)
 
         # App updater
-        @appUpdater = new App.AppUpdater(this, App.LocalStorage.get("ConfigServerUrl")+ "/deployota/WallTabletApp")
+        @appUpdater = new App.AppUpdater(this, @getConfigServerUrl() + "/deployota/WallTabletApp")
 
         # Automation manager handles communicaton with automaion devices like
         # Indigo/vera/fibaro
@@ -43,7 +52,7 @@ class App.WallTabApp
         @calendarManager = new App.CalendarManager(this)
 
         # App Pages
-        @appPages = new App.AppPages(this, "#sqWrapper", @automationManager)
+        @appPages = new App.AppPages(this, "#sqWrapper", @automationManager, @VERSION)
 
         # Handler for orientation change
         $(window).on 'orientationchange', =>
@@ -76,18 +85,22 @@ class App.WallTabApp
         if configData.common? and configData.common.calendar?
             @calendarManager.setConfig(configData.common.calendar)
         @automationManager.requestUpdate(configData)
+        return
 
     automationManagerReadyCb: (hasChanged) =>
         # Automation server data is available
         if hasChanged
             @buildAndDisplayUI()
+        return
 
     buildAndDisplayUI: ->
         @appPages.build(@automationManager.getActionGroups())
         @appPages.display()
+        return
 
-    actionOnUserIdle: =>
-        @appPages.userIsIdle()
+    actionOnUserIdle: (appObject) ->
+        console.log "wall-tab-app actionOnUserIdle @appPages " + appObject
+        appObject.appPages.userIsIdle()
         return
 
     checkEventLogs: ->
@@ -97,7 +110,7 @@ class App.WallTabApp
             for i in [0...@maxEventsPerLogSend]
                 ev = App.LocalStorage.getEvent(logCat)
                 if ev?
-                    console.log "WallTabletDebug Logging event from " + logCat + " = " + JSON.stringify(ev)
+                    console.log "wall-tab-app Logging event from " + logCat + " = " + JSON.stringify(ev)
                     evList.push
                         logCat: logCat
                         timestamp: ev.timestamp
@@ -106,17 +119,17 @@ class App.WallTabApp
                     break
         if evList.length > 0
             evListJson = JSON.stringify(evList)
-            console.log "WallTabletDebug Sending " + evList.length + " log event(s) to log server"
+            console.log "wall-tab-app Sending " + evList.length + " log event(s) to log server"
             $.ajax 
                 url: @getLogServerUrl()
                 type: 'POST'
                 data: evListJson
                 contentType: "application/json"
                 success: (data, status, response) =>
-                    console.log "WallTabletDebug logged events success"
+                    console.log "wall-tab-app logged events success"
                     return
                 error: (jqXHR, textStatus, errorThrown) =>
-                    console.log ("WallTabletDebug Error log failed: " + textStatus + " " + errorThrown)
+                    console.log ("wall-tab-app Error log failed: " + textStatus + " " + errorThrown)
                     # If logging failed then re-log the events
                     for ev in evList
                         App.LocalStorage.logEvent(ev.logCat, ev.eventText, ev.timestamp)
@@ -124,5 +137,7 @@ class App.WallTabApp
         return
 
     appUpdate: ->
-        console.log ("App update requested")
+        console.log ("wall-tab-app App update requested")
         @appUpdater.appUpdate()
+        return
+

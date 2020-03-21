@@ -16,7 +16,7 @@ class App.LocalStorage
 	@logEvent: (logKey, eventText, timestamp) ->
 		now = new Date()
 		timestamp = if timestamp? then timestamp else now
-		console.log "WallTabletDebug LogEvent: " + logKey + " text " + eventText + " time " + timestamp
+		console.log "local-storage LogEvent: " + logKey + " text " + eventText + " time " + timestamp
 		logData = @get(logKey)
 		if logData?
 			while logData.length > 100

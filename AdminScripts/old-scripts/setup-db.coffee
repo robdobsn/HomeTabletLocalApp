@@ -228,7 +228,8 @@ sendConfigToConfigServer = (deviceConfig, configsToSet, favourites) ->
 
 
 # Config server URL
-configServerSaveURL = "http://domoticzoff:5076/tabletconfig/"
+configServerSaveURL = "http://192.168.86.247:5076/tabletconfig/"
+# configServerSaveURL = "http://domoticzoff:5076/tabletconfig/"
 #configServerSaveURL = "http://localhost:5076/tabletconfig/"
 
 # Devices info master

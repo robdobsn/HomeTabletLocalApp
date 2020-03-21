@@ -318,5 +318,5 @@ try
 	module.exports = DefaultTabletConfig
 catch e
 	App.DefaultTabletConfig = DefaultTabletConfig
-	console.log "WallTabletDebug Running in web page"
+	console.log "default-tablet-config Running in web page"
 

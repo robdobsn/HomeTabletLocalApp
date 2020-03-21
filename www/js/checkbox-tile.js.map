@@ -1,1 +1,13 @@
-{"version":3,"file":"checkbox-tile.js","sourceRoot":"","sources":["checkbox-tile.coffee"],"names":[],"mappings":"AAAA;EAAM,GAAG,CAAC,eAAV,MAAA,aAAA,QAA+B,GAAG,CAAC,YAAnC;IACC,WAAa,CAAC,OAAD,CAAA;WACZ,CAAM,OAAN;MACA,IAAC,CAAA,QAAD,GAAY,GAAG,CAAC,YAAY,CAAC,GAAjB,CAAqB,OAAO,CAAC,OAA7B;AACZ;IAHY;;IAKb,YAAc,CAAC,MAAD,CAAA;MACb,IAAG,MAAA,KAAU,QAAb;QACC,IAAC,CAAA,QAAD,GAAY,CAAC,IAAC,CAAA;QACd,GAAG,CAAC,YAAY,CAAC,GAAjB,CAAqB,IAAC,CAAA,OAAO,CAAC,OAA9B,EAAuC,IAAC,CAAA,QAAxC,EAFD;;MAGA,IAAC,CAAA,OAAD,CAAA;IAJa;;IAOd,OAAS,CAAA,CAAA;MACR,IAAG,IAAC,CAAA,QAAD,KAAa,IAAhB;aADD,CAAA,OAEE,CAAM,IAAC,CAAA,OAAO,CAAC,QAAf,EADD;OAAA,MAAA;aADD,CAAA,OAIE,CAAM,IAAC,CAAA,OAAO,CAAC,WAAf,EAHD;;IADQ;;EAbV;AAAA"}
+{
+  "version": 3,
+  "file": "checkbox-tile.js",
+  "sourceRoot": "..\\..",
+  "sources": [
+    "www\\js\\checkbox-tile.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;EAAM,GAAG,CAAC,eAAV,MAAA,aAAA,QAA+B,GAAG,CAAC,YAAnC;IACC,WAAa,CAAC,OAAD,CAAA;WACZ,CAAM,OAAN;MACA,IAAC,CAAA,QAAD,GAAY,GAAG,CAAC,YAAY,CAAC,GAAjB,CAAqB,OAAO,CAAC,OAA7B;AACZ;IAHY;;IAKb,YAAc,CAAC,MAAD,CAAA;MACb,IAAG,MAAA,KAAU,QAAb;QACC,IAAC,CAAA,QAAD,GAAY,CAAC,IAAC,CAAA;QACd,GAAG,CAAC,YAAY,CAAC,GAAjB,CAAqB,IAAC,CAAA,OAAO,CAAC,OAA9B,EAAuC,IAAC,CAAA,QAAxC,EAFD;;MAGA,IAAC,CAAA,OAAD,CAAA;IAJa;;IAOd,OAAS,CAAA,CAAA;MACR,IAAG,IAAC,CAAA,QAAD,KAAa,IAAhB;aADD,CAAA,OAEE,CAAM,IAAC,CAAA,OAAO,CAAC,QAAf,EADD;OAAA,MAAA;aADD,CAAA,OAIE,CAAM,IAAC,CAAA,OAAO,CAAC,WAAf,EAHD;;IADQ;;EAbV;AAAA",
+  "sourcesContent": [
+    "class App.CheckBoxTile extends App.SceneButton\r\n\tconstructor: (tileDef) ->\r\n\t\tsuper tileDef\r\n\t\t@stateVar = App.LocalStorage.get(tileDef.varName)\r\n\t\treturn\r\n\r\n\thandleAction: (action) ->\r\n\t\tif action is \"toggle\"\r\n\t\t\t@stateVar = !@stateVar\r\n\t\t\tApp.LocalStorage.set(@tileDef.varName, @stateVar)\r\n\t\t@setIcon()\r\n\t\treturn\r\n\r\n\tsetIcon: () ->\r\n\t\tif @stateVar is true\r\n\t\t\tsuper(@tileDef.iconName)\r\n\t\telse\r\n\t\t\tsuper(@tileDef.iconNameOff)\r\n\t\treturn\r\n\r\n"
+  ]
+}

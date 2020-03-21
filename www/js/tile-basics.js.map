@@ -1,1 +1,13 @@
-{"version":3,"file":"tile-basics.js","sourceRoot":"","sources":["tile-basics.coffee"],"names":[],"mappings":"AAAA;EAAM,GAAG,CAAC,eAAV,MAAA,aAAA;IACC,WAAa,UAAA,SAAqB,CAArB,SAAgC,CAAhC,YAA8C,CAA9C,YAA4D,CAA5D,CAAA;MAAC,IAAC,CAAA;MAAW,IAAC,CAAA;MAAU,IAAC,CAAA;MAAU,IAAC,CAAA;MAAa,IAAC,CAAA;AAC9D;IADY;;IAGb,UAAY,CAAC,OAAD,CAAA;MACX,IAAG,CAAI,IAAC,CAAA,SAAR;AACC,eAAO,MADR;;MAEA,IAAG,IAAC,CAAA,IAAD,GAAQ,OAAO,CAAC,IAAR,GAAe,OAAO,CAAC,OAAvB,GAAiC,CAA5C;AACC,eAAO,MADR;;MAEA,IAAG,IAAC,CAAA,IAAD,GAAQ,IAAC,CAAA,OAAT,GAAmB,CAAnB,GAAuB,OAAO,CAAC,IAAlC;AACC,eAAO,MADR;;MAEA,IAAG,IAAC,CAAA,IAAD,GAAQ,OAAO,CAAC,IAAR,GAAe,OAAO,CAAC,OAAvB,GAAiC,CAA5C;AACC,eAAO,MADR;;MAEA,IAAG,IAAC,CAAA,IAAD,GAAQ,IAAC,CAAA,OAAT,GAAmB,CAAnB,GAAuB,OAAO,CAAC,IAAlC;AACC,eAAO,MADR;;AAEA,aAAO;IAXI;;EAJb;AAAA"}
+{
+  "version": 3,
+  "file": "tile-basics.js",
+  "sourceRoot": "..\\..",
+  "sources": [
+    "www\\js\\tile-basics.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;EAAM,GAAG,CAAC,eAAV,MAAA,aAAA;IACC,WAAa,UAAA,SAAqB,CAArB,SAAgC,CAAhC,YAA8C,CAA9C,YAA4D,CAA5D,CAAA;MAAC,IAAC,CAAA;MAAW,IAAC,CAAA;MAAU,IAAC,CAAA;MAAU,IAAC,CAAA;MAAa,IAAC,CAAA;AAC9D;IADY;;IAGb,UAAY,CAAC,OAAD,CAAA;MACX,IAAG,CAAI,IAAC,CAAA,SAAR;AACC,eAAO,MADR;;MAEA,IAAG,IAAC,CAAA,IAAD,GAAQ,OAAO,CAAC,IAAR,GAAe,OAAO,CAAC,OAAvB,GAAiC,CAA5C;AACC,eAAO,MADR;;MAEA,IAAG,IAAC,CAAA,IAAD,GAAQ,IAAC,CAAA,OAAT,GAAmB,CAAnB,GAAuB,OAAO,CAAC,IAAlC;AACC,eAAO,MADR;;MAEA,IAAG,IAAC,CAAA,IAAD,GAAQ,OAAO,CAAC,IAAR,GAAe,OAAO,CAAC,OAAvB,GAAiC,CAA5C;AACC,eAAO,MADR;;MAEA,IAAG,IAAC,CAAA,IAAD,GAAQ,IAAC,CAAA,OAAT,GAAmB,CAAnB,GAAuB,OAAO,CAAC,IAAlC;AACC,eAAO,MADR;;AAEA,aAAO;IAXI;;EAJb;AAAA",
+  "sourcesContent": [
+    "class App.TilePosition\r\n\tconstructor: (@tileValid, @xPos = 0, @yPos = 0, @colSpan = 0, @rowSpan = 0) ->\r\n\t\treturn\r\n\t\t\r\n\tintersects: (tilePos) ->\r\n\t\tif not @tileValid\r\n\t\t\treturn false\r\n\t\tif @xPos > tilePos.xPos + tilePos.colSpan - 1\r\n\t\t\treturn false\r\n\t\tif @xPos + @colSpan - 1 < tilePos.xPos\r\n\t\t\treturn false\r\n\t\tif @yPos > tilePos.yPos + tilePos.rowSpan - 1\r\n\t\t\treturn false\r\n\t\tif @yPos + @rowSpan - 1 < tilePos.yPos\r\n\t\t\treturn false\r\n\t\treturn true\r\n"
+  ]
+}

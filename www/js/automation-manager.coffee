@@ -31,17 +31,18 @@ class App.AutomationManager
 			if dataChanged
 				@servers = []
 				for serverDef in configData.common.servers
-					if serverDef.type is "indigo" or serverDef.type is "Indigo"
-						@servers.push new App.IndigoServer(this, serverDef, @actionsReadyCb)
-					else if serverDef.type is "indigo-test"
-						@servers.push new App.IndigoTestServer(this, serverDef, @actionsReadyCb)
-					else if serverDef.type is "vera" or serverDef.type is "Vera"
-						@servers.push new App.VeraServer(this, serverDef, @actionsReadyCb)
-					else if serverDef.type is "fibaro" or serverDef.type is "Fibaro"
-						@servers.push new App.FibaroServer(this, serverDef, @actionsReadyCb)
-					else if serverDef.type is "domoticz" or serverDef.type is "Domoticz"
-						@servers.push new App.DomoticzServer(this, serverDef, @actionsReadyCb)
-					else if serverDef.type is "robhome" or serverDef.type is "RobHome"
+					# if serverDef.type is "indigo" or serverDef.type is "Indigo"
+					# 	@servers.push new App.IndigoServer(this, serverDef, @actionsReadyCb)
+					# else if serverDef.type is "indigo-test"
+					# 	@servers.push new App.IndigoTestServer(this, serverDef, @actionsReadyCb)
+					# else if serverDef.type is "vera" or serverDef.type is "Vera"
+					# 	@servers.push new App.VeraServer(this, serverDef, @actionsReadyCb)
+					# else if serverDef.type is "fibaro" or serverDef.type is "Fibaro"
+					# 	@servers.push new App.FibaroServer(this, serverDef, @actionsReadyCb)
+					# else if serverDef.type is "domoticz" or serverDef.type is "Domoticz"
+					# 	@servers.push new App.DomoticzServer(this, serverDef, @actionsReadyCb)
+					# else 
+					if serverDef.type is "robhome" or serverDef.type is "RobHome"
 						@servers.push new App.RobHomeServer(this, serverDef, @actionsReadyCb)
 		else
 			@servers = []
@@ -49,7 +50,7 @@ class App.AutomationManager
 		# Request data from servers
 		for server in @servers
 			server.reqActions()
-			console.log "reqActions from server " + server.SCENES_URL
+			console.log "automation-manager reqActions from server " + server.ACTIONS_URI
 		# Callback now with initial actions (fixed actions)
 		@readyCallback(true)
 		return
@@ -119,7 +120,7 @@ class App.AutomationManager
 		for cmd in cmds
 			# Check if command contains "~POST~" - to indicate POST rather than GET
 			if cmd.indexOf("~POST~") > 0
-				console.log "WallTabletDebug Exec POST command " + cmd
+				console.log "automation-manager Exec POST command " + cmd
 				cmdParts = cmd.split("~")
 				$.ajax cmdParts[0],
 					type: "POST"
@@ -130,12 +131,12 @@ class App.AutomationManager
 						@soundResult(cmdsToDo, cmdsCompleted, cmdsFailed)
 						return
 					error: (jqXHR, textStatus, errorThrown) =>
-						console.error ("WallTabletDebug POST exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
+						console.error ("automation-manager POST exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
 						cmdsFailed++
 						cmdsCompleted++
 						return
 			else
-				console.log "WallTabletDebug Exec GET command " + cmd
+				console.log "automation-manager Exec GET command " + cmd
 				$.ajax cmd,
 					type: "GET"
 					dataType: "text"
@@ -144,7 +145,7 @@ class App.AutomationManager
 						@soundResult(cmdsToDo, cmdsCompleted, cmdsFailed)
 						return
 					error: (jqXHR, textStatus, errorThrown) =>
-						console.error ("WallTabletDebug GET exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
+						console.error ("automation-manager GET exec command failed: " + textStatus + " " + errorThrown + " COMMAND=" + cmd)
 						cmdsFailed++
 						cmdsCompleted++
 						return

@@ -32,7 +32,7 @@ class App.Clock extends App.Tile
 		timePos = (@sizeY / 3)
 		$('#'+@tileId+" .sqClockDayMonthYear").css
 			position: "absolute"
-			fontSize: (@sizeY/5.5) + "px"
+			fontSize: (@sizeY/6) + "px"
 			top: (@sizeY / 10) + "px"
 			width: "100%"
 		$('#'+@tileId+" .sqClockTime").css
@@ -54,5 +54,5 @@ class App.Clock extends App.Tile
 		$('#'+@tileId+" .sqClockDayMonthYear").html @shortDayNames[dt.getDay()] + " " + dt.getDate() + " " + @shortMonthNames[dt.getMonth()] + " " + dt.getFullYear()
 		$('#'+@tileId+" .sqClockHours").html (if dt.getHours() < 10 then "0" else "") + dt.getHours()
 		$('#'+@tileId+" .sqClockMins").html (if dt.getMinutes() < 10 then "0" else "") + dt.getMinutes()
-		$('#'+@tileId+" .sqClockSecs").html (if dt.getSeconds() < 10 then "0" else "") + dt.getSeconds()
+		# $('#'+@tileId+" .sqClockSecs").html (if dt.getSeconds() < 10 then "0" else "") + dt.getSeconds()
 		return

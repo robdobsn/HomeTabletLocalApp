@@ -10,7 +10,7 @@ class App.DomoticzServer
 		return
 
 	reqActions: ->
-		console.log "WallTabletDebug Requesting Domoticz data from " + @ACTIONS_URI
+		console.log "domiticz-server Requesting Domoticz data from " + @ACTIONS_URI
 		$.ajax @ACTIONS_URI,
 			type: "GET"
 			dataType: "json"
@@ -18,13 +18,13 @@ class App.DomoticzServer
 			success: (data, textStatus, jqXHR) =>
 				@processRecvdActions(data)
 				# console.log "Domoticz data = " + JSON.stringify(@scenes)
-				console.log "WallTabletDebug Received Domoticz data from " + @ACTIONS_URI
+				console.log "domiticz-server Received Domoticz data from " + @ACTIONS_URI
 				@numRefreshFailuresSinceSuccess = 0
 				App.LocalStorage.set(@ACTIONS_URI, data)
 				return
 			error: (jqXHR, textStatus, errorThrown) =>
 
-				console.log("WallTabletDebug " + " DOMOTICZ AjaxFail Status= " + textStatus + " URL= " + @ACTIONS_URI + " Error= " + errorThrown);
+				console.log("domiticz-server " + " DOMOTICZ AjaxFail Status= " + textStatus + " URL= " + @ACTIONS_URI + " Error= " + errorThrown);
 
 				App.LocalStorage.logEvent("DomLog", "AjaxFail Status= " + textStatus + " URL= " + @ACTIONS_URI + " Error= " + errorThrown)
 				@numRefreshFailuresSinceSuccess++
@@ -33,10 +33,10 @@ class App.DomoticzServer
 				, (if @numRefreshFailuresSinceSuccess is 1 then @firstRefreshAfterFailSecs * 1000 else @nextRefreshesAfterFailSecs * 1000)
 				# Use stored data if available
 				storedData = App.LocalStorage.get(@ACTIONS_URI)
-				console.log "WallTabletDebug Getting data stored for " + @ACTIONS_URI + " result = " + storedData
+				console.log "domiticz-server Getting data stored for " + @ACTIONS_URI + " result = " + storedData
 				if storedData?
 					# console.log "Using stored data" + JSON.stringify(storedData)
-					console.log "WallTabletDebug Using stored data for " + @ACTIONS_URI
+					console.log "domiticz-server Using stored data for " + @ACTIONS_URI
 					@processRecvdActions(storedData)
 				return
 		return

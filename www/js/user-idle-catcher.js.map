@@ -1,1 +1,13 @@
-{"version":3,"file":"user-idle-catcher.js","sourceRoot":"","sources":["user-idle-catcher.coffee"],"names":[],"mappings":"AAAA;EAAM,GAAG,CAAC,kBAAV,MAAA,gBAAA;IACC,WAAa,SAAA,YAAA,CAAA;MAAC,IAAC,CAAA;MAAU,IAAC,CAAA;MACzB,IAAC,CAAA,QAAD,GAAY;MACZ,CAAA,CAAE,MAAF,CAAS,CAAC,SAAV,CAAoB,CAAA,CAAA,GAAA;eACnB,IAAC,CAAA,cAAD,CAAA;MADmB,CAApB;MAEA,CAAA,CAAE,MAAF,CAAS,CAAC,QAAV,CAAmB,CAAA,CAAA,GAAA;eAClB,IAAC,CAAA,cAAD,CAAA;MADkB,CAAnB;MAEA,CAAA,CAAE,MAAF,CAAS,CAAC,MAAV,CAAiB,CAAA,CAAA,GAAA;eAChB,IAAC,CAAA,cAAD,CAAA;MADgB,CAAjB;MAEA,MAAM,CAAC,gBAAP,CAAwB,YAAxB,EAAsC,CAAA,CAAA,GAAA;eACrC,IAAC,CAAA,cAAD,CAAA;MADqC,CAAtC;MAEA,WAAA,CAAY,CAAA,CAAA,GAAA;QACX,IAAC,CAAA,QAAD,IAAa;QACb,IAAG,IAAC,CAAA,QAAD,IAAa,IAAC,CAAA,QAAjB;UACC,IAAC,CAAA,QAAD,GAAY;iBACZ,IAAC,CAAA,UAAD,CAAA,EAFD;;MAFW,CAAZ,EAKE,IALF;IAVY;;IAiBb,cAAgB,CAAA,CAAA;aACf,IAAC,CAAA,QAAD,GAAY;IADG;;EAlBjB;AAAA"}
+{
+  "version": 3,
+  "file": "user-idle-catcher.js",
+  "sourceRoot": "..\\..",
+  "sources": [
+    "www\\js\\user-idle-catcher.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;EAAM,GAAG,CAAC,kBAAV,MAAA,gBAAA;IACC,WAAa,SAAA,YAAA,QAAA,CAAA;MAAC,IAAC,CAAA;MAAU,IAAC,CAAA;MAAY,IAAC,CAAA;MACtC,IAAC,CAAA,QAAD,GAAY;MACZ,CAAA,CAAE,MAAF,CAAS,CAAC,SAAV,CAAoB,CAAA,CAAA,GAAA;eACnB,IAAC,CAAA,cAAD,CAAA;MADmB,CAApB;MAEA,CAAA,CAAE,MAAF,CAAS,CAAC,QAAV,CAAmB,CAAA,CAAA,GAAA;eAClB,IAAC,CAAA,cAAD,CAAA;MADkB,CAAnB;MAEA,CAAA,CAAE,MAAF,CAAS,CAAC,MAAV,CAAiB,CAAA,CAAA,GAAA;eAChB,IAAC,CAAA,cAAD,CAAA;MADgB,CAAjB;MAEA,MAAM,CAAC,gBAAP,CAAwB,YAAxB,EAAsC,CAAA,CAAA,GAAA;eACrC,IAAC,CAAA,cAAD,CAAA;MADqC,CAAtC;MAEA,WAAA,CAAY,CAAA,CAAA,GAAA;QACX,IAAC,CAAA,QAAD,IAAa;QACb,IAAG,IAAC,CAAA,QAAD,IAAa,IAAC,CAAA,QAAjB;UACC,IAAC,CAAA,QAAD,GAAY;iBACZ,IAAC,CAAA,UAAD,CAAY,IAAC,CAAA,MAAb,EAFD;;MAFW,CAAZ,EAKE,IALF;IAVY;;IAiBb,cAAgB,CAAA,CAAA;aACf,IAAC,CAAA,QAAD,GAAY;IADG;;EAlBjB;AAAA",
+  "sourcesContent": [
+    "class App.UserIdleCatcher\r\n\tconstructor: (@interval, @cbFunction, @parent) ->\r\n\t\t@idleTime = 0\r\n\t\t$(\"html\").mousemove =>\r\n\t\t\t@resetIdleTimer()\r\n\t\t$(\"html\").keypress => \r\n\t\t\t@resetIdleTimer()\r\n\t\t$(\"html\").scroll => \r\n\t\t\t@resetIdleTimer()\r\n\t\twindow.addEventListener 'touchstart', =>\r\n\t\t\t@resetIdleTimer()\r\n\t\tsetInterval =>\r\n\t\t\t@idleTime += 1\r\n\t\t\tif @idleTime >= @interval\r\n\t\t\t\t@idleTime = 0\r\n\t\t\t\t@cbFunction(@parent)\r\n\t\t, 1000\r\n\r\n\tresetIdleTimer: ->\r\n\t\t@idleTime = 0\r\n"
+  ]
+}

@@ -1,5 +1,5 @@
 class App.AppPages
-	constructor: (@app, @parentTag, @automationManager) ->
+	constructor: (@app, @parentTag, @automationManager, @VERSION) ->
 		@curPageDef = { "pageName": "" }
 		@generatedPage = {}
 		@defaultPageName = ""
@@ -37,6 +37,7 @@ class App.AppPages
 
 	build: (@automationActionGroups) ->
 		@rebuild(true)
+		return
 
 	rebuild: (forceSetInitialPage) ->
 		# Generate pages from data
@@ -52,6 +53,7 @@ class App.AppPages
 					for tile in pageDef.tilesFixed
 						pageDef.tiles.push tile
 				@generatePageContents(pageDef, tabConfig)
+		return
 
 	generatePageContents: (pageDef, tabletSpecificConfig) ->
 		tileList = []
@@ -190,10 +192,19 @@ class App.AppPages
 		@curTabPage.updateDom()
 
 	buttonCallback: (context) =>
-		console.log "buttonCallback user button pressed " + context.url
-		# Check for navigation button
+		# console.log "buttonCallback user button pressed " + JSON.stringify(context) + "\nprevPage " + JSON.stringify(@curPageDef) + "\n"
+
+		# Check if settings save required
+		# console.log "app-pages buttonCallback prev pageName " + @curPageDef.pageName + " == settings " + (@curPageDef.pageName == "Settings") + " not null " + (@curPageDef?)
+		# if (@curPageDef?) && (@curPageDef.pageName == "Settings")
+		# 	# console.log "app-pages buttonCallback saving config"
+		# 	@app.tabletConfigManager.saveDeviceConfig()
+
+		# Force reload
 		if context.forceReloadPages? and context.forceReloadPages
 			@app.requestConfigData()
+
+		# Check for navigation button
 		if "tileMode" of context and context.tileMode is "SelFavs"
 			@addFavouriteButton(context)
 			@setCurrentPage(@defaultPageName, false)
@@ -213,8 +224,10 @@ class App.AppPages
 			@app.appUpdate()
 		else if context.url is "ExitYes"
 			navigator.app.exitApp()
-		else 
-			console.log "WallTabletDebug Attempting page generation " + context.url
+		else if context.tileType is "clock"
+			alert "App version " + @VERSION
+		else
+			console.log "app-pages Attempting page generation " + JSON.stringify(context)
 			newPageName = @generateNewPage(context)
 			@setCurrentPage(newPageName, false)
 			@display()
@@ -223,8 +236,10 @@ class App.AppPages
 	addFavouriteButton: (context) ->
 		@app.tabletConfigManager.addFavouriteButton(context)
 		@rebuild(false)
+		return
 
 	deleteFavouriteButton: (context) ->
 		@app.tabletConfigManager.deleteFavouriteButton(context)
 		@rebuild(false)
+		return
 

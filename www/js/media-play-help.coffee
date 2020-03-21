@@ -16,10 +16,10 @@ class App.MediaPlayHelper
 			if window.plugins and window.plugins.LowLatencyAudio
 				try
 					if soundName not of @soundsLoaded
-						console.log "WallTabletDebug Preloading audio " + soundName
+						console.log "media-play-help Preloading audio " + soundName
 						window.plugins.LowLatencyAudio.preloadAudio(soundName, @soundsDict[soundName], 1, 1, @onSuccess, @onErrorPreload)
 						@soundsLoaded[soundName] = true
-					console.log "WallTabletDebug Playing audio"
+					console.log "media-play-help Playing audio"
 					window.plugins.LowLatencyAudio.play(soundName, @onSuccess, @onErrorPlay)
 				catch e
 					bTryAudio = true
@@ -30,18 +30,18 @@ class App.MediaPlayHelper
 					snd = new Audio(@soundsDict[soundName])
 					snd.play()
 				catch e
-					console.log("WallTabletDebug LowLatencyAudio and Audio both failed")
+					console.log("media-play-help LowLatencyAudio and Audio both failed")
 		return
 
 	onSuccess: (result) ->
-		console.log("WallTabletDebug LowLatencyAudio success result = " + result )
+		console.log("media-play-help LowLatencyAudio success result = " + result )
 		return
 
 	onErrorPreload: (error) ->
-		console.log("WallTabletDebug LowLatencyAudio preload error = " + error )
+		console.log("media-play-help LowLatencyAudio preload error = " + error )
 		return
 
 	onErrorPlay: (error) ->
-		console.log("WallTabletDebug LowLatencyAudio play error = " + error )
+		console.log("media-play-help LowLatencyAudio play error = " + error )
 		return
 		

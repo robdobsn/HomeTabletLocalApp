@@ -7,7 +7,7 @@ class App.AppUpdater
         window.plugins.webintent.startActivity({
             action: window.plugins.webintent.ACTION_VIEW,
             # url: @updateURL + "/WallTabletApp.apk",
-            url: "http://192.168.86.235:5076/deployota/WallTabletApp/index.html",
+            url: "http://192.168.86.247:5076/deployota/WallTabletApp/index.html",
             # url: ""
             # url: e.target.localURL,
             # url: 'geo:0,0?q=8 Dick Place, EH9 2JL',

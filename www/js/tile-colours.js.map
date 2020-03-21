@@ -1,1 +1,13 @@
-{"version":3,"file":"tile-colours.js","sourceRoot":"","sources":["tile-colours.coffee"],"names":[],"mappings":"AAAA;EAAM,GAAG,CAAC,cAAV,MAAA,YAAA;IACC,WAAa,CAAA,CAAA;MACZ,IAAC,CAAA,WAAD,GAAe;QACd,SADc;QAEd,SAFc;QAGd,SAHc;QAId,SAJc;QAKd,SALc;QAMd,SANc;QAOd,SAPc;QAQd,SARc;QASd,SATc;;QAWd,SAXc;QAYd,SAZc;;;;QAgBd,SAhBc;QAiBd,SAjBc;;;QAoBd,SApBc;;QAsBd,SAtBc;QAuBd,SAvBc;;;QA0Bd,SA1Bc;;MA4Bf,IAAC,CAAA,aAAD,GAAiB;AACjB;IA9BY;;IAgCb,aAAe,CAAA,CAAA;AACd,UAAA;MAAA,MAAA,GAAS,IAAC,CAAA,WAAY,CAAA,IAAC,CAAA,aAAD;MACtB,IAAC,CAAA,aAAD,IAAkB;MAClB,IAAG,IAAC,CAAA,aAAD,IAAkB,IAAC,CAAA,WAAW,CAAC,MAAlC;QACC,IAAC,CAAA,aAAD,GAAiB,EADlB;;AAEA,aAAO;IALO;;EAjChB;AAAA"}
+{
+  "version": 3,
+  "file": "tile-colours.js",
+  "sourceRoot": "..\\..",
+  "sources": [
+    "www\\js\\tile-colours.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;EAAM,GAAG,CAAC,cAAV,MAAA,YAAA;IACC,WAAa,CAAA,CAAA;MACZ,IAAC,CAAA,WAAD,GAAe;QACd,SADc;QAEd,SAFc;QAGd,SAHc;QAId,SAJc;QAKd,SALc;QAMd,SANc;QAOd,SAPc;QAQd,SARc;QASd,SATc;;QAWd,SAXc;QAYd,SAZc;;;;QAgBd,SAhBc;QAiBd,SAjBc;;;QAoBd,SApBc;;QAsBd,SAtBc;QAuBd,SAvBc;;;QA0Bd,SA1Bc;;MA4Bf,IAAC,CAAA,aAAD,GAAiB;AACjB;IA9BY;;IAgCb,aAAe,CAAA,CAAA;AAChB,UAAA;MAAE,MAAA,GAAS,IAAC,CAAA,WAAW,CAAC,IAAC,CAAA,aAAF;MACrB,IAAC,CAAA,aAAD,IAAkB;MAClB,IAAG,IAAC,CAAA,aAAD,IAAkB,IAAC,CAAA,WAAW,CAAC,MAAlC;QACC,IAAC,CAAA,aAAD,GAAiB,EADlB;;AAEA,aAAO;IALO;;EAjChB;AAAA",
+  "sourcesContent": [
+    "class App.TileColours\r\n\tconstructor: ->\r\n\t\t@tileColours = [ \r\n\t\t\t\"#e7821c\"\t\t\t# darkorange\r\n\t\t\t\"#8bc73b\"\t\t\t# yellowgreen\r\n\t\t\t\"#a20025\"           # crimson\r\n\t\t\t\"#1b81e2\"           # cyan\r\n\t\t\t\"#d80073\"           # magenta\r\n\t\t\t\"#00b5ac\"\t\t\t# lightseagreen\r\n\t\t\t\"#741b47\"           # deep purple\r\n\t\t\t\"#137409\"\t\t\t# green\r\n\t\t\t\"#76608a\"           # mauve\r\n\t\t\t# \"#6d8764\"           # olive\r\n\t\t\t\"#aa00ff\"           # violet\r\n\t\t\t\"#0f38d3\"\t\t\t# mediumblue\r\n\t\t\t# \"#bf9000\"           # mustard\r\n\t\t\t# \"#008a00\"           # emerald\r\n\t\t\t# \"#671345\"           # purple\r\n\t\t\t\"#a08306\"           # amber\r\n\t\t\t\"#825a2c\"           # brown\r\n\t\t\t# \"#0050ef\"           # cobalt\r\n\t\t\t# \"#a4c400\"           # lime\r\n\t\t\t\"#6a00ff\"           # indigo\r\n\t\t\t# \"#00aba9\"           # teal\r\n\t\t\t\"#647687\"           # steel\r\n\t\t\t\"#9900ff\"           # purple\r\n\t\t\t# \"#2566c2\"           # myblue\r\n\t\t\t# \"#aa6ddf\"\t\t\t# mediumpurple\r\n\t\t\t\"#aca42a\"\t\t\t# yellow\r\n\t\t\t]\r\n\t\t@curTileColour = 0\r\n\t\treturn\r\n\r\n\tgetNextColour: ->\r\n\t\tcolour = @tileColours[@curTileColour]\r\n\t\t@curTileColour += 1\r\n\t\tif @curTileColour >= @tileColours.length\r\n\t\t\t@curTileColour = 0\r\n\t\treturn colour\r\n"
+  ]
+}
