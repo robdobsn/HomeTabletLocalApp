@@ -1,7 +1,7 @@
 class App.SceneButton extends App.Tile
 	constructor: (tileDef) ->
 		super(tileDef)
-		@buttonMarginX = 35
+		@buttonMarginX = 45
 		@iconSize = [0,0]
 		@fontPixels = 40
 		@iconCellWidth = 80
