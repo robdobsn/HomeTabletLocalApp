@@ -68,19 +68,23 @@
       var actionName, i, len, scene, scenes, serverScene, serverScenes;
       scenes = [];
       serverScenes = data.scenes;
-      // console.log "robhome-server RobHomeServer data = " + JSON.stringify(serverScenes)
       if (serverScenes != null) {
         for (i = 0, len = serverScenes.length; i < len; i++) {
           serverScene = serverScenes[i];
           actionName = serverScene.room + " - " + serverScene.nom;
-          scene = {
-            actionNum: "",
-            actionName: serverScene.room + " " + serverScene.nom,
-            groupName: serverScene.room,
-            actionUrl: serverScene.urls.join(";"),
-            iconName: this.manager.getIconFromActionName(actionName, this.serverDef.iconAliasing)
-          };
-          scenes.push(scene);
+          // console.log "robhome-server serverScene = " + JSON.stringify(serverScene)
+          if ("urls" in serverScene && "room" in serverScene && "nom" in serverScene) {
+            scene = {
+              actionNum: "",
+              actionName: serverScene.room + " " + serverScene.nom,
+              groupName: serverScene.room,
+              actionUrl: serverScene.urls.join(";"),
+              iconName: this.manager.getIconFromActionName(actionName, this.serverDef.iconAliasing)
+            };
+            scenes.push(scene);
+          } else {
+            console.warn("robhome-server serverScene urls/nom/room missing = " + JSON.stringify(serverScene));
+          }
         }
       }
       // console.log "robhome-server RobHomeServer scene " + JSON.stringify(scene)

@@ -53,16 +53,19 @@ class App.RobHomeServer
     getScenes: (data, rooms) ->
         scenes = []
         serverScenes = data.scenes
-        # console.log "robhome-server RobHomeServer data = " + JSON.stringify(serverScenes)
         if serverScenes?
             for serverScene in serverScenes
                 actionName = serverScene.room + " - " + serverScene.nom
-                scene = 
-                    actionNum: ""
-                    actionName: serverScene.room + " " + serverScene.nom
-                    groupName: serverScene.room
-                    actionUrl: serverScene.urls.join(";")
-                    iconName: @manager.getIconFromActionName(actionName, @serverDef.iconAliasing)
-                scenes.push(scene)
+                # console.log "robhome-server serverScene = " + JSON.stringify(serverScene)
+                if "urls" of serverScene and "room" of serverScene and "nom" of serverScene
+                    scene = 
+                        actionNum: ""
+                        actionName: serverScene.room + " " + serverScene.nom
+                        groupName: serverScene.room
+                        actionUrl: serverScene.urls.join(";")
+                        iconName: @manager.getIconFromActionName(actionName, @serverDef.iconAliasing)
+                    scenes.push(scene)
+                else
+                    console.warn "robhome-server serverScene urls/nom/room missing = " + JSON.stringify(serverScene)
                 # console.log "robhome-server RobHomeServer scene " + JSON.stringify(scene)
         return scenes

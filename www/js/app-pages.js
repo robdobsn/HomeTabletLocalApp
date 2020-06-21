@@ -159,7 +159,7 @@
               }
             }
           }
-        // Select a single specific tile but using data from the tabled config
+        // Select a single specific tile but using data from the tablet config
         // such as the favourites list - e.g. using the groupname (room) and
         // tilename (action) to get a favourite tile
         } else if ("tabConfigFavListName" in tileGen && tileGen.tabConfigFavListName in tabletSpecificConfig) {

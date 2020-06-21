@@ -1,7 +1,7 @@
 class App.WallTabApp
     constructor: ->
 
-        @VERSION = "002.001.000"
+        @VERSION = "2.2.0"
 
         console.log "wall-tab-app APPLICATION STARTING UP " + @VERSION
 

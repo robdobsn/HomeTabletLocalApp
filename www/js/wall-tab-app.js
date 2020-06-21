@@ -4,7 +4,7 @@
     constructor() {
       this.tabletConfigReadyCb = this.tabletConfigReadyCb.bind(this);
       this.automationManagerReadyCb = this.automationManagerReadyCb.bind(this);
-      this.VERSION = "002.001.000";
+      this.VERSION = "2.2.0";
       console.log("wall-tab-app APPLICATION STARTING UP " + this.VERSION);
       // Default the tablet name and get the configuration server
       this.defaultTabletName = "tabhall";

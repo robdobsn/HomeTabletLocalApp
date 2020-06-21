@@ -92,7 +92,7 @@ class App.AppPages
 							if tile[tileGen.tileSelect] is pageDef[tileGen.tileFilterValFrom]
 								newTile = @generateTileInfo(tileGen, tile)
 								tileList.push newTile
-			# Select a single specific tile but using data from the tabled config
+			# Select a single specific tile but using data from the tablet config
 			# such as the favourites list - e.g. using the groupname (room) and
 			# tilename (action) to get a favourite tile
 			else if "tabConfigFavListName" of tileGen and tileGen.tabConfigFavListName of tabletSpecificConfig

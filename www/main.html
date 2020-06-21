@@ -2,114 +2,14 @@
 <html>
     <head>
         <meta http-equiv="Content-Security-Policy"
-              content="default-src 'self'
-                        localhost:*
-                        https://api.particle.io
-                        http://benbecula:5077
-                        http://192.168.86.247:5077
-                        http://benbecula:5076
-                        http://192.168.86.247:5076
-                        http://benbecula:5005
-                        http://192.168.86.247:5005
-                        http://benbecula:80
-                        http://192.168.86.247:80
-                        http://domoticzoff:5077
-                        http://192.168.86.235:5077
-                        http://domoticzoff:5076
-                        http://192.168.86.235:5076
-                        http://domoticzoff:5005
-                        http://192.168.86.235:5005
-                        http://domoticzoff:80
-                        http://192.168.86.235:80
-                        http://domoticzcel:80
-                        http://192.168.86.234:80
-                        http://domoticzut:80
-                        http://192.168.86.232:80
-                        http://domoticzplc:80
-                        http://192.168.86.233:80
-                        http://calprinter:80
-                        http://192.168.86.231:80
-                        http://officeshades
-                        http://kitgameshades.lan
-                        http://frontdoor
-                        http://landingshades
-                        http://192.168.86.180
-                        http://192.168.86.181
-                        http://192.168.86.182
-                        http://192.168.86.183
-                        http://192.168.86.184
-                        http://192.168.86.185
-                        http://192.168.86.186
-                        http://192.168.86.187
-                        http://192.168.86.188
-                        http://192.168.86.189
-                        http://192.168.86.190
-                        http://192.168.86.191
-                        http://192.168.86.192
-                        http://192.168.86.193
-                        http://192.168.86.194
-                        http://192.168.86.195
-                        http://192.168.86.196
-                        http://192.168.86.197
-                        http://192.168.86.198
-                        http://192.168.86.199
-                        http://192.168.86.200
-                        http://192.168.86.201
-                        http://192.168.86.202
-                        http://192.168.86.203
-                        http://192.168.86.204
-                        http://192.168.86.205
-                        http://192.168.86.206
-                        http://192.168.86.207
-                        http://192.168.86.208
-                        http://192.168.86.209
-                        http://192.168.86.210
-                        http://192.168.86.211
-                        http://192.168.86.212
-                        http://192.168.86.213
-                        http://192.168.86.214
-                        http://192.168.86.215
-                        http://192.168.86.216
-                        http://192.168.86.217
-                        http://192.168.86.218
-                        http://192.168.86.219
-                        http://192.168.86.220
-                        http://192.168.86.221
-                        http://192.168.86.222
-                        http://192.168.86.223
-                        http://192.168.86.224
-                        http://192.168.86.225
-                        http://192.168.86.226
-                        http://192.168.86.227
-                        http://192.168.86.229
-                        http://192.168.86.230
-                        http://192.168.86.231
-                        http://192.168.86.232
-                        http://192.168.86.233
-                        http://192.168.86.234
-                        http://192.168.86.235
-                        http://192.168.86.236
-                        http://192.168.86.237
-                        http://192.168.86.238
-                        http://192.168.86.239
-                        http://192.168.86.240
-                        http://192.168.86.241
-                        http://192.168.86.242
-                        http://192.168.86.243
-                        http://192.168.86.244
-                        http://192.168.86.245
-                        http://192.168.86.246
-                        http://192.168.86.247
-                        http://192.168.86.248
-                        http://192.168.86.249
-                        http://192.168.86.250
-                        http://192.168.86.251
-                        http://192.168.86.252
-                        http://192.168.86.253
-                        http://192.168.86.254
-                        data: gap: https://ssl.gstatic.com 'unsafe-eval';
-                        style-src 'self' 'unsafe-inline';
-                        media-src *">
+           default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval' 'unsafe-dynamic'; 
+            script-src * data: blob: 'unsafe-inline' 'unsafe-eval'; 
+            connect-src * data: blob: 'unsafe-inline'; 
+            img-src * data: blob: 'unsafe-inline'; 
+            frame-src * data: blob: ; 
+            style-src * data: blob: 'unsafe-inline';
+            font-src * data: blob: 'unsafe-inline';
+            >
         <meta name="format-detection" content="telephone=no" />
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height"/>
         <link rel="stylesheet" type="text/css" href="css/index.css" />
