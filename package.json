@@ -18,6 +18,6 @@
     "cordova-webintent": "github:cordova-misc/cordova-webintent"
   },
   "devDependencies": {
-    "cordova-android": "^7.1.4"
+    "cordova-android": "^11.0.0"
   }
 }
