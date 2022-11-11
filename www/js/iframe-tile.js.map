@@ -1,9 +1,9 @@
 {
   "version": 3,
   "file": "iframe-tile.js",
-  "sourceRoot": "..\\..",
+  "sourceRoot": "../../",
   "sources": [
-    "www\\js\\iframe-tile.coffee"
+    "www/js/iframe-tile.coffee"
   ],
   "names": [],
   "mappings": ";AAAA;EAAM,GAAG,CAAC,aAAV,MAAA,WAAA,QAA6B,GAAG,CAAC,KAAjC;IACC,WAAa,CAAC,OAAD,CAAA;WACZ,CAAM,OAAN;MACA,IAAC,CAAA,YAAD,GAAgB,OAAO,CAAC;AACxB;IAHY;;IAKb,QAAU,CAAC,WAAD,CAAA;WAAV,CAAA,QACC,CAAA;MACA,IAAC,CAAA,QAAQ,CAAC,MAAV,CAAiB,CAAA;;aAAA,CAAA,CAGD,IAAC,CAAA,YAHA,CAAA;;;;;gBAAA,CAAjB;IAFS;;EANX;AAAA",

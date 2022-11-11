@@ -1,9 +1,9 @@
 {
   "version": 3,
   "file": "wall-tab-main.js",
-  "sourceRoot": "..\\..",
+  "sourceRoot": "../../",
   "sources": [
-    "www\\js\\wall-tab-main.coffee"
+    "www/js/wall-tab-main.coffee"
   ],
   "names": [],
   "mappings": ";AACC;EAAA,MAAM,CAAC,GAAP,GAAa,CAAA;;EAEZ,CAAA,CAAE,QAAF,CAAW,CAAC,IAAZ,CAAkB,YAAlB,EAAiC,QAAA,CAAA,CAAA,EAAA;;IAEjC,CAAC,CAAC,MAAM,CAAC,qBAAT,GAAiC;WACjC,CAAC,CAAC,OAAO,CAAC,IAAV,GAAiB;EAHgB,CAAjC;;EAKA,CAAA,CAAE,QAAF,CAAW,CAAC,KAAZ,CAAkB,QAAA,CAAA,CAAA;AACnB,QAAA;IAAC,SAAS,CAAC,MAAV,CAAiB,QAAQ,CAAC,IAA1B;IACA,UAAA,GAAa,IAAI,GAAG,CAAC,UAAR,CAAA;WACb,UAAU,CAAC,EAAX,CAAA;EAHkB,CAAlB;AAPD",

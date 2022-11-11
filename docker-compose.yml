@@ -1,0 +1,12 @@
+---
+    version: "2"
+    services:
+      buildHomeTabletLocalApp:
+        image: robdobsn/hometabletlocalapp
+        container_name: hometabletlocalapp
+        environment:
+          - PUID=1000
+          - PGID=1000
+          - TZ=Europe/London
+        network_mode: bridge
+        

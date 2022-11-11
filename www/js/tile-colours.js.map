@@ -1,9 +1,9 @@
 {
   "version": 3,
   "file": "tile-colours.js",
-  "sourceRoot": "..\\..",
+  "sourceRoot": "../../",
   "sources": [
-    "www\\js\\tile-colours.coffee"
+    "www/js/tile-colours.coffee"
   ],
   "names": [],
   "mappings": ";AAAA;EAAM,GAAG,CAAC,cAAV,MAAA,YAAA;IACC,WAAa,CAAA,CAAA;MACZ,IAAC,CAAA,WAAD,GAAe;QACd,SADc;QAEd,SAFc;QAGd,SAHc;QAId,SAJc;QAKd,SALc;QAMd,SANc;QAOd,SAPc;QAQd,SARc;QASd,SATc;;QAWd,SAXc;QAYd,SAZc;;;;QAgBd,SAhBc;QAiBd,SAjBc;;;QAoBd,SApBc;;QAsBd,SAtBc;QAuBd,SAvBc;;;QA0Bd,SA1Bc;;MA4Bf,IAAC,CAAA,aAAD,GAAiB;AACjB;IA9BY;;IAgCb,aAAe,CAAA,CAAA;AAChB,UAAA;MAAE,MAAA,GAAS,IAAC,CAAA,WAAW,CAAC,IAAC,CAAA,aAAF;MACrB,IAAC,CAAA,aAAD,IAAkB;MAClB,IAAG,IAAC,CAAA,aAAD,IAAkB,IAAC,CAAA,WAAW,CAAC,MAAlC;QACC,IAAC,CAAA,aAAD,GAAiB,EADlB;;AAEA,aAAO;IALO;;EAjChB;AAAA",
