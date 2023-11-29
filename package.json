@@ -13,11 +13,11 @@
     }
   },
   "dependencies": {
-    "cordova-plugin-file": "^6.0.2",
+    "cordova-plugin-file": "^8.0.1",
     "cordova-plugin-whitelist": "1",
     "cordova-webintent": "github:cordova-misc/cordova-webintent"
   },
   "devDependencies": {
-    "cordova-android": "^7.1.4"
+    "cordova-android": "^9.0.0"
   }
 }
